@@ -18,17 +18,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           submodules: true
-
-      # checkout PUSopen into fprime
-      - uses: actions/checkout@v2
-        with:
-          repository: CHESS-mission/pusopen
-          token: ${{ secrets.PUS_TOKEN }}
-          path: fprime/Lib
           
-      - name: install apt package
-        run: sudo apt install libzmq3-dev
-
       - name: prepare python pre-built environnement
         uses: actions/setup-python@v2
         with:
