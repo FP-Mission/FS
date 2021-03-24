@@ -1,4 +1,4 @@
-# 05_FS - F' CHESS Flight software
+# FS - F' Flight software
 
 This is the main repository of the CHESS flight software. It uses the [NASA F' framework](https://github.com/nasa/fprime). 
 
@@ -57,7 +57,7 @@ fprime-gds
 ## simulators
 ### ADCS
 #### Installing
-```bash
+​```bash
 pip install python-statemachine
 ```
 #### Running ADCS simulator
