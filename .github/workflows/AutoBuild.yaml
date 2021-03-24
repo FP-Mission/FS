@@ -17,6 +17,9 @@ jobs:
       - uses: actions/checkout@v2
         with:
           submodules: true
+      
+      - name: look permission
+        run: ls -l ./scripts-ci/build.sh
 
       - name: prepare python pre-built environnement
         uses: actions/setup-python@v2
@@ -34,9 +37,6 @@ jobs:
       # Init the virtual environnement (project script)
       - name: Prepare venv
         run: ./scripts-ci/init-venv.sh
-
-      - name: look permission
-        run: ls -l ./scripts-ci/build.sh
 
       # Build the project (project script)
       - name: Build the project
