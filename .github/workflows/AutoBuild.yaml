@@ -37,6 +37,7 @@ jobs:
 
       # Build the project (project script)
       - name: Build the project
+        run: ls -l ./scripts-ci/build.sh
         run: ./scripts-ci/build.sh ${{env.path}}
 
       # Upload build artifact for static analysis
