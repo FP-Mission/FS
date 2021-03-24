@@ -1,0 +1,35 @@
+
+## Build Fprime 
+
+App/build-artifacts/
+
+App/build-fprime-automatic-native/
+App/build-fprime-automatic-native-ut/
+App/build-fprime-automatic-raspberrypi/
+App/build-fprime-automatic-raspberrypi-ut/
+
+App/logs/
+
+## venv
+fprime-venv
+
+.idea
+.editorconfig
+.vscode/
+__pycache__
+## Python cache
+App/Top/alt/
+
+App/Top/channels/
+
+App/Top/commands/
+
+App/Top/events/
+
+App/Top/AppTopologyAppID.csv
+
+App/Top/AppTopologyAppAi_IDTableLog.txt
+
+App/Top/AppTopologyAppDictionary.xml
+
+App/Top/ISFApp.pdf

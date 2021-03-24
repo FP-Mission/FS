@@ -1,0 +1,92 @@
+name: Continous delivery
+
+on:
+  push:
+    branches: [ master ]
+
+env:
+  path: App
+  delivery-path: ~/fsw/chess
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Cross-compile
+
+    steps:
+      # checkout the repository with submodules
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      # checkout PUSopen into fprime
+      - uses: actions/checkout@v2
+        with:
+          repository: CHESS-mission/pusopen
+          token: ${{ secrets.PUS_TOKEN }}
+          path: fprime/Lib
+
+      - name: prepare python pre-built environnement
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+
+      - name: test python is functionnal
+        run: python -c "import sys; print(sys.version)"
+      
+      - name: Prepare dependencies python, cmake
+        run: |
+          python -m pip install --upgrade pip
+          sudo apt install cmake -y
+
+      #prepare (download & export variable) the RPI toolchain
+      - name: Toolchain installation
+        run: sudo git clone https://github.com/raspberrypi/tools.git /opt/rpi/tools
+
+      # Init the virtual environnement (project script)
+      - name: Prepare venv
+        run: ./scripts-ci/init-venv.sh
+
+      # Build the project (project script)
+      - name: Build the project
+        run: |
+          ./scripts-ci/build.sh ${path} raspberrypi
+      #move the script at the root inside a folder to avoid deflattening
+      - name: Move build at root
+        run: |
+          mkdir artifacts
+          mv ${{ env.path }}/build-artifacts artifacts/build-artifacts
+          mv artifacts/build-artifacts/arm* artifacts/build-artifacts/Linux
+      
+      # Upload build artifact for static analysis
+      - name: Upload the Build final folder
+        uses: actions/upload-artifact@v2
+        with:
+          name: Build
+          path: artifacts
+
+  delivery:
+    needs: build
+    runs-on: self-hosted
+    name: Deliver
+    steps:
+
+      - name: download buld folder
+        uses: actions/download-artifact@v2
+        with:
+          name: Build
+
+      - name: give execution rights to app
+        run: sudo chmod a+x build-artifacts/*/bin/*
+
+      # Put the build-artifacts folder at the "latest"
+      - name: Put version as latest
+        run: |
+          find ${{ env.delivery-path }}/latest/* -delete || true  
+          cp -r build-artifacts ${{ env.delivery-path }}/latest/build-artifacts
+      #put the build-artifacts folder as archive
+      - name: Put version in archive
+        run: |
+          date_now=$(date +"%d_%m_%Y_%H:%M:%S")
+          mkdir ${{ env.delivery-path }}/archives/$date_now
+          cp -r build-artifacts ${{ env.delivery-path }}/archives/$date_now/build-artifacts

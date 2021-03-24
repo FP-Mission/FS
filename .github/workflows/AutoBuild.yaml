@@ -1,0 +1,182 @@
+name: Application Build and UT
+
+# Builds project on every push and PR
+on:  [push, pull_request]
+
+env:
+  path: App
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Build application
+    
+    # https://docs.github.com/en/free-pro-team@latest/actions/guides/building-and-testing-python
+    steps:
+      # checkout the repository with submodules
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      # checkout PUSopen into fprime
+      - uses: actions/checkout@v2
+        with:
+          repository: CHESS-mission/pusopen
+          token: ${{ secrets.PUS_TOKEN }}
+          path: fprime/Lib
+
+      - name: install apt package
+        run: sudo apt install libzmq3-dev
+
+      - name: prepare python pre-built environnement
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+
+      - name: test python is functionnal
+        run: python -c "import sys; print(sys.version)"
+      
+      - name: Prepare dependencies python, cmake
+        run: |
+          python -m pip install --upgrade pip
+          sudo apt install cmake -y
+        
+      # Init the virtual environnement (project script)
+      - name: Prepare venv
+        run: ./scripts-ci/init-venv.sh
+
+      # Build the project (project script)
+      - name: Build the project
+        run: ./scripts-ci/build.sh ${{env.path}}
+
+      # Upload build artifact for static analysis
+      - name: Upload the Build final folder
+        uses: actions/upload-artifact@v2
+        with:
+          name: Build
+          path: ${{ env.path }}/build-fprime-automatic-native
+
+  static_code_analysis:
+    needs: build
+    runs-on: ubuntu-latest
+    name: Static code Analysis
+    steps:
+
+      - name: download buld folder
+        uses: actions/download-artifact@v2
+        with:
+          name: Build
+
+      - name : prepare cppcheck
+        run: |
+          sudo apt install cppcheck -y
+          sudo apt install python-pygments -y
+      - name: Compute cppcheck code analysis
+        run: cppcheck --xml --force . 2>./cppcheck.xml
+
+      - name: Transform  XML into HTML
+        run: |
+          mkdir check-html/
+          cppcheck-htmlreport --file=cppcheck.xml --report-dir=./check-html/ --source-dir=. --title=CHESS-mission
+      - name: upload HTML files 
+        uses: actions/upload-artifact@v2
+        with:
+          name: cppCheck coverage report
+          path: ./check-html
+
+  app_unit_test:
+    runs-on: ubuntu-latest
+    name: Local unit tests
+
+    steps:
+      # checkout the repository with submodules
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      # checkout PUSopen into fprime
+      - uses: actions/checkout@v2
+        with:
+          repository: CHESS-mission/pusopen
+          token: ${{ secrets.PUS_TOKEN }}
+          path: fprime/Lib
+
+      - name: install apt package
+        run: sudo apt install libzmq3-dev
+
+      - name: prepare python pre-built environnement
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+
+      - name: test python is functionnal
+        run: python -c "import sys; print(sys.version)"
+      
+      - name: Pepare dependencies python, cmake
+        run: |
+          python -m pip install --upgrade pip
+          sudo apt install cmake -y
+
+      - name: start simulators
+        run: ./scripts-ci/start-simulators.sh       
+        
+      # Init the virtual environnement (project script)
+      - name: Prepare venv
+        run: ./scripts-ci/init-venv.sh
+
+      # Build the project (project script)
+      - name: Build the project
+        run: ./scripts-ci/build.sh ${{env.path}}
+
+      # Build the unit tests and check them one by one in the app
+      - name: Build and run the unit test
+        run: ./scripts-ci/local-unit-test.sh ${{env.path}}
+
+  global_unit_test:
+    runs-on: ubuntu-latest
+    name: Global unit tests
+    steps:
+      # checkout the repository with submodules
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      # checkout PUSopen into fprime
+      - uses: actions/checkout@v2
+        with:
+          repository: CHESS-mission/pusopen
+          token: ${{ secrets.PUS_TOKEN }}
+          path: fprime/Lib
+
+      - name: install apt package
+        run: sudo apt install libzmq3-dev
+
+      - name: prepare python pre-built environnement
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+
+      - name: test python is functionnal
+        run: python -c "import sys; print(sys.version)"
+      
+      - name: Pepare dependencies python, cmake
+        run: |
+          python -m pip install --upgrade pip
+          sudo apt install cmake -y
+
+      - name: start simulators
+        run: ./scripts-ci/start-simulators.sh
+        
+      # Init the virtual environnement (project script)
+      - name: Prepare venv
+        run: ./scripts-ci/init-venv.sh
+
+
+      # Build the project (project script)
+      - name: Build the project
+        run: ./scripts-ci/build.sh ${{env.path}}
+
+
+      # Build the unit tests and check them one by one in the app using fprime check --all
+      - name: Build and run all the unit tests
+        run: ./scripts-ci/global-unit-test.sh ${{env.path}}

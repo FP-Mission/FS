@@ -1,0 +1,16 @@
+<dashboard-box border-color="black">
+    <dashboard-row>
+        <dashboard-box>
+            <command-input/>
+        </dashboard-box>
+        <dashboard-box>
+            <channel-table compact/>
+        </dashboard-box>
+    </dashboard-row>
+
+</dashboard-box>
+
+<dashboard-box border-color="black">
+    <event-list compact/>
+</dashboard-box>
+
