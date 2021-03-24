@@ -35,9 +35,11 @@ jobs:
       - name: Prepare venv
         run: ./scripts-ci/init-venv.sh
 
+      - name: look permission
+        run: ls -l ./scripts-ci/build.sh
+
       # Build the project (project script)
       - name: Build the project
-        run: ls -l ./scripts-ci/build.sh
         run: ./scripts-ci/build.sh ${{env.path}}
 
       # Upload build artifact for static analysis
