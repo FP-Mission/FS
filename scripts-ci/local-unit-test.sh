@@ -10,7 +10,7 @@ fi
 #activate the python environnement
 . ./fprime-venv/bin/activate
 
-#purge an old app if it exists
+#purge an old app if it exists.
 cd $1
 base_directory=$(pwd)
 echo "purging..."; yes | fprime-util purge
