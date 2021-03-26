@@ -37,7 +37,9 @@ jobs:
 
       # Build the project (project script)
       - name: Build the project
-        run: sh ./scripts-ci/build.sh ${{env.path}}
+        run: |
+          chmod +x ./scripts-ci/build.sh
+          ./scripts-ci/build.sh ${{env.path}}
 
       # Upload build artifact for static analysis
       - name: Upload the Build final folder
@@ -99,15 +101,15 @@ jobs:
         
       # Init the virtual environnement (project script)
       - name: Prepare venv
-        run: sh ./scripts-ci/init-venv.sh
-
-      # Build the project (project script)
-      - name: Build the project
-        run: sh ./scripts-ci/build.sh ${{env.path}}
+        run: |
+          chmod +x ./scripts-ci/init-venv.sh
+          ./scripts-ci/init-venv.sh
 
       # Build the unit tests and check them one by one in the app
       - name: Build and run the unit test
-        run: sh ./scripts-ci/local-unit-test.sh ${{env.path}}
+        run: |
+          chmod +x ./scripts-ci/local-unit-test.sh
+          ./scripts-ci/local-unit-test.sh ${{env.path}}
 
   global_unit_test:
     runs-on: ubuntu-latest
@@ -135,14 +137,20 @@ jobs:
         
       # Init the virtual environnement (project script)
       - name: Prepare venv
-        run: sh ./scripts-ci/init-venv.sh
+        run: |
+          chmod +x ./scripts-ci/init-venv.sh
+          ./scripts-ci/init-venv.sh
 
 
       # Build the project (project script)
       - name: Build the project
-        run: sh ./scripts-ci/build.sh ${{env.path}}
+        run: | 
+          chmod +x ./scripts-ci/build.sh
+          ./scripts-ci/build.sh ${{env.path}}
 
 
       # Build the unit tests and check them one by one in the app using fprime check --all
       - name: Build and run all the unit tests
-        run: sh ./scripts-ci/global-unit-test.sh ${{env.path}}
+        run: |
+          chmod +x ./scripts-ci/global-unit-test.sh
+          ./scripts-ci/global-unit-test.sh ${{env.path}}

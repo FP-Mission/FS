@@ -23,7 +23,7 @@ echo "generating..."; fprime-util generate
 
 echo "Searchign Unit Test on $base_directory..."
 #get directories that have test in them
-dirs=$(find $base_directory -type d -name "ut" -not -path "$base_directory/build-*" | sed -e 's/\<test\/ut\>//g')
+dirs=$((find $base_directory -type d -name "ut" -not -path "$base_directory/build-*" | sed -e 's/\<test\/ut\>//g'))
 #number of dirs
 processed_tests=${#dirs[@]}
 

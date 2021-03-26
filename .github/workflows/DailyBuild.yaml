@@ -34,11 +34,15 @@ jobs:
         
       # Init the virtual environnement (project script)
       - name: Prepare venv
-        run: sh ./scripts-ci/init-venv.sh
+        run: |
+          chmod +x ./scripts-ci/init-venv.sh
+          ./scripts-ci/init-venv.sh
 
       # Build the project (project script)
       - name: Build the project
-        run: sh ./scripts-ci/build.sh ${{env.path}}
+        run: |
+          chmod +x ./scripts-ci/build.sh
+          ./scripts-ci/build.sh ${{env.path}}
 
       # Upload the artifact
       - name: Upload the application binaries
