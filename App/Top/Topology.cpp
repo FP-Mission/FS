@@ -49,6 +49,7 @@ Drv::BlockDriverImpl blockDrv(FW_OPTIONAL_NAME("BDRV"));
 
 // Reference Implementation Components
 
+
 #if FW_ENABLE_TEXT_LOGGING
 Svc::ConsoleTextLoggerImpl textLogger(FW_OPTIONAL_NAME("TLOG"));
 #endif
@@ -66,15 +67,15 @@ Svc::CmdSequencerComponentImpl cmdSeq(FW_OPTIONAL_NAME("CMDSEQ"));
 
 Svc::PrmDbImpl prmDb(FW_OPTIONAL_NAME("PRM"),"PrmDb.dat");
 
+Ref::PingReceiverComponentImpl pingRcvr(FW_OPTIONAL_NAME("PngRecv"));
+
 Drv::SocketIpDriverComponentImpl socketIpDriver(FW_OPTIONAL_NAME("SocketIpDriver"));
 
 Svc::FileUplink fileUplink(FW_OPTIONAL_NAME("fileUplink"));
 
-Svc::FileDownlink fileDownlink(FW_OPTIONAL_NAME("fileDownlink"), DOWNLINK_PACKET_SIZE);
+Svc::FileDownlink fileDownlink(FW_OPTIONAL_NAME("fileDownlink"));
 
 Svc::FileManager fileManager(FW_OPTIONAL_NAME("fileManager"));
-
-Svc::BufferManager fileDownlinkBufferManager(FW_OPTIONAL_NAME("fileDownlinkBufferManager"), DOWNLINK_BUFFER_STORE_SIZE, DOWNLINK_BUFFER_QUEUE_SIZE);
 
 Svc::BufferManager fileUplinkBufferManager(FW_OPTIONAL_NAME("fileUplinkBufferManager"), UPLINK_BUFFER_STORE_SIZE, UPLINK_BUFFER_QUEUE_SIZE);
 
@@ -111,6 +112,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     // Initialize block driver
     blockDrv.init(10);
 
+    // Send/Receive example hardware components
 
 #if FW_ENABLE_TEXT_LOGGING
     textLogger.init();
@@ -134,12 +136,13 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
 
     fileUplink.init(30, 0);
     fileDownlink.init(30, 0);
+    fileDownlink.configure(1000, 1000, 1000, 10);
     fileManager.init(30, 0);
     fileUplinkBufferManager.init(0);
-    fileDownlinkBufferManager.init(1);
     fatalAdapter.init(0);
     fatalHandler.init(0);
     health.init(25,0);
+    pingRcvr.init(10);
     // Connect rate groups to rate group driver
     constructAppArchitecture();
 
@@ -158,7 +161,8 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     prmDb.regCommands();
     fileDownlink.regCommands();
     fileManager.regCommands();
-	health.regCommands();
+    health.regCommands();
+    pingRcvr.regCommands();
 
     // read parameters
     prmDb.readParamFile();
@@ -176,6 +180,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
         {3,5,getHealthName(prmDb)}, // 7
         {3,5,getHealthName(fileUplink)}, // 8
         {3,5,getHealthName(fileDownlink)}, // 9
+        {3,5,getHealthName(pingRcvr)}, // 10
         {3,5,getHealthName(blockDrv)}, // 11
         {3,5,getHealthName(fileManager)}, // 12
     };
@@ -203,6 +208,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     fileUplink.start(0, 100, 10*1024);
     fileManager.start(0, 100, 10*1024);
 
+    pingRcvr.start(0, 100, 10*1024);
 
     // Initialize socket server if and only if there is a valid specification
     if (hostname != NULL && port_number != 0) {
@@ -224,6 +230,7 @@ void exitTasks(void) {
     fileDownlink.exit();
     fileManager.exit();
     cmdSeq.exit();
+    pingRcvr.exit();
     // join the component threads with NULL pointers to free them
     (void) rateGroup1Comp.ActiveComponentBase::join(NULL);
     (void) rateGroup2Comp.ActiveComponentBase::join(NULL);
@@ -237,6 +244,7 @@ void exitTasks(void) {
     (void) fileDownlink.ActiveComponentBase::join(NULL);
     (void) fileManager.ActiveComponentBase::join(NULL);
     (void) cmdSeq.ActiveComponentBase::join(NULL);
+    (void) pingRcvr.ActiveComponentBase::join(NULL);
     socketIpDriver.exitSocketTask();
     (void) socketIpDriver.joinSocketTask(NULL);
     cmdSeq.deallocateBuffer(seqMallocator);

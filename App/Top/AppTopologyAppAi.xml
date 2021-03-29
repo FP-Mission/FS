@@ -2,7 +2,7 @@
 <?xml-model href="../../Autocoders/Python/schema/ISF/topology_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <assembly name = "App">
 
-    <!-- Immport component declarations -->
+    <!-- Import component declarations -->
 
     <import_component_type>Svc/FatalHandler/FatalHandlerComponentAi.xml</import_component_type>
     <import_component_type>Svc/ActiveRateGroup/ActiveRateGroupComponentAi.xml</import_component_type>
@@ -41,7 +41,6 @@
     <instance namespace="Svc" name="fileUplink" type="FileUplink" base_id="261"  base_id_window="20" />
     <instance namespace="Svc" name="fileUplinkBufferManager" type="BufferManager" base_id="301"  base_id_window="20" />
     <instance namespace="Svc" name="fileDownlink" type="FileDownlink" base_id="501"  base_id_window="20" />
-    <instance namespace="Svc" name="fileDownlinkBufferManager" type="BufferManager" base_id="401"  base_id_window="20" />
     <instance namespace="Svc" name="fileManager" type="FileManager" base_id="621"  base_id_window="20" />
     <instance namespace="Svc" name="textLogger" type="PassiveTextLogger" base_id="521"  base_id_window="20" />
     <instance namespace="Svc" name="fatalAdapter" type="AssertFatalAdapter" base_id="341"  base_id_window="20" />
@@ -60,6 +59,8 @@
     <instance namespace="Svc" name="rateGroup3Comp" type="ActiveRateGroup" base_id="241"  base_id_window="20" />
 
     <!-- Reference Example Components -->
+
+    <instance namespace="Ref" name="pingRcvr" type="PingReceiver" base_id="41"  base_id_window="20" />
     <instance namespace="Drv" name="blockDrv" type="BlockDriver" base_id="481"  base_id_window="20" />
 
     <!-- Connections -->
@@ -101,6 +102,11 @@
          <source component = "fileDownlink" port = "cmdRegOut" type = "CmdReg" num = "0"/>
          <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "5"/>
     </connection>
+
+    <connection name = "PingRcvReg">
+         <source component = "pingRcvr" port = "CmdReg" type = "CmdReg" num = "0"/>
+         <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "13"/>
+    </connection>
     <connection name = "FileManagerReg">
          <source component = "fileManager" port = "cmdRegOut" type = "CmdReg" num = "0"/>
          <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "14"/>
@@ -131,6 +137,11 @@
     <connection name = "FileDownlinkDisp">
          <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "5"/>
          <target component = "fileDownlink" port = "cmdIn" type = "Cmd" num = "0"/>
+    </connection>
+    
+    <connection name = "PingRcvDisp">
+         <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "13"/>
+         <target component = "pingRcvr" port = "CmdDisp" type = "Cmd" num = "0"/>
     </connection>
     <connection name = "FileManagerDisp">
          <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "14"/>
@@ -168,7 +179,10 @@
         <source component = "fileManager" port = "cmdResponseOut" type = "CmdResponse" num = "0"/>
         <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
     </connection>
-    
+    <connection name = "PingRcvStat">
+         <source component = "pingRcvr" port = "CmdStatus" type = "CmdResponse" num = "0"/>
+         <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
+    </connection>
 
     <!-- Sequencer Connections - should not conflict with uplink port -->
 
@@ -208,10 +222,6 @@
         <source component = "cmdDisp" port = "Log" type = "Log" num = "0"/>
         <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
     </connection>
-    <connection name = "FileDownlinkBufferManagerLog">
-        <source component = "fileDownlinkBufferManager" port = "eventOut" type = "Log" num = "0"/>
-        <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
-    </connection>
     <connection name = "CmdSeqLog">
         <source component = "cmdSeq" port = "logOut" type = "Log" num = "0"/>
         <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
@@ -242,6 +252,11 @@
     </connection>
     <connection name = "RG3Ev">
          <source component = "rateGroup3Comp" port = "Log" type = "Log" num = "0"/>
+         <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+    </connection>
+
+    <connection name = "pingEvt">
+         <source component = "pingRcvr" port = "Log" type = "Log" num = "0"/>
          <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
     </connection>
    
@@ -286,7 +301,16 @@
     <connection name = "Rg3Text">
          <source component = "rateGroup3Comp" port = "LogText" type = "LogText" num = "0"/>
          <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
-    </connection>    
+    </connection>
+    <connection name = "PingText">
+        <source component = "pingRcvr" port = "LogText" type = "LogText" num = "0"/>
+        <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
+    </connection>
+    <connection name = "fileDownlinkText">
+         <source component = "fileDownlink" port = "textEventOut" type = "LogText" num = "0"/>
+         <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
+    </connection>
+    
 
     <!-- Telemetry Connections -->
 
@@ -300,10 +324,6 @@
     </connection>
     <connection name = "FileUplinkTlm">
         <source component = "fileUplink" port = "tlmOut" type = "Tlm" num = "0"/>
-        <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
-    </connection>
-    <connection name = "FileDownlinkBufferManagerTlm">
-        <source component = "fileDownlinkBufferManager" port = "tlmOut" type = "Tlm" num = "0"/>
         <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
     </connection>
     <connection name = "fileManagerTlm">
@@ -334,11 +354,16 @@
         <source component = "health" port = "Tlm" type = "Tlm" num = "0"/>
         <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
     </connection>
+    <connection name = "pingTlm">
+         <source component = "pingRcvr" port = "Tlm" type = "Tlm" num = "0"/>
+         <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
+    </connection>
     <connection name = "blockDrvTlm">
          <source component = "blockDrv" port = "Tlm" type = "Tlm" num = "0"/>
          <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
     </connection>
-       
+    
+    <!-- Parameter Connections -->
 
     <!-- Time Connections -->
 
@@ -361,10 +386,6 @@
     <connection name = "rg3Time">
          <source component = "rateGroup3Comp" port = "Time" type = "Time" num = "0"/>
          <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
-    </connection>
-    <connection name = "fileDownlinkBufferManagerTime">
-        <source component = "fileDownlinkBufferManager" port = "timeCaller" type = "Time" num = "0"/>
-        <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
     </connection>
     <connection name = "cmdSeqTime">
         <source component = "cmdSeq" port = "timeCaller" type = "Time" num = "0"/>
@@ -402,6 +423,10 @@
         <source component = "groundIf" port = "Time" type = "Time" num = "0"/>
         <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
     </connection>
+    <connection name = "pingTime">
+         <source component = "pingRcvr" port = "Time" type = "Time" num = "0"/>
+         <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+    </connection>
     <connection name = "blockDrvTime">
          <source component = "blockDrv" port = "Time" type = "Time" num = "0"/>
          <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
@@ -420,10 +445,13 @@
         <source component = "rateGroupDriverComp" port = "CycleOut" type = "Cycle" num = "0"/>
         <target component = "rateGroup1Comp" port = "CycleIn" type = "Cycle" num = "0"/>
     </connection>
-    
     <connection name = "Rg1ChTlm">
          <source component = "rateGroup1Comp" port = "RateGroupMemberOut" type = "Sched" num = "2"/>
          <target component = "chanTlm" port = "Run" type = "Sched" num = "0"/>
+    </connection>
+    <connection name = "Rg1FileDown">
+         <source component = "rateGroup1Comp" port = "RateGroupMemberOut" type = "Sched" num = "3"/>
+         <target component = "fileDownlink" port = "Run" type = "Sched" num = "0"/>
     </connection>
 
     <!-- Rate Group 2 -->
@@ -436,7 +464,6 @@
          <target component = "cmdSeq" port = "schedIn" type = "Sched" num = "0"/>
     </connection>
    
-   
     <!-- Rate Group 3 -->
     <connection name = "rateGroup3DriverComp">
         <source component = "rateGroupDriverComp" port = "CycleOut" type = "Cycle" num = "2"/>
@@ -447,7 +474,6 @@
          <source component = "rateGroup3Comp" port = "RateGroupMemberOut" type = "Sched" num = "0"/>
          <target component = "health" port = "Run" type = "Sched" num = "0"/>
     </connection>
-
     <connection name = "Rg3BlkDrv">
          <source component = "rateGroup3Comp" port = "RateGroupMemberOut" type = "Sched" num = "2"/>
          <target component = "blockDrv" port = "Sched" type = "Sched" num = "0"/>
@@ -540,6 +566,14 @@
         <source component = "fileDownlink" port = "pingOut" type = "Ping" num = "0"/>
         <target component = "health" port = "PingReturn" type = "Ping" num = "9"/>
     </connection>
+    <connection name = "PingRcvPingRecv">
+         <source component = "health" port = "PingSend" type = "Ping" num = "10"/>
+         <target component = "pingRcvr" port = "PingIn" type = "Ping" num = "0"/>
+    </connection>
+    <connection name = "PingRcvPingSend">
+         <source component = "pingRcvr" port = "PingOut" type = "Ping" num = "0"/>
+         <target component = "health" port = "PingReturn" type = "Ping" num = "10"/>
+    </connection>
     <connection name = "blockDrvPingSend">
          <source component = "health" port = "PingSend" type = "Ping" num = "11"/>
          <target component = "blockDrv" port = "PingIn" type = "Ping" num = "0"/>
@@ -592,17 +626,14 @@
         <target component = "groundIf" port = "downlinkPort" type = "Com" num = "0"/>
     </connection>
    
-    <connection name = "fileDownlinkBufferGet">
-        <source component = "fileDownlink" port = "bufferGetCaller" type = "BufferGet" num = "0"/>
-        <target component = "fileDownlinkBufferManager" port = "bufferGetCallee" type = "BufferGet" num = "0"/>
-    </connection>
-    <connection name = "fileDownlinkBufferManagerBufferReturn">
-        <source component = "groundIf" port = "fileDownlinkBufferSendOut" type = "BufferSend" num = "0"/>
-        <target component = "fileDownlinkBufferManager" port = "bufferSendIn" type = "BufferSend" num = "0"/>
-    </connection>
     <connection name = "fileDownlinkBufferSend">
         <source component = "fileDownlink" port = "bufferSendOut" type = "BufferSend" num = "0"/>
         <target component = "groundIf" port = "fileDownlinkBufferSendIn" type = "BufferSend" num = "0"/>
+    </connection>
+
+    <connection name = "fileDownlinkBufferReturn">
+        <source component = "groundIf" port = "fileDownlinkBufferSendOut" type = "BufferSend" num = "0"/>
+        <target component = "fileDownlink" port = "bufferReturn" type = "BufferSend" num = "0"/>
     </connection>
    
     <!-- Fault Connections -->
@@ -612,5 +643,7 @@
     </connection>
     
     <!-- Reference App Connections -->
+    
+
     
 </assembly>
