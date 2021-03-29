@@ -1,6 +1,6 @@
 # FS - F' Flight software
 
-This is the main repository of the CHESS flight software. It uses the [NASA F' framework](https://github.com/nasa/fprime). 
+This is the main repository of the CHESS flight software. It uses the [NASA F' framework](https://github.com/nasa/fprime)
 
 ## Getting Started
 
