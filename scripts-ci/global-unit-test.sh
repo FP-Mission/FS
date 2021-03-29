@@ -19,5 +19,5 @@ echo "purging..."; yes | fprime-util purge
 set -e
 
 #build the app
-echo "generating..."; fprime-util generate
+echo "generating..."; fprime-util generate --ut
 fprime-util check --all
