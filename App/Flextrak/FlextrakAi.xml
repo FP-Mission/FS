@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../../Autocoders/Python/schema/ISF/component_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<component name="Flextrak" kind="active" namespace="App">
+    <comment>Component handling the FlexTrak board</comment>
+
+    <import_port_type>Svc/Ping/PingPortAi.xml</import_port_type>   
+    <import_port_type>Drv/SerialDriverPorts/SerialReadPortAi.xml</import_port_type>
+    <import_port_type>Drv/SerialDriverPorts/SerialWritePortAi.xml</import_port_type>
+    
+    <ports>
+        <port name="PingIn" data_type="Svc::Ping" kind="async_input" max_number="1">
+            <comment>
+                Ping request port
+            </comment>
+        </port>
+        <port name="PingOut" data_type="Svc::Ping" kind="output" max_number="1">
+            <comment>
+                Ping response port
+            </comment>
+        </port>
+        <port name="serialSend" data_type="Drv::SerialWrite" kind="output" max_number="1">
+        </port>
+        <port name="serialRecv" data_type="Drv::SerialRead" kind="synch_input"  max_number="1">
+        </port>
+
+        <port name="pictureTaken" data_type="U8" kind="async_input" max_number="1">
+            <comment>
+                Picture taken by the Pi Camera
+            </comment>
+        </port>
+        <port name="batteryVoltage" data_type="U16" kind="output" max_number="1">
+            <comment>
+                Battery votlage level in mV
+            </comment>
+        </port>
+        <port name="internalTemp" data_type="F32" kind="output" max_number="1">
+            <comment>
+                Internal temperature in °C
+            </comment>
+        </port>
+        <port name="externalTemp" data_type="F32" kind="output" max_number="1">
+            <comment>
+                External temperature in °C
+            </comment>
+        </port>
+
+    </ports>
+    <commands>
+        <command kind="async" opcode="0" mnemonic="FT_Version">
+            <comment>
+                Ask version
+            </comment>
+        </command>
+    </commands>
+    <telemetry>
+        <channel id="0" name="FT_SSDVBufferLength" data_type="U16">
+            <comment>
+                Used length of SSDV buffer
+            </comment>
+        </channel>
+    </telemetry>
+    <events>
+        <event id="0" name="FT_Version" severity="ACTIVITY_LOW" format_string = "Current FlexTrak version: %u" >
+            <comment>
+                FlexTrak version response
+            </comment>
+            <args>
+                <arg name="version" type="U8">
+                    <comment>Version</comment>
+                </arg>          
+            </args>
+        </event>
+     </events>
+</component>
+

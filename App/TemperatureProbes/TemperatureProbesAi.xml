@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../../Autocoders/Python/schema/ISF/component_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<component name="TemperatureProbes" kind="active" namespace="App">
+    <comment>Component handling the Flextrak temperature probes</comment>
+       
+    <ports>
+        <port name="internalTemperature" data_type="F32" kind="internal" max_number="1">
+            <comment>
+                Internal temperature in °C
+            </comment>
+        </port>
+        <port name="externalTemperature" data_type="F32" kind="external" max_number="1">
+            <comment>
+                External temperature in °C, provided by the DS18B20 probe
+            </comment>
+        </port>
+    </ports>
+    <commands>
+        <command kind="async" opcode="0" mnemonic="TempProb_SetInternalLevel">
+            <comment>
+                Set internal temperature warning level
+            </comment>
+            <args>
+                <arg name="temperature" type="F32">
+                    <comment>Temperature in °C</comment>
+                </arg>          
+            </args>
+        </command>
+        <command kind="async" opcode="1" mnemonic="TempProb_SetExternalLevel">
+            <comment>
+                Set external temperature warning level
+            </comment>
+            <args>
+                <arg name="temperature" type="F32">
+                    <comment>Temperature in °C</comment>
+                </arg>          
+            </args>
+        </command>
+    </commands>
+    <telemetry>
+        <channel id="0" name="TempProb_InternalTemperature" data_type="F32">
+            <comment>
+                Internal temperature in °C
+            </comment>
+        </channel>
+        <channel id="1" name="TempProb_ExternalTemperature" data_type="F32">
+            <comment>
+                External temperature in °C
+            </comment>
+        </channel>
+    </telemetry>
+    <events>
+        <event id="0" name="TempPro_LowInternalWarning" severity="WARNING_HI" format_string = "Low internal temperature: %f" >
+            <comment>
+                Sent when internal temperature reachs low level
+            </comment>
+            <args>
+                <arg name="temperature" type="F32">
+                    <comment>Temperature in °C</comment>
+                </arg>          
+            </args>
+        </event>
+        <event id="1" name="TempPro_LowExternalWarning" severity="WARNING_HI" format_string = "Low external temperature: %f" >
+            <comment>
+                Sent when external temperature reachs low level
+            </comment>
+            <args>
+                <arg name="temperature" type="F32">
+                    <comment>Temperature in °C</comment>
+                </arg>          
+            </args>
+        </event>
+     </events>
+</component>
+

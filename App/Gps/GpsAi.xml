@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../../Autocoders/Python/schema/ISF/component_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<component name="Gps" kind="active" namespace="App">
+    <comment>Component handling the Flextrak GPS</comment>
+    
+    <import_port_type>App/PositionPort/PositionPortAi.xml</import_port_type>
+    
+    <ports>
+        <port name="position" data_type="App::Position" kind="output" max_number="2">
+            <comment>
+                GPS Position output
+            </comment>
+        </port>
+    </ports>
+    <commands>
+        <command kind="async" opcode="0" mnemonic="Gps_SetFlightModeAltitude">
+            <comment>
+                Set flight mode altitude. This is the altitude at which the GPS will switch from pedestrian mode (for more accuracy on the ground) to flight mode (to work above 18km)
+            </comment>
+            <args>
+                <arg name="altitude" type="I16">
+                    <comment>Altitude in meters</comment>
+                </arg>          
+            </args>
+        </command>
+    </commands>
+    <telemetry>
+        <channel id="0" name="Gps_Position" data_type="App::Position">
+            <comment>
+                GPS position
+            </comment>
+        </channel>
+    </telemetry>
+    <events>
+        <!--
+        <event id="0" name="Gps_" severity="ACTIVITY_HI" format_string = "" >
+            <comment>
+            
+            </comment>
+        </event>
+        -->
+     </events>
+</component>
+

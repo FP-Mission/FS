@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../../Autocoders/Python/schema/ISF/component_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<component name="Predictor" kind="active" namespace="App">
+    <comment>Component predicting landing position</comment>
+        
+    <ports>
+        <port name="position" data_type="App::Position" kind="async_input" max_number="1">
+            <comment>
+                Current balloon position
+            </comment>
+        </port>
+    </ports>
+    <commands>
+        <command kind="async" opcode="0" mnemonic="Predi_SetPredictionRate">
+            <comment>
+                Set prediction rate
+            </comment>
+            <args>
+                <arg name="rate" type="U8">
+                    <comment>Prediction rate. Set to 0 to disable. 1 means each time the position is sent to the predictor it will estimate landing position.</comment>
+                </arg>          
+            </args>
+        </command>
+    </commands>
+    <telemetry>
+        <channel id="0" name="Predi_LandingPosition" data_type="App::Position">
+            <comment>
+                Predicted landing position
+            </comment>
+        </channel>
+    </telemetry>
+    <events>
+        <event id="0" name="Predi_FlightMode" severity="ACTIVITY_HI" format_string = "New flight mode: %u" >
+            <comment>
+                Flight mode change
+            </comment>
+            <arg name="newFlightMode" type="ENUM">
+                <enum name="FlightMode">
+                    <item name="FM_IDLE" value="1" comment=""/>
+                    <item name="FM_LAUNCHED" value="2" comment=""/>
+                    <item name="FM_DESCENDING" value="3" comment=""/>
+                    <item name="FM_LANDED" value="4" comment=""/>
+                </enum>
+                <comment>Flight modes</comment>
+            </arg>
+        </event>
+     </events>
+</component>
+

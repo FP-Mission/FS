@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Type_Schema.rnc" type="compact"?>
+<interface name="Position" namespace="App">
+    <comment>
+        Port for sending GPS position data
+    </comment>
+    <args>
+        <arg name="time" type="Fw::Time">
+            <comment>Measure time</comment>
+        </arg>
+        <arg name="latitude" type="I32">
+            <comment>Latitude in ? @todo</comment>
+        </arg>
+        <arg name="longitude" type="I32">
+            <comment>Longitude in ? @todo</comment>
+        </arg>
+        <arg name="altitude" type="U16">
+            <comment>Altitude in meters</comment>
+        </arg>
+        <arg name="satellite" type="U8">
+            <comment>Satellite count</comment>
+        </arg>
+    </args>
+</interface>
+
