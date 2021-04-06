@@ -21,7 +21,6 @@
 #include <Drv/SocketIpDriver/SocketIpDriverComponentImpl.hpp>
 #include <Svc/GroundInterface/GroundInterface.hpp>
 
-/*
 #include <App/Eps/EpsComponentImpl.hpp>
 #include <App/FlexTrak/FlexTrakComponentImpl.hpp>
 #include <App/Gps/GpsComponentImpl.hpp>
@@ -29,7 +28,6 @@
 #include <App/Predictor/PredictorComponentImpl.hpp>
 #include <App/RockBlock/RockBlockComponentImpl.hpp>
 #include <App/TemperatureProbes/TemperatureProbesComponentImpl.hpp>
-*/
 
 void constructAppArchitecture(void);
 bool constructApp(bool dump, U32 port_number, char* hostname);
@@ -53,14 +51,12 @@ extern Drv::BlockDriverImpl blockDrv;
 extern Ref::PingReceiverComponentImpl pingRcvr;
 extern Drv::SocketIpDriverComponentImpl socketIpDriver;
 
-/*
-extern App::Eps eps;
-extern App::FlexTrak flexTrak;
-extern App::Gps gps;
-extern App::PiCamera piCamera;
-extern App::Predictor predictor;
-extern App::RockBlock rockBlock;
-extern App::TemperatureProbes temperatureProbes;
-*/
+extern App::EpsComponentImpl eps;
+extern App::FlexTrakComponentImpl flexTrak;
+extern App::GpsComponentImpl gps;
+extern App::PiCameraComponentImpl piCamera;
+extern App::PredictorComponentImpl predictor;
+extern App::RockBlockComponentImpl rockBlock;
+extern App::TemperatureProbesComponentImpl temperatureProbes;
 
 #endif

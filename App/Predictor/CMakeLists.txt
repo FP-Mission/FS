@@ -10,5 +10,6 @@
 set(SOURCE_FILES
 	"${CMAKE_CURRENT_LIST_DIR}/FlightModeEnumAi.xml"
 	"${CMAKE_CURRENT_LIST_DIR}/PredictorComponentAi.xml"
+	"${CMAKE_CURRENT_LIST_DIR}/PredictorComponentImpl.cpp"
 )
 register_fprime_module()

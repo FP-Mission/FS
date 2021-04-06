@@ -63,15 +63,13 @@ Ref::PingReceiverComponentImpl pingRcvr(FW_OPTIONAL_NAME("PngRecv"));
 Drv::BlockDriverImpl blockDrv(FW_OPTIONAL_NAME("BDRV"));
 Drv::SocketIpDriverComponentImpl socketIpDriver(FW_OPTIONAL_NAME("SocketIpDriver"));
 
-/*
-App::Eps eps(FW_OPTIONAL_NAME("Eps"));
-App::FlexTrak flexTrak(FW_OPTIONAL_NAME("FlexTrak"));
-App::Gps gps(FW_OPTIONAL_NAME("Gps"));
-App::PiCamera piCamera(FW_OPTIONAL_NAME("PiCamera"));
-App::Predictor predictor(FW_OPTIONAL_NAME("Predictor"));
-App::RockBlock rockBlock(FW_OPTIONAL_NAME("RockBlock"));
-App::TemperatureProbes temperatureProbes(FW_OPTIONAL_NAME("TemperatureProbes"));
-*/
+App::EpsComponentImpl eps(FW_OPTIONAL_NAME("Eps"));
+App::FlexTrakComponentImpl flexTrak(FW_OPTIONAL_NAME("FlexTrak"));
+App::GpsComponentImpl gps(FW_OPTIONAL_NAME("Gps"));
+App::PiCameraComponentImpl piCamera(FW_OPTIONAL_NAME("PiCamera"));
+App::PredictorComponentImpl predictor(FW_OPTIONAL_NAME("Predictor"));
+App::RockBlockComponentImpl rockBlock(FW_OPTIONAL_NAME("RockBlock"));
+App::TemperatureProbesComponentImpl temperatureProbes(FW_OPTIONAL_NAME("TemperatureProbes"));
 
 const char* getHealthName(Fw::ObjBase& comp) {
    #if FW_OBJECT_NAMES == 1
@@ -127,15 +125,13 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     health.init(25,0);
     pingRcvr.init(10);
 
-    /*
-    eps.init(10, 0)
-    flexTrak.init(10, 0)
-    gps.init(10, 0)
-    piCamera.init(10, 0)
-    predictor.init(10, 0)
-    rockBlock.init(10, 0)
-    temperatureProbes.init(10, 0)
-    */
+    eps.init(10, 0);
+    flexTrak.init(10, 0);
+    gps.init(0);
+    piCamera.init(10, 0);
+    predictor.init(10, 0);
+    rockBlock.init(10, 0);
+    temperatureProbes.init(10, 0);
 
     // Connect rate groups to rate group driver
     constructAppArchitecture();
@@ -156,15 +152,13 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     health.regCommands();
     pingRcvr.regCommands();
 
-    /*
     eps.regCommands();
     flexTrak.regCommands();
     gps.regCommands();
     piCamera.regCommands();
     predictor.regCommands();
-    rockBlock.regCommands();
+    //rockBlock.regCommands();
     temperatureProbes.regCommands();
-    */
 
     // read parameters
     // prmDb.readParamFile();

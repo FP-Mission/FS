@@ -9,5 +9,6 @@
 ####
 set(SOURCE_FILES
 	"${CMAKE_CURRENT_LIST_DIR}/TemperatureProbesComponentAi.xml"
+	"${CMAKE_CURRENT_LIST_DIR}/TemperatureProbesComponentImpl.cpp"
 )
 register_fprime_module()

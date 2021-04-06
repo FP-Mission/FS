@@ -35,14 +35,11 @@
         </channel>
     </telemetry>
     
-    <!--
     <events>
-        <event id="0" name="Gps_" severity="ACTIVITY_HI" format_string = "" >
+        <event id="0" name="Gps_Error" severity="ACTIVITY_HI" format_string = "Error" >
             <comment>
-            
+                Random error event for test purpose
             </comment>
         </event>
-    events>
-    -->
+    </events>
 </component>
-

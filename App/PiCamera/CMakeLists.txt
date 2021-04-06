@@ -9,5 +9,6 @@
 ####
 set(SOURCE_FILES
 	"${CMAKE_CURRENT_LIST_DIR}/PiCameraComponentAi.xml"
+	"${CMAKE_CURRENT_LIST_DIR}/PiCameraComponentImpl.cpp"
 )
 register_fprime_module()

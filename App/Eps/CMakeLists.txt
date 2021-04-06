@@ -9,5 +9,6 @@
 ####
 set(SOURCE_FILES
 	"${CMAKE_CURRENT_LIST_DIR}/EpsComponentAi.xml"
+	"${CMAKE_CURRENT_LIST_DIR}/EpsComponentImpl.cpp"
 )
 register_fprime_module()

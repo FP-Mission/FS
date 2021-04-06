@@ -50,16 +50,16 @@ namespace App {
       // Handler implementations for user-defined typed input ports
       // ----------------------------------------------------------------------
 
-      //! Handler implementation for internalTemperature
+      //! Handler implementation for internal
       //!
-      void internalTemperature_handler(
+      void internal_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           F32 degree /*!< Temperature in °C*/
       );
 
-      //! Handler implementation for externalTemperature
+      //! Handler implementation for external
       //!
-      void externalTemperature_handler(
+      void external_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           F32 degree /*!< Temperature in °C*/
       );

@@ -48,7 +48,7 @@ namespace App {
   // ----------------------------------------------------------------------
 
   void TemperatureProbesComponentImpl ::
-    internalTemperature_handler(
+    internal_handler(
         const NATIVE_INT_TYPE portNum,
         F32 degree
     )
@@ -57,7 +57,7 @@ namespace App {
   }
 
   void TemperatureProbesComponentImpl ::
-    externalTemperature_handler(
+    external_handler(
         const NATIVE_INT_TYPE portNum,
         F32 degree
     )
