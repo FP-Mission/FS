@@ -37,7 +37,7 @@
     </telemetry>
 
     <events>
-        <event id="0" name="Predi_FlightMode" severity="ACTIVITY_HI" format_string = "New flight mode: %u" >
+        <event id="0" name="Predi_FlightMode" severity="ACTIVITY_HI" format_string = "New flight mode: %s" >
             <comment>
                 Flight mode change
             </comment>

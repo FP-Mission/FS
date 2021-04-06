@@ -36,7 +36,8 @@ PiCameraComponentImpl ::~PiCameraComponentImpl(void) {}
 
 void PiCameraComponentImpl ::PingIn_handler(const NATIVE_INT_TYPE portNum,
                                             U32 key) {
-    // TODO
+    // @todo Implement Ping logic
+    PingOut_out(0, key);
 }
 
 void PiCameraComponentImpl ::position_handler(const NATIVE_INT_TYPE portNum,
@@ -50,9 +51,10 @@ void PiCameraComponentImpl ::position_handler(const NATIVE_INT_TYPE portNum,
 // Command handler implementations
 // ----------------------------------------------------------------------
 
-void PiCameraComponentImpl ::PiCam_cmdHandler(const FwOpcodeType opCode,
-                                              const U32 cmdSeq) {
-    // TODO
+void PiCameraComponentImpl ::PiCam_TakePicture_cmdHandler(
+    const FwOpcodeType opCode, const U32 cmdSeq) {
+    // @todo
+    this->log_ACTIVITY_LO_PiCam_PictureTaken();
     this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
 }
 

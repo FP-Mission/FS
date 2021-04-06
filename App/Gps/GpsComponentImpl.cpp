@@ -36,6 +36,7 @@ GpsComponentImpl ::~GpsComponentImpl(void) {}
 void GpsComponentImpl ::Gps_SetFlightModeAltitude_cmdHandler(
     const FwOpcodeType opCode, const U32 cmdSeq, U16 altitude) {
     // TODO
+    this->log_ACTIVITY_HI_Gps_Error();
     this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
 }
 

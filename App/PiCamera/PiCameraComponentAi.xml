@@ -32,7 +32,7 @@
     </ports>
 
     <commands>
-        <command kind="async" opcode="0" mnemonic="PiCam">
+        <command kind="async" opcode="0" mnemonic="PiCam_TakePicture">
             <comment>
             Take picture
             </comment>

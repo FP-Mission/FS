@@ -70,8 +70,9 @@ class PiCameraComponentImpl : public PiCameraComponentBase {
         //! Implementation for PiCam command handler
         //! Take picture
         void
-        PiCam_cmdHandler(const FwOpcodeType opCode, /*!< The opcode*/
-                         const U32 cmdSeq /*!< The command sequence number*/
+        PiCam_TakePicture_cmdHandler(
+            const FwOpcodeType opCode, /*!< The opcode*/
+            const U32 cmdSeq           /*!< The command sequence number*/
         );
 };
 

@@ -169,8 +169,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     // read parameters
     // prmDb.readParamFile();
 
-    // set health ping entries
-
+    // Set health ping entries
     Svc::HealthImpl::PingEntry pingEntries[] = {
         {3, 5, getHealthName(rateGroup1)},   // 0
         {3, 5, getHealthName(rateGroup2)},   // 1
@@ -209,9 +208,13 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
 
     pingRcvr.start(0, 100, 10 * 1024);
 
-    /*
-    @todo start App components
-    */
+    // App
+    eps.start(0, 100, 10 * 1024);
+    flexTrak.start(0, 100, 10 * 1024);
+    piCamera.start(0, 100, 10 * 1024);
+    predictor.start(0, 100, 10 * 1024);
+    rockBlock.start(0, 100, 10 * 1024);
+    temperatureProbes.start(0, 100, 10 * 1024);
 
     // Initialize socket server if and only if there is a valid specification
     if (hostname != NULL && port_number != 0) {
@@ -231,7 +234,13 @@ void exitTasks(void) {
     prmDb.exit();
     cmdSeq.exit();
     pingRcvr.exit();
-    // @todo stop and free App components
+    // App
+    eps.exit();
+    flexTrak.exit();
+    piCamera.exit();
+    predictor.exit();
+    rockBlock.exit();
+    temperatureProbes.exit();
 
     // Join the component threads with NULL pointers to free them
     (void)rateGroup1.ActiveComponentBase::join(NULL);
@@ -244,6 +253,14 @@ void exitTasks(void) {
     (void)prmDb.ActiveComponentBase::join(NULL);
     (void)cmdSeq.ActiveComponentBase::join(NULL);
     (void)pingRcvr.ActiveComponentBase::join(NULL);
+    // App
+    (void)eps.ActiveComponentBase::join(NULL);
+    (void)flexTrak.ActiveComponentBase::join(NULL);
+    (void)piCamera.ActiveComponentBase::join(NULL);
+    (void)predictor.ActiveComponentBase::join(NULL);
+    (void)rockBlock.ActiveComponentBase::join(NULL);
+    (void)temperatureProbes.ActiveComponentBase::join(NULL);
+
     socketIpDriver.exitSocketTask();
     (void)socketIpDriver.joinSocketTask(NULL);
     cmdSeq.deallocateBuffer(seqMallocator);

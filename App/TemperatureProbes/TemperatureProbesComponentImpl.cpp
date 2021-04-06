@@ -51,13 +51,15 @@ void TemperatureProbesComponentImpl ::external_handler(
 
 void TemperatureProbesComponentImpl ::TempProb_SetInternalLevel_cmdHandler(
     const FwOpcodeType opCode, const U32 cmdSeq, F32 temperature) {
-    // TODO
+    // @todo
+    this->log_WARNING_HI_TempPro_LowInternalWarning(2.15);
     this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
 }
 
 void TemperatureProbesComponentImpl ::TempProb_SetExternalLevel_cmdHandler(
     const FwOpcodeType opCode, const U32 cmdSeq, F32 temperature) {
-    // TODO
+    // @todo
+    this->log_WARNING_HI_TempPro_LowExternalWarning(-15.3);
     this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
 }
 

@@ -47,7 +47,8 @@ void PredictorComponentImpl ::position_handler(const NATIVE_INT_TYPE portNum,
 
 void PredictorComponentImpl ::Predi_SetPredictionRate_cmdHandler(
     const FwOpcodeType opCode, const U32 cmdSeq, U8 rate) {
-    // TODO
+    // @todo
+    this->log_ACTIVITY_HI_Predi_FlightMode(FlightMode::FM_LANDED);
     this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
 }
 

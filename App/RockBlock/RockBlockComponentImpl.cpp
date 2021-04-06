@@ -36,7 +36,8 @@ RockBlockComponentImpl ::~RockBlockComponentImpl(void) {}
 
 void RockBlockComponentImpl ::PingIn_handler(const NATIVE_INT_TYPE portNum,
                                              U32 key) {
-    // TODO
+    // @todo Implement Ping logic
+    PingOut_out(0, key);
 }
 
 void RockBlockComponentImpl ::serialRecv_handler(

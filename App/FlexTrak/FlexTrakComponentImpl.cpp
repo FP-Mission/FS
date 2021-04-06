@@ -36,6 +36,7 @@ FlexTrakComponentImpl ::~FlexTrakComponentImpl(void) {}
 
 void FlexTrakComponentImpl ::PingIn_handler(const NATIVE_INT_TYPE portNum,
                                             U32 key) {
+    // @todo Implement Ping logic
     PingOut_out(0, key);
 }
 
@@ -56,7 +57,8 @@ void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
 
 void FlexTrakComponentImpl ::FT_Version_cmdHandler(const FwOpcodeType opCode,
                                                    const U32 cmdSeq) {
-    // TODO
+    // @todo Implement version request
+    this->log_ACTIVITY_LO_FT_Version(1);
     this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
 }
 

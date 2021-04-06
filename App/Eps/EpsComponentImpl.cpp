@@ -45,13 +45,15 @@ void EpsComponentImpl ::batteryVoltage_handler(const NATIVE_INT_TYPE portNum,
 
 void EpsComponentImpl ::Eps_SetWarningLevel_cmdHandler(
     const FwOpcodeType opCode, const U32 cmdSeq, U16 voltage) {
-    // TODO
+    // @todo
+    this->log_WARNING_HI_Eps_LowBattery(2000);
     this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
 }
 
 void EpsComponentImpl ::Eps_SetCriticalLevel_cmdHandler(
     const FwOpcodeType opCode, const U32 cmdSeq, U16 voltage) {
-    // TODO
+    // @todo
+    this->log_FATAL_Eps_CriticallyLowBattery(1200);
     this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
 }
 
