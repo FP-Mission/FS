@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../../Autocoders/Python/schema/default/array_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<serializable name="PositionSer" namespace="App">
+    <!--<include_header>Fw/Time/Time.hpp</include_header>-->
+
+    <members>
+        <!--<member type="Fw::Time" name="time" format="%f"/>-->
+        <member type="F64" name="latitude" format="%lf" />
+        <member type="F64" name="longitude" format="%lf" />
+        <member type="U16" name="altitude" format="%u" />
+        <member type="U8" name="satellite" format="%u" />
+    </members>
+</serializable>

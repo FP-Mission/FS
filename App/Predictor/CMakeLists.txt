@@ -8,6 +8,7 @@
 # registering the component as an F prime module. This allows autocoding and more!
 ####
 set(SOURCE_FILES
+	"${CMAKE_CURRENT_LIST_DIR}/FlightModeEnumAi.xml"
 	"${CMAKE_CURRENT_LIST_DIR}/PredictorComponentAi.xml"
 )
 register_fprime_module()

@@ -28,7 +28,6 @@
     <import_component_type>Svc/LinuxTimer/LinuxTimerComponentAi.xml</import_component_type>
     <import_component_type>Drv/SocketIpDriver/SocketIpDriverComponentAi.xml</import_component_type>
 
-    <!--
     <import_component_type>App/Eps/EpsComponentAi.xml</import_component_type>
     <import_component_type>App/FlexTrak/FlexTrakComponentAi.xml</import_component_type>
     <import_component_type>App/Gps/GpsComponentAi.xml</import_component_type>
@@ -36,7 +35,6 @@
     <import_component_type>App/Predictor/PredictorComponentAi.xml</import_component_type>
     <import_component_type>App/RockBlock/RockBlockComponentAi.xml</import_component_type>
     <import_component_type>App/TemperatureProbes/TemperatureProbesComponentAi.xml</import_component_type>
-    -->
 
     <!-- ################################################################ -->
     <!-- Declare component instances - must match names in Components.hpp -->
@@ -77,7 +75,7 @@
     <instance namespace="App" name="rockBlock"          type="RockBlock"            base_id="700"   base_id_window="20" />
     <instance namespace="App" name="temperatureProbes"  type="TemperatureProbes"    base_id="720"   base_id_window="20" />
     -->
-
+    
     <!-- ########### -->
     <!-- Connections -->
     <!-- ########### -->

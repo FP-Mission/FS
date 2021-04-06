@@ -7,7 +7,8 @@
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
 set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/PositionPortAi.xml"
+"${CMAKE_CURRENT_LIST_DIR}/PositionPortAi.xml"
+"${CMAKE_CURRENT_LIST_DIR}/PositionSerializableAi.xml"
 )
 
 register_fprime_module()

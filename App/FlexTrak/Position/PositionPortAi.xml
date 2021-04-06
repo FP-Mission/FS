@@ -11,10 +11,10 @@
         <arg name="time" type="Fw::Time">
             <comment>Measure time</comment>
         </arg>
-        <arg name="latitude" type="I32">
+        <arg name="latitude" type="F64">
             <comment>Latitude in ? @todo</comment>
         </arg>
-        <arg name="longitude" type="I32">
+        <arg name="longitude" type="F64">
             <comment>Longitude in ? @todo</comment>
         </arg>
         <arg name="altitude" type="U16">

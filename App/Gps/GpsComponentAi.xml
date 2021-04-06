@@ -3,7 +3,8 @@
 <component name="Gps" kind="passive" namespace="App">
     <comment>Component handling the FlexTrak GPS</comment>
     
-    <import_port_type>App/FlexTrak/PositionPort/PositionPortAi.xml</import_port_type>
+    <import_port_type>App/FlexTrak/Position/PositionPortAi.xml</import_port_type>
+    <import_serializable_type>App/FlexTrak/Position/PositionSerializableAi.xml</import_serializable_type>
     
     <ports>
         <port name="position" data_type="App::Position" kind="output" max_number="2">
@@ -19,7 +20,7 @@
                 Set flight mode altitude. This is the altitude at which the GPS will switch from pedestrian mode (for more accuracy on the ground) to flight mode (to work above 18km)
             </comment>
             <args>
-                <arg name="altitude" type="I16">
+                <arg name="altitude" type="U16">
                     <comment>Altitude in meters</comment>
                 </arg>          
             </args>
@@ -27,7 +28,7 @@
     </commands>
 
     <telemetry>
-        <channel id="0" name="Gps_Position" data_type="App::Position">
+        <channel id="0" name="Gps_Position" data_type="App::PositionSer">
             <comment>
                 GPS position
             </comment>

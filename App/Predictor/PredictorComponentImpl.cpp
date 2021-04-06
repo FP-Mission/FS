@@ -51,8 +51,8 @@ namespace App {
     position_handler(
         const NATIVE_INT_TYPE portNum,
         Fw::Time time,
-        I32 latitude,
-        I32 longitude,
+        F64 latitude,
+        F64 longitude,
         U16 altitude,
         U8 satellite
     )

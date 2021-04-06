@@ -41,7 +41,7 @@ include("${FPRIME_FRAMEWORK_PATH}/cmake/FPrime-Code.cmake")
 ##
 
 # Add ports subdirectories
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FlexTrak/PositionPort/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FlexTrak/Position/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FlexTrak/BatteryLevelPort/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FlexTrak/TemperaturePort/")
 

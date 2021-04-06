@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../../Autocoders/Python/schema/ISF_Type_Schema.rnc" type="compact"?>
+<enum namespace = "App" name="FlightMode">
+    <comment>Enum of different flight modes</comment>
+    <item name="FM_IDLE" value="1" comment=""/>
+    <item name="FM_LAUNCHED" value="2" comment=""/>
+    <item name="FM_DESCENDING" value="3" comment=""/>
+    <item name="FM_LANDED" value="4" comment=""/>
+</enum>

@@ -50,7 +50,7 @@ namespace App {
     Gps_SetFlightModeAltitude_cmdHandler(
         const FwOpcodeType opCode,
         const U32 cmdSeq,
-        I16 altitude
+        U16 altitude
     )
   {
     // TODO
