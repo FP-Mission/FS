@@ -10,51 +10,33 @@
 //
 // ======================================================================
 
-
 #include <App/Gps/GpsComponentImpl.hpp>
+
 #include "Fw/Types/BasicTypes.hpp"
 
 namespace App {
 
-  // ----------------------------------------------------------------------
-  // Construction, initialization, and destruction
-  // ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
+// Construction, initialization, and destruction
+// ----------------------------------------------------------------------
 
-  GpsComponentImpl ::
-    GpsComponentImpl(
-        const char *const compName
-    ) : GpsComponentBase(compName)
-  {
+GpsComponentImpl ::GpsComponentImpl(const char *const compName)
+    : GpsComponentBase(compName) {}
 
-  }
-
-  void GpsComponentImpl ::
-    init(
-        const NATIVE_INT_TYPE instance
-    )
-  {
+void GpsComponentImpl ::init(const NATIVE_INT_TYPE instance) {
     GpsComponentBase::init(instance);
-  }
+}
 
-  GpsComponentImpl ::
-    ~GpsComponentImpl(void)
-  {
+GpsComponentImpl ::~GpsComponentImpl(void) {}
 
-  }
+// ----------------------------------------------------------------------
+// Command handler implementations
+// ----------------------------------------------------------------------
 
-  // ----------------------------------------------------------------------
-  // Command handler implementations
-  // ----------------------------------------------------------------------
-
-  void GpsComponentImpl ::
-    Gps_SetFlightModeAltitude_cmdHandler(
-        const FwOpcodeType opCode,
-        const U32 cmdSeq,
-        U16 altitude
-    )
-  {
+void GpsComponentImpl ::Gps_SetFlightModeAltitude_cmdHandler(
+    const FwOpcodeType opCode, const U32 cmdSeq, U16 altitude) {
     // TODO
-    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
-  }
+    this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
+}
 
-} // end namespace App
+}  // end namespace App

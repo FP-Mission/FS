@@ -17,73 +17,64 @@
 
 namespace App {
 
-  class PiCameraComponentImpl :
-    public PiCameraComponentBase
-  {
+class PiCameraComponentImpl : public PiCameraComponentBase {
+   public:
+    // ----------------------------------------------------------------------
+    // Construction, initialization, and destruction
+    // ----------------------------------------------------------------------
 
-    public:
+    //! Construct object PiCamera
+    //!
+    PiCameraComponentImpl(const char *const compName /*!< The component name*/
+    );
 
-      // ----------------------------------------------------------------------
-      // Construction, initialization, and destruction
-      // ----------------------------------------------------------------------
+    //! Initialize object PiCamera
+    //!
+    void init(const NATIVE_INT_TYPE queueDepth,  /*!< The queue depth*/
+              const NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
+    );
 
-      //! Construct object PiCamera
-      //!
-      PiCameraComponentImpl(
-          const char *const compName /*!< The component name*/
-      );
+    //! Destroy object PiCamera
+    //!
+    ~PiCameraComponentImpl(void);
 
-      //! Initialize object PiCamera
-      //!
-      void init(
-          const NATIVE_INT_TYPE queueDepth, /*!< The queue depth*/
-          const NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
-      );
+    PRIVATE :
 
-      //! Destroy object PiCamera
-      //!
-      ~PiCameraComponentImpl(void);
+        // ----------------------------------------------------------------------
+        // Handler implementations for user-defined typed input ports
+        // ----------------------------------------------------------------------
 
-    PRIVATE:
+        //! Handler implementation for PingIn
+        //!
+        void
+        PingIn_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+                       U32 key /*!< Value to return to pinger*/
+        );
 
-      // ----------------------------------------------------------------------
-      // Handler implementations for user-defined typed input ports
-      // ----------------------------------------------------------------------
+    //! Handler implementation for position
+    //!
+    void position_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+                          Fw::Time time,                 /*!< Measure time*/
+                          F64 latitude,  /*!< Latitude in ? @todo*/
+                          F64 longitude, /*!< Longitude in ? @todo*/
+                          U16 altitude,  /*!< Altitude in meters*/
+                          U8 satellite   /*!< Satellite count*/
+    );
 
-      //! Handler implementation for PingIn
-      //!
-      void PingIn_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          U32 key /*!< Value to return to pinger*/
-      );
+    PRIVATE :
 
-      //! Handler implementation for position
-      //!
-      void position_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Time time, /*!< Measure time*/
-          F64 latitude, /*!< Latitude in ? @todo*/
-          F64 longitude, /*!< Longitude in ? @todo*/
-          U16 altitude, /*!< Altitude in meters*/
-          U8 satellite /*!< Satellite count*/
-      );
+        // ----------------------------------------------------------------------
+        // Command handler implementations
+        // ----------------------------------------------------------------------
 
-    PRIVATE:
+        //! Implementation for PiCam command handler
+        //! Take picture
+        void
+        PiCam_cmdHandler(const FwOpcodeType opCode, /*!< The opcode*/
+                         const U32 cmdSeq /*!< The command sequence number*/
+        );
+};
 
-      // ----------------------------------------------------------------------
-      // Command handler implementations
-      // ----------------------------------------------------------------------
-
-      //! Implementation for PiCam command handler
-      //! Take picture
-      void PiCam_cmdHandler(
-          const FwOpcodeType opCode, /*!< The opcode*/
-          const U32 cmdSeq /*!< The command sequence number*/
-      );
-
-
-    };
-
-} // end namespace App
+}  // end namespace App
 
 #endif

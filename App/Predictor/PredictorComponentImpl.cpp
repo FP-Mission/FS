@@ -10,69 +10,45 @@
 //
 // ======================================================================
 
-
 #include <App/Predictor/PredictorComponentImpl.hpp>
+
 #include "Fw/Types/BasicTypes.hpp"
 
 namespace App {
 
-  // ----------------------------------------------------------------------
-  // Construction, initialization, and destruction
-  // ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
+// Construction, initialization, and destruction
+// ----------------------------------------------------------------------
 
-  PredictorComponentImpl ::
-    PredictorComponentImpl(
-        const char *const compName
-    ) : PredictorComponentBase(compName)
-  {
+PredictorComponentImpl ::PredictorComponentImpl(const char *const compName)
+    : PredictorComponentBase(compName) {}
 
-  }
-
-  void PredictorComponentImpl ::
-    init(
-        const NATIVE_INT_TYPE queueDepth,
-        const NATIVE_INT_TYPE instance
-    )
-  {
+void PredictorComponentImpl ::init(const NATIVE_INT_TYPE queueDepth,
+                                   const NATIVE_INT_TYPE instance) {
     PredictorComponentBase::init(queueDepth, instance);
-  }
+}
 
-  PredictorComponentImpl ::
-    ~PredictorComponentImpl(void)
-  {
+PredictorComponentImpl ::~PredictorComponentImpl(void) {}
 
-  }
+// ----------------------------------------------------------------------
+// Handler implementations for user-defined typed input ports
+// ----------------------------------------------------------------------
 
-  // ----------------------------------------------------------------------
-  // Handler implementations for user-defined typed input ports
-  // ----------------------------------------------------------------------
-
-  void PredictorComponentImpl ::
-    position_handler(
-        const NATIVE_INT_TYPE portNum,
-        Fw::Time time,
-        F64 latitude,
-        F64 longitude,
-        U16 altitude,
-        U8 satellite
-    )
-  {
+void PredictorComponentImpl ::position_handler(const NATIVE_INT_TYPE portNum,
+                                               Fw::Time time, F64 latitude,
+                                               F64 longitude, U16 altitude,
+                                               U8 satellite) {
     // TODO
-  }
+}
 
-  // ----------------------------------------------------------------------
-  // Command handler implementations
-  // ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
+// Command handler implementations
+// ----------------------------------------------------------------------
 
-  void PredictorComponentImpl ::
-    Predi_SetPredictionRate_cmdHandler(
-        const FwOpcodeType opCode,
-        const U32 cmdSeq,
-        U8 rate
-    )
-  {
+void PredictorComponentImpl ::Predi_SetPredictionRate_cmdHandler(
+    const FwOpcodeType opCode, const U32 cmdSeq, U8 rate) {
     // TODO
-    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
-  }
+    this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
+}
 
-} // end namespace App
+}  // end namespace App

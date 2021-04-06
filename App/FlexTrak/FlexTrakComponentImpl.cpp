@@ -10,83 +10,54 @@
 //
 // ======================================================================
 
-
 #include <App/FlexTrak/FlexTrakComponentImpl.hpp>
+
 #include "Fw/Types/BasicTypes.hpp"
 
 namespace App {
 
-  // ----------------------------------------------------------------------
-  // Construction, initialization, and destruction
-  // ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
+// Construction, initialization, and destruction
+// ----------------------------------------------------------------------
 
-  FlexTrakComponentImpl ::
-    FlexTrakComponentImpl(
-        const char *const compName
-    ) : FlexTrakComponentBase(compName)
-  {
+FlexTrakComponentImpl ::FlexTrakComponentImpl(const char *const compName)
+    : FlexTrakComponentBase(compName) {}
 
-  }
-
-  void FlexTrakComponentImpl ::
-    init(
-        const NATIVE_INT_TYPE queueDepth,
-        const NATIVE_INT_TYPE instance
-    )
-  {
+void FlexTrakComponentImpl ::init(const NATIVE_INT_TYPE queueDepth,
+                                  const NATIVE_INT_TYPE instance) {
     FlexTrakComponentBase::init(queueDepth, instance);
-  }
+}
 
-  FlexTrakComponentImpl ::
-    ~FlexTrakComponentImpl(void)
-  {
+FlexTrakComponentImpl ::~FlexTrakComponentImpl(void) {}
 
-  }
+// ----------------------------------------------------------------------
+// Handler implementations for user-defined typed input ports
+// ----------------------------------------------------------------------
 
-  // ----------------------------------------------------------------------
-  // Handler implementations for user-defined typed input ports
-  // ----------------------------------------------------------------------
+void FlexTrakComponentImpl ::PingIn_handler(const NATIVE_INT_TYPE portNum,
+                                            U32 key) {
+    PingOut_out(0, key);
+}
 
-  void FlexTrakComponentImpl ::
-    PingIn_handler(
-        const NATIVE_INT_TYPE portNum,
-        U32 key
-    )
-  {
+void FlexTrakComponentImpl ::serialRecv_handler(const NATIVE_INT_TYPE portNum,
+                                                Fw::Buffer &serBuffer,
+                                                Drv::SerialReadStatus &status) {
     // TODO
-  }
+}
 
-  void FlexTrakComponentImpl ::
-    serialRecv_handler(
-        const NATIVE_INT_TYPE portNum,
-        Fw::Buffer &serBuffer,
-        Drv::SerialReadStatus &status
-    )
-  {
+void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
+                                              Fw::Buffer &fwBuffer) {
     // TODO
-  }
+}
 
-  void FlexTrakComponentImpl ::
-    sendData_handler(
-        const NATIVE_INT_TYPE portNum,
-        Fw::Buffer &fwBuffer
-    )
-  {
+// ----------------------------------------------------------------------
+// Command handler implementations
+// ----------------------------------------------------------------------
+
+void FlexTrakComponentImpl ::FT_Version_cmdHandler(const FwOpcodeType opCode,
+                                                   const U32 cmdSeq) {
     // TODO
-  }
+    this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
+}
 
-  // ----------------------------------------------------------------------
-  // Command handler implementations
-  // ----------------------------------------------------------------------
-
-  void FlexTrakComponentImpl ::
-    FT_Version_cmdHandler(
-        const FwOpcodeType opCode,
-        const U32 cmdSeq
-    )
-  {
-    // TODO
-    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
-  }
-
-} // end namespace App
+}  // end namespace App

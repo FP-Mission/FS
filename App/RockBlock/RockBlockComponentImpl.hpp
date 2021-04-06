@@ -17,57 +17,49 @@
 
 namespace App {
 
-  class RockBlockComponentImpl :
-    public RockBlockComponentBase
-  {
+class RockBlockComponentImpl : public RockBlockComponentBase {
+   public:
+    // ----------------------------------------------------------------------
+    // Construction, initialization, and destruction
+    // ----------------------------------------------------------------------
 
-    public:
+    //! Construct object RockBlock
+    //!
+    RockBlockComponentImpl(const char *const compName /*!< The component name*/
+    );
 
-      // ----------------------------------------------------------------------
-      // Construction, initialization, and destruction
-      // ----------------------------------------------------------------------
+    //! Initialize object RockBlock
+    //!
+    void init(const NATIVE_INT_TYPE queueDepth,  /*!< The queue depth*/
+              const NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
+    );
 
-      //! Construct object RockBlock
-      //!
-      RockBlockComponentImpl(
-          const char *const compName /*!< The component name*/
-      );
+    //! Destroy object RockBlock
+    //!
+    ~RockBlockComponentImpl(void);
 
-      //! Initialize object RockBlock
-      //!
-      void init(
-          const NATIVE_INT_TYPE queueDepth, /*!< The queue depth*/
-          const NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
-      );
+    PRIVATE :
 
-      //! Destroy object RockBlock
-      //!
-      ~RockBlockComponentImpl(void);
+        // ----------------------------------------------------------------------
+        // Handler implementations for user-defined typed input ports
+        // ----------------------------------------------------------------------
 
-    PRIVATE:
+        //! Handler implementation for PingIn
+        //!
+        void
+        PingIn_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+                       U32 key /*!< Value to return to pinger*/
+        );
 
-      // ----------------------------------------------------------------------
-      // Handler implementations for user-defined typed input ports
-      // ----------------------------------------------------------------------
+    //! Handler implementation for serialRecv
+    //!
+    void serialRecv_handler(
+        const NATIVE_INT_TYPE portNum, /*!< The port number*/
+        Fw::Buffer &serBuffer,         /*!< Buffer containing data*/
+        Drv::SerialReadStatus &status  /*!< Status of read*/
+    );
+};
 
-      //! Handler implementation for PingIn
-      //!
-      void PingIn_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          U32 key /*!< Value to return to pinger*/
-      );
-
-      //! Handler implementation for serialRecv
-      //!
-      void serialRecv_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Buffer &serBuffer, /*!< Buffer containing data*/
-          Drv::SerialReadStatus &status /*!< Status of read*/
-      );
-
-
-    };
-
-} // end namespace App
+}  // end namespace App
 
 #endif

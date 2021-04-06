@@ -10,76 +10,49 @@
 //
 // ======================================================================
 
-
 #include <App/Eps/EpsComponentImpl.hpp>
+
 #include "Fw/Types/BasicTypes.hpp"
 
 namespace App {
 
-  // ----------------------------------------------------------------------
-  // Construction, initialization, and destruction
-  // ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
+// Construction, initialization, and destruction
+// ----------------------------------------------------------------------
 
-  EpsComponentImpl ::
-    EpsComponentImpl(
-        const char *const compName
-    ) : EpsComponentBase(compName)
-  {
+EpsComponentImpl ::EpsComponentImpl(const char *const compName)
+    : EpsComponentBase(compName) {}
 
-  }
-
-  void EpsComponentImpl ::
-    init(
-        const NATIVE_INT_TYPE queueDepth,
-        const NATIVE_INT_TYPE instance
-    )
-  {
+void EpsComponentImpl ::init(const NATIVE_INT_TYPE queueDepth,
+                             const NATIVE_INT_TYPE instance) {
     EpsComponentBase::init(queueDepth, instance);
-  }
+}
 
-  EpsComponentImpl ::
-    ~EpsComponentImpl(void)
-  {
+EpsComponentImpl ::~EpsComponentImpl(void) {}
 
-  }
+// ----------------------------------------------------------------------
+// Handler implementations for user-defined typed input ports
+// ----------------------------------------------------------------------
 
-  // ----------------------------------------------------------------------
-  // Handler implementations for user-defined typed input ports
-  // ----------------------------------------------------------------------
-
-  void EpsComponentImpl ::
-    batteryVoltage_handler(
-        const NATIVE_INT_TYPE portNum,
-        U16 voltage
-    )
-  {
+void EpsComponentImpl ::batteryVoltage_handler(const NATIVE_INT_TYPE portNum,
+                                               U16 voltage) {
     // TODO
-  }
+}
 
-  // ----------------------------------------------------------------------
-  // Command handler implementations
-  // ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
+// Command handler implementations
+// ----------------------------------------------------------------------
 
-  void EpsComponentImpl ::
-    Eps_SetWarningLevel_cmdHandler(
-        const FwOpcodeType opCode,
-        const U32 cmdSeq,
-        U16 voltage
-    )
-  {
+void EpsComponentImpl ::Eps_SetWarningLevel_cmdHandler(
+    const FwOpcodeType opCode, const U32 cmdSeq, U16 voltage) {
     // TODO
-    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
-  }
+    this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
+}
 
-  void EpsComponentImpl ::
-    Eps_SetCriticalLevel_cmdHandler(
-        const FwOpcodeType opCode,
-        const U32 cmdSeq,
-        U16 voltage
-    )
-  {
+void EpsComponentImpl ::Eps_SetCriticalLevel_cmdHandler(
+    const FwOpcodeType opCode, const U32 cmdSeq, U16 voltage) {
     // TODO
-    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
-  }
+    this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
+}
 
-} // end namespace App
+}  // end namespace App

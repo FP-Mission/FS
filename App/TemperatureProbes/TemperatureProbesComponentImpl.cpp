@@ -10,85 +10,55 @@
 //
 // ======================================================================
 
-
 #include <App/TemperatureProbes/TemperatureProbesComponentImpl.hpp>
+
 #include "Fw/Types/BasicTypes.hpp"
 
 namespace App {
 
-  // ----------------------------------------------------------------------
-  // Construction, initialization, and destruction
-  // ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
+// Construction, initialization, and destruction
+// ----------------------------------------------------------------------
 
-  TemperatureProbesComponentImpl ::
-    TemperatureProbesComponentImpl(
-        const char *const compName
-    ) : TemperatureProbesComponentBase(compName)
-  {
+TemperatureProbesComponentImpl ::TemperatureProbesComponentImpl(
+    const char *const compName)
+    : TemperatureProbesComponentBase(compName) {}
 
-  }
-
-  void TemperatureProbesComponentImpl ::
-    init(
-        const NATIVE_INT_TYPE queueDepth,
-        const NATIVE_INT_TYPE instance
-    )
-  {
+void TemperatureProbesComponentImpl ::init(const NATIVE_INT_TYPE queueDepth,
+                                           const NATIVE_INT_TYPE instance) {
     TemperatureProbesComponentBase::init(queueDepth, instance);
-  }
+}
 
-  TemperatureProbesComponentImpl ::
-    ~TemperatureProbesComponentImpl(void)
-  {
+TemperatureProbesComponentImpl ::~TemperatureProbesComponentImpl(void) {}
 
-  }
+// ----------------------------------------------------------------------
+// Handler implementations for user-defined typed input ports
+// ----------------------------------------------------------------------
 
-  // ----------------------------------------------------------------------
-  // Handler implementations for user-defined typed input ports
-  // ----------------------------------------------------------------------
-
-  void TemperatureProbesComponentImpl ::
-    internal_handler(
-        const NATIVE_INT_TYPE portNum,
-        F32 degree
-    )
-  {
+void TemperatureProbesComponentImpl ::internal_handler(
+    const NATIVE_INT_TYPE portNum, F32 degree) {
     // TODO
-  }
+}
 
-  void TemperatureProbesComponentImpl ::
-    external_handler(
-        const NATIVE_INT_TYPE portNum,
-        F32 degree
-    )
-  {
+void TemperatureProbesComponentImpl ::external_handler(
+    const NATIVE_INT_TYPE portNum, F32 degree) {
     // TODO
-  }
+}
 
-  // ----------------------------------------------------------------------
-  // Command handler implementations
-  // ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
+// Command handler implementations
+// ----------------------------------------------------------------------
 
-  void TemperatureProbesComponentImpl ::
-    TempProb_SetInternalLevel_cmdHandler(
-        const FwOpcodeType opCode,
-        const U32 cmdSeq,
-        F32 temperature
-    )
-  {
+void TemperatureProbesComponentImpl ::TempProb_SetInternalLevel_cmdHandler(
+    const FwOpcodeType opCode, const U32 cmdSeq, F32 temperature) {
     // TODO
-    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
-  }
+    this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
+}
 
-  void TemperatureProbesComponentImpl ::
-    TempProb_SetExternalLevel_cmdHandler(
-        const FwOpcodeType opCode,
-        const U32 cmdSeq,
-        F32 temperature
-    )
-  {
+void TemperatureProbesComponentImpl ::TempProb_SetExternalLevel_cmdHandler(
+    const FwOpcodeType opCode, const U32 cmdSeq, F32 temperature) {
     // TODO
-    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
-  }
+    this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
+}
 
-} // end namespace App
+}  // end namespace App

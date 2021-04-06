@@ -10,60 +10,39 @@
 //
 // ======================================================================
 
-
 #include <App/RockBlock/RockBlockComponentImpl.hpp>
+
 #include "Fw/Types/BasicTypes.hpp"
 
 namespace App {
 
-  // ----------------------------------------------------------------------
-  // Construction, initialization, and destruction
-  // ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
+// Construction, initialization, and destruction
+// ----------------------------------------------------------------------
 
-  RockBlockComponentImpl ::
-    RockBlockComponentImpl(
-        const char *const compName
-    ) : RockBlockComponentBase(compName)
-  {
+RockBlockComponentImpl ::RockBlockComponentImpl(const char *const compName)
+    : RockBlockComponentBase(compName) {}
 
-  }
-
-  void RockBlockComponentImpl ::
-    init(
-        const NATIVE_INT_TYPE queueDepth,
-        const NATIVE_INT_TYPE instance
-    )
-  {
+void RockBlockComponentImpl ::init(const NATIVE_INT_TYPE queueDepth,
+                                   const NATIVE_INT_TYPE instance) {
     RockBlockComponentBase::init(queueDepth, instance);
-  }
+}
 
-  RockBlockComponentImpl ::
-    ~RockBlockComponentImpl(void)
-  {
+RockBlockComponentImpl ::~RockBlockComponentImpl(void) {}
 
-  }
+// ----------------------------------------------------------------------
+// Handler implementations for user-defined typed input ports
+// ----------------------------------------------------------------------
 
-  // ----------------------------------------------------------------------
-  // Handler implementations for user-defined typed input ports
-  // ----------------------------------------------------------------------
-
-  void RockBlockComponentImpl ::
-    PingIn_handler(
-        const NATIVE_INT_TYPE portNum,
-        U32 key
-    )
-  {
+void RockBlockComponentImpl ::PingIn_handler(const NATIVE_INT_TYPE portNum,
+                                             U32 key) {
     // TODO
-  }
+}
 
-  void RockBlockComponentImpl ::
-    serialRecv_handler(
-        const NATIVE_INT_TYPE portNum,
-        Fw::Buffer &serBuffer,
-        Drv::SerialReadStatus &status
-    )
-  {
+void RockBlockComponentImpl ::serialRecv_handler(
+    const NATIVE_INT_TYPE portNum, Fw::Buffer &serBuffer,
+    Drv::SerialReadStatus &status) {
     // TODO
-  }
+}
 
-} // end namespace App
+}  // end namespace App

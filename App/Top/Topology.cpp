@@ -1,14 +1,14 @@
 #include <Components.hpp>
-#include <Fw/Types/Assert.hpp>
-#include <Os/Task.hpp>
 #include <Fw/Logger/Logger.hpp>
-#include <Os/Log.hpp>
+#include <Fw/Types/Assert.hpp>
 #include <Fw/Types/MallocAllocator.hpp>
+#include <Os/Log.hpp>
+#include <Os/Task.hpp>
 
 #if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+#include <ctype.h>
 #include <getopt.h>
 #include <stdlib.h>
-#include <ctype.h>
 #endif
 
 // List of context IDs
@@ -32,27 +32,32 @@ Fw::MallocAllocator seqMallocator;
 // Component instance pointers
 Svc::LinuxTimeImpl linuxTime(FW_OPTIONAL_NAME("LTIME"));
 
-static NATIVE_INT_TYPE rgDivs[Svc::RateGroupDriverImpl::DIVIDER_SIZE] = {1,2,4};
-Svc::RateGroupDriverImpl rateGroupDrv(FW_OPTIONAL_NAME("RGDvr"),rgDivs,FW_NUM_ARRAY_ELEMENTS(rgDivs));
+static NATIVE_INT_TYPE rgDivs[Svc::RateGroupDriverImpl::DIVIDER_SIZE] = {1, 2,
+                                                                         4};
+Svc::RateGroupDriverImpl rateGroupDrv(FW_OPTIONAL_NAME("RGDvr"), rgDivs,
+                                      FW_NUM_ARRAY_ELEMENTS(rgDivs));
 
-static NATIVE_UINT_TYPE rg1Context[] = {0,0,0,0,0,0,0,0,0,0};
-Svc::ActiveRateGroupImpl rateGroup1(FW_OPTIONAL_NAME("RG1"),rg1Context,FW_NUM_ARRAY_ELEMENTS(rg1Context));
+static NATIVE_UINT_TYPE rg1Context[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+Svc::ActiveRateGroupImpl rateGroup1(FW_OPTIONAL_NAME("RG1"), rg1Context,
+                                    FW_NUM_ARRAY_ELEMENTS(rg1Context));
 
-static NATIVE_UINT_TYPE rg2Context[] = {0,0,0,0,0,0,0,0,0,0};
-Svc::ActiveRateGroupImpl rateGroup2(FW_OPTIONAL_NAME("RG2"),rg2Context,FW_NUM_ARRAY_ELEMENTS(rg2Context));
+static NATIVE_UINT_TYPE rg2Context[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+Svc::ActiveRateGroupImpl rateGroup2(FW_OPTIONAL_NAME("RG2"), rg2Context,
+                                    FW_NUM_ARRAY_ELEMENTS(rg2Context));
 
-static NATIVE_UINT_TYPE rg3Context[] = {0,0,0,0,0,0,0,0,0,0};
-Svc::ActiveRateGroupImpl rateGroup3(FW_OPTIONAL_NAME("RG3"),rg3Context,FW_NUM_ARRAY_ELEMENTS(rg3Context));
-
+static NATIVE_UINT_TYPE rg3Context[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+Svc::ActiveRateGroupImpl rateGroup3(FW_OPTIONAL_NAME("RG3"), rg3Context,
+                                    FW_NUM_ARRAY_ELEMENTS(rg3Context));
 
 Svc::FatalHandlerComponentImpl fatalHandler(FW_OPTIONAL_NAME("fatalHandler"));
-Svc::AssertFatalAdapterComponentImpl fatalAdapter(FW_OPTIONAL_NAME("fatalAdapter"));
+Svc::AssertFatalAdapterComponentImpl fatalAdapter(
+    FW_OPTIONAL_NAME("fatalAdapter"));
 Svc::CommandDispatcherImpl cmdDisp(FW_OPTIONAL_NAME("CMDDISP"));
 Svc::CmdSequencerComponentImpl cmdSeq(FW_OPTIONAL_NAME("CMDSEQ"));
 Svc::ActiveLoggerImpl eventLogger(FW_OPTIONAL_NAME("ELOG"));
 Svc::TlmChanImpl chanTlm(FW_OPTIONAL_NAME("TLM"));
 Svc::HealthImpl health(FW_OPTIONAL_NAME("health"));
-Svc::PrmDbImpl prmDb(FW_OPTIONAL_NAME("PRM"),"PrmDb.dat");
+Svc::PrmDbImpl prmDb(FW_OPTIONAL_NAME("PRM"), "PrmDb.dat");
 Svc::GroundInterfaceComponentImpl groundIf(FW_OPTIONAL_NAME("GNDIF"));
 
 #if FW_ENABLE_TEXT_LOGGING
@@ -61,7 +66,8 @@ Svc::ConsoleTextLoggerImpl textLogger(FW_OPTIONAL_NAME("TLOG"));
 
 Ref::PingReceiverComponentImpl pingRcvr(FW_OPTIONAL_NAME("PngRecv"));
 Drv::BlockDriverImpl blockDrv(FW_OPTIONAL_NAME("BDRV"));
-Drv::SocketIpDriverComponentImpl socketIpDriver(FW_OPTIONAL_NAME("SocketIpDriver"));
+Drv::SocketIpDriverComponentImpl socketIpDriver(
+    FW_OPTIONAL_NAME("SocketIpDriver"));
 
 App::EpsComponentImpl eps(FW_OPTIONAL_NAME("Eps"));
 App::FlexTrakComponentImpl flexTrak(FW_OPTIONAL_NAME("FlexTrak"));
@@ -69,31 +75,31 @@ App::GpsComponentImpl gps(FW_OPTIONAL_NAME("Gps"));
 App::PiCameraComponentImpl piCamera(FW_OPTIONAL_NAME("PiCamera"));
 App::PredictorComponentImpl predictor(FW_OPTIONAL_NAME("Predictor"));
 App::RockBlockComponentImpl rockBlock(FW_OPTIONAL_NAME("RockBlock"));
-App::TemperatureProbesComponentImpl temperatureProbes(FW_OPTIONAL_NAME("TemperatureProbes"));
+App::TemperatureProbesComponentImpl temperatureProbes(
+    FW_OPTIONAL_NAME("TemperatureProbes"));
 
 const char* getHealthName(Fw::ObjBase& comp) {
-   #if FW_OBJECT_NAMES == 1
-       return comp.getObjName();
-   #else
-      return "[no object name]"
-   #endif
+#if FW_OBJECT_NAMES == 1
+    return comp.getObjName();
+#else
+    return "[no object name]"
+#endif
 }
 
 bool constructApp(bool dump, U32 port_number, char* hostname) {
-
 #if FW_PORT_TRACING
     Fw::PortBase::setTrace(false);
-#endif    
+#endif
 
     // Initialize rate group driver
     rateGroupDrv.init();
 
     // Initialize the rate groups
-    rateGroup1.init(10,0);
-    
-    rateGroup2.init(10,1);
-    
-    rateGroup3.init(10,2);
+    rateGroup1.init(10, 0);
+
+    rateGroup2.init(10, 1);
+
+    rateGroup3.init(10, 2);
 
     // Initialize block driver
     blockDrv.init(10);
@@ -104,25 +110,25 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     textLogger.init();
 #endif
 
-    eventLogger.init(10,0);
-    
+    eventLogger.init(10, 0);
+
     linuxTime.init(0);
 
-    chanTlm.init(10,0);
+    chanTlm.init(10, 0);
 
-    cmdDisp.init(20,0);
+    cmdDisp.init(20, 0);
 
-    cmdSeq.init(10,0);
-    cmdSeq.allocateBuffer(0,seqMallocator,5*1024);
+    cmdSeq.init(10, 0);
+    cmdSeq.allocateBuffer(0, seqMallocator, 5 * 1024);
 
-    prmDb.init(10,0);
+    prmDb.init(10, 0);
 
     groundIf.init(0);
     socketIpDriver.init(0);
 
     fatalAdapter.init(0);
     fatalHandler.init(0);
-    health.init(25,0);
+    health.init(25, 0);
     pingRcvr.init(10);
 
     eps.init(10, 0);
@@ -157,7 +163,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     gps.regCommands();
     piCamera.regCommands();
     predictor.regCommands();
-    //rockBlock.regCommands();
+    // rockBlock.regCommands();
     temperatureProbes.regCommands();
 
     // read parameters
@@ -166,38 +172,42 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     // set health ping entries
 
     Svc::HealthImpl::PingEntry pingEntries[] = {
-        {3,5,getHealthName(rateGroup1)},    // 0
-        {3,5,getHealthName(rateGroup2)},    // 1
-        {3,5,getHealthName(rateGroup3)},    // 2
-        {3,5,getHealthName(cmdDisp)},       // 3
-        {3,5,getHealthName(eventLogger)},   // 4
-        {3,5,getHealthName(cmdSeq)},        // 5
-        {3,5,getHealthName(chanTlm)},       // 6
-        {3,5,getHealthName(prmDb)},         // 7
-        {3,5,getHealthName(pingRcvr)},      // 8
-        {3,5,getHealthName(blockDrv)},      // 9
+        {3, 5, getHealthName(rateGroup1)},   // 0
+        {3, 5, getHealthName(rateGroup2)},   // 1
+        {3, 5, getHealthName(rateGroup3)},   // 2
+        {3, 5, getHealthName(cmdDisp)},      // 3
+        {3, 5, getHealthName(eventLogger)},  // 4
+        {3, 5, getHealthName(cmdSeq)},       // 5
+        {3, 5, getHealthName(chanTlm)},      // 6
+        {3, 5, getHealthName(prmDb)},        // 7
+        {3, 5, getHealthName(pingRcvr)},     // 8
+        {3, 5, getHealthName(blockDrv)},     // 9
+        {3, 5, getHealthName(flexTrak)},     // 10
+        {3, 5, getHealthName(piCamera)},     // 11
+        {3, 5, getHealthName(rockBlock)},    // 12
     };
 
     // register ping table
-    health.setPingEntries(pingEntries,FW_NUM_ARRAY_ELEMENTS(pingEntries),0x123);
+    health.setPingEntries(pingEntries, FW_NUM_ARRAY_ELEMENTS(pingEntries),
+                          0x123);
 
     // Active component startup
     // start rate groups
-    rateGroup1.start(0, 120,10 * 1024);
-    rateGroup2.start(0, 119,10 * 1024);
-    rateGroup3.start(0, 118,10 * 1024);
+    rateGroup1.start(0, 120, 10 * 1024);
+    rateGroup2.start(0, 119, 10 * 1024);
+    rateGroup3.start(0, 118, 10 * 1024);
     // start driver
-    blockDrv.start(0,140,10*1024);
+    blockDrv.start(0, 140, 10 * 1024);
     // start dispatcher
-    cmdDisp.start(0,101,10*1024);
+    cmdDisp.start(0, 101, 10 * 1024);
     // start sequencer
-    cmdSeq.start(0,100,10*1024);
+    cmdSeq.start(0, 100, 10 * 1024);
     // start telemetry
-    eventLogger.start(0,98,10*1024);
-    chanTlm.start(0,97,10*1024);
-    prmDb.start(0,96,10*1024);
+    eventLogger.start(0, 98, 10 * 1024);
+    chanTlm.start(0, 97, 10 * 1024);
+    prmDb.start(0, 96, 10 * 1024);
 
-    pingRcvr.start(0, 100, 10*1024);
+    pingRcvr.start(0, 100, 10 * 1024);
 
     /*
     @todo start App components
@@ -224,17 +234,17 @@ void exitTasks(void) {
     // @todo stop and free App components
 
     // Join the component threads with NULL pointers to free them
-    (void) rateGroup1.ActiveComponentBase::join(NULL);
-    (void) rateGroup2.ActiveComponentBase::join(NULL);
-    (void) rateGroup3.ActiveComponentBase::join(NULL);
-    (void) blockDrv.ActiveComponentBase::join(NULL);
-    (void) cmdDisp.ActiveComponentBase::join(NULL);
-    (void) eventLogger.ActiveComponentBase::join(NULL);
-    (void) chanTlm.ActiveComponentBase::join(NULL);
-    (void) prmDb.ActiveComponentBase::join(NULL);
-    (void) cmdSeq.ActiveComponentBase::join(NULL);
-    (void) pingRcvr.ActiveComponentBase::join(NULL);
+    (void)rateGroup1.ActiveComponentBase::join(NULL);
+    (void)rateGroup2.ActiveComponentBase::join(NULL);
+    (void)rateGroup3.ActiveComponentBase::join(NULL);
+    (void)blockDrv.ActiveComponentBase::join(NULL);
+    (void)cmdDisp.ActiveComponentBase::join(NULL);
+    (void)eventLogger.ActiveComponentBase::join(NULL);
+    (void)chanTlm.ActiveComponentBase::join(NULL);
+    (void)prmDb.ActiveComponentBase::join(NULL);
+    (void)cmdSeq.ActiveComponentBase::join(NULL);
+    (void)pingRcvr.ActiveComponentBase::join(NULL);
     socketIpDriver.exitSocketTask();
-    (void) socketIpDriver.joinSocketTask(NULL);
+    (void)socketIpDriver.joinSocketTask(NULL);
     cmdSeq.deallocateBuffer(seqMallocator);
 }

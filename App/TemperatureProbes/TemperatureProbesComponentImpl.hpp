@@ -17,78 +17,71 @@
 
 namespace App {
 
-  class TemperatureProbesComponentImpl :
-    public TemperatureProbesComponentBase
-  {
+class TemperatureProbesComponentImpl : public TemperatureProbesComponentBase {
+   public:
+    // ----------------------------------------------------------------------
+    // Construction, initialization, and destruction
+    // ----------------------------------------------------------------------
 
-    public:
+    //! Construct object TemperatureProbes
+    //!
+    TemperatureProbesComponentImpl(
+        const char *const compName /*!< The component name*/
+    );
 
-      // ----------------------------------------------------------------------
-      // Construction, initialization, and destruction
-      // ----------------------------------------------------------------------
+    //! Initialize object TemperatureProbes
+    //!
+    void init(const NATIVE_INT_TYPE queueDepth,  /*!< The queue depth*/
+              const NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
+    );
 
-      //! Construct object TemperatureProbes
-      //!
-      TemperatureProbesComponentImpl(
-          const char *const compName /*!< The component name*/
-      );
+    //! Destroy object TemperatureProbes
+    //!
+    ~TemperatureProbesComponentImpl(void);
 
-      //! Initialize object TemperatureProbes
-      //!
-      void init(
-          const NATIVE_INT_TYPE queueDepth, /*!< The queue depth*/
-          const NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
-      );
+    PRIVATE :
 
-      //! Destroy object TemperatureProbes
-      //!
-      ~TemperatureProbesComponentImpl(void);
+        // ----------------------------------------------------------------------
+        // Handler implementations for user-defined typed input ports
+        // ----------------------------------------------------------------------
 
-    PRIVATE:
+        //! Handler implementation for internal
+        //!
+        void
+        internal_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+                         F32 degree /*!< Temperature in °C*/
+        );
 
-      // ----------------------------------------------------------------------
-      // Handler implementations for user-defined typed input ports
-      // ----------------------------------------------------------------------
+    //! Handler implementation for external
+    //!
+    void external_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+                          F32 degree /*!< Temperature in °C*/
+    );
 
-      //! Handler implementation for internal
-      //!
-      void internal_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          F32 degree /*!< Temperature in °C*/
-      );
+    PRIVATE :
 
-      //! Handler implementation for external
-      //!
-      void external_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          F32 degree /*!< Temperature in °C*/
-      );
+        // ----------------------------------------------------------------------
+        // Command handler implementations
+        // ----------------------------------------------------------------------
 
-    PRIVATE:
+        //! Implementation for TempProb_SetInternalLevel command handler
+        //! Set internal temperature warning level
+        void
+        TempProb_SetInternalLevel_cmdHandler(
+            const FwOpcodeType opCode, /*!< The opcode*/
+            const U32 cmdSeq,          /*!< The command sequence number*/
+            F32 temperature            /*!< Temperature in °C*/
+        );
 
-      // ----------------------------------------------------------------------
-      // Command handler implementations
-      // ----------------------------------------------------------------------
+    //! Implementation for TempProb_SetExternalLevel command handler
+    //! Set external temperature warning level
+    void TempProb_SetExternalLevel_cmdHandler(
+        const FwOpcodeType opCode, /*!< The opcode*/
+        const U32 cmdSeq,          /*!< The command sequence number*/
+        F32 temperature            /*!< Temperature in °C*/
+    );
+};
 
-      //! Implementation for TempProb_SetInternalLevel command handler
-      //! Set internal temperature warning level
-      void TempProb_SetInternalLevel_cmdHandler(
-          const FwOpcodeType opCode, /*!< The opcode*/
-          const U32 cmdSeq, /*!< The command sequence number*/
-          F32 temperature /*!< Temperature in °C*/
-      );
-
-      //! Implementation for TempProb_SetExternalLevel command handler
-      //! Set external temperature warning level
-      void TempProb_SetExternalLevel_cmdHandler(
-          const FwOpcodeType opCode, /*!< The opcode*/
-          const U32 cmdSeq, /*!< The command sequence number*/
-          F32 temperature /*!< Temperature in °C*/
-      );
-
-
-    };
-
-} // end namespace App
+}  // end namespace App
 
 #endif

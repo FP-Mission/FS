@@ -17,71 +17,65 @@
 
 namespace App {
 
-  class EpsComponentImpl :
-    public EpsComponentBase
-  {
+class EpsComponentImpl : public EpsComponentBase {
+   public:
+    // ----------------------------------------------------------------------
+    // Construction, initialization, and destruction
+    // ----------------------------------------------------------------------
 
-    public:
+    //! Construct object Eps
+    //!
+    EpsComponentImpl(const char *const compName /*!< The component name*/
+    );
 
-      // ----------------------------------------------------------------------
-      // Construction, initialization, and destruction
-      // ----------------------------------------------------------------------
+    //! Initialize object Eps
+    //!
+    void init(const NATIVE_INT_TYPE queueDepth,  /*!< The queue depth*/
+              const NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
+    );
 
-      //! Construct object Eps
-      //!
-      EpsComponentImpl(
-          const char *const compName /*!< The component name*/
-      );
+    //! Destroy object Eps
+    //!
+    ~EpsComponentImpl(void);
 
-      //! Initialize object Eps
-      //!
-      void init(
-          const NATIVE_INT_TYPE queueDepth, /*!< The queue depth*/
-          const NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
-      );
+    PRIVATE :
 
-      //! Destroy object Eps
-      //!
-      ~EpsComponentImpl(void);
+        // ----------------------------------------------------------------------
+        // Handler implementations for user-defined typed input ports
+        // ----------------------------------------------------------------------
 
-    PRIVATE:
+        //! Handler implementation for batteryVoltage
+        //!
+        void
+        batteryVoltage_handler(
+            const NATIVE_INT_TYPE portNum, /*!< The port number*/
+            U16 voltage                    /*!< Battery voltage level in mV*/
+        );
 
-      // ----------------------------------------------------------------------
-      // Handler implementations for user-defined typed input ports
-      // ----------------------------------------------------------------------
+    PRIVATE :
 
-      //! Handler implementation for batteryVoltage
-      //!
-      void batteryVoltage_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          U16 voltage /*!< Battery voltage level in mV*/
-      );
+        // ----------------------------------------------------------------------
+        // Command handler implementations
+        // ----------------------------------------------------------------------
 
-    PRIVATE:
+        //! Implementation for Eps_SetWarningLevel command handler
+        //! Set low battery level
+        void
+        Eps_SetWarningLevel_cmdHandler(
+            const FwOpcodeType opCode, /*!< The opcode*/
+            const U32 cmdSeq,          /*!< The command sequence number*/
+            U16 voltage                /*!< Voltage in mV*/
+        );
 
-      // ----------------------------------------------------------------------
-      // Command handler implementations
-      // ----------------------------------------------------------------------
+    //! Implementation for Eps_SetCriticalLevel command handler
+    //! Set critical low battery level
+    void Eps_SetCriticalLevel_cmdHandler(
+        const FwOpcodeType opCode, /*!< The opcode*/
+        const U32 cmdSeq,          /*!< The command sequence number*/
+        U16 voltage                /*!< Voltage in mV*/
+    );
+};
 
-      //! Implementation for Eps_SetWarningLevel command handler
-      //! Set low battery level
-      void Eps_SetWarningLevel_cmdHandler(
-          const FwOpcodeType opCode, /*!< The opcode*/
-          const U32 cmdSeq, /*!< The command sequence number*/
-          U16 voltage /*!< Voltage in mV*/
-      );
-
-      //! Implementation for Eps_SetCriticalLevel command handler
-      //! Set critical low battery level
-      void Eps_SetCriticalLevel_cmdHandler(
-          const FwOpcodeType opCode, /*!< The opcode*/
-          const U32 cmdSeq, /*!< The command sequence number*/
-          U16 voltage /*!< Voltage in mV*/
-      );
-
-
-    };
-
-} // end namespace App
+}  // end namespace App
 
 #endif

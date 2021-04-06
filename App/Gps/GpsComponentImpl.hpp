@@ -17,49 +17,44 @@
 
 namespace App {
 
-  class GpsComponentImpl :
-    public GpsComponentBase
-  {
+class GpsComponentImpl : public GpsComponentBase {
+   public:
+    // ----------------------------------------------------------------------
+    // Construction, initialization, and destruction
+    // ----------------------------------------------------------------------
 
-    public:
+    //! Construct object Gps
+    //!
+    GpsComponentImpl(const char *const compName /*!< The component name*/
+    );
 
-      // ----------------------------------------------------------------------
-      // Construction, initialization, and destruction
-      // ----------------------------------------------------------------------
+    //! Initialize object Gps
+    //!
+    void init(const NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
+    );
 
-      //! Construct object Gps
-      //!
-      GpsComponentImpl(
-          const char *const compName /*!< The component name*/
-      );
+    //! Destroy object Gps
+    //!
+    ~GpsComponentImpl(void);
 
-      //! Initialize object Gps
-      //!
-      void init(
-          const NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
-      );
+    PRIVATE :
 
-      //! Destroy object Gps
-      //!
-      ~GpsComponentImpl(void);
+        // ----------------------------------------------------------------------
+        // Command handler implementations
+        // ----------------------------------------------------------------------
 
-    PRIVATE:
+        //! Implementation for Gps_SetFlightModeAltitude command handler
+        //! Set flight mode altitude. This is the altitude at which the GPS will
+        //! switch from pedestrian mode (for more accuracy on the ground) to
+        //! flight mode (to work above 18km)
+        void
+        Gps_SetFlightModeAltitude_cmdHandler(
+            const FwOpcodeType opCode, /*!< The opcode*/
+            const U32 cmdSeq,          /*!< The command sequence number*/
+            U16 altitude               /*!< Altitude in meters*/
+        );
+};
 
-      // ----------------------------------------------------------------------
-      // Command handler implementations
-      // ----------------------------------------------------------------------
-
-      //! Implementation for Gps_SetFlightModeAltitude command handler
-      //! Set flight mode altitude. This is the altitude at which the GPS will switch from pedestrian mode (for more accuracy on the ground) to flight mode (to work above 18km)
-      void Gps_SetFlightModeAltitude_cmdHandler(
-          const FwOpcodeType opCode, /*!< The opcode*/
-          const U32 cmdSeq, /*!< The command sequence number*/
-          U16 altitude /*!< Altitude in meters*/
-      );
-
-
-    };
-
-} // end namespace App
+}  // end namespace App
 
 #endif

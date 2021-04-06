@@ -1,25 +1,5 @@
 #ifndef __LIST_COMPONENTS_HEADER__
 #define __LIST_COMPONENTS_HEADER__
-#include <Svc/ActiveRateGroup/ActiveRateGroupImpl.hpp>
-#include <Svc/RateGroupDriver/RateGroupDriverImpl.hpp>
-
-#include <Svc/CmdDispatcher/CommandDispatcherImpl.hpp>
-#include <Svc/CmdSequencer/CmdSequencerImpl.hpp>
-#include <Svc/PassiveConsoleTextLogger/ConsoleTextLoggerImpl.hpp>
-#include <Svc/ActiveLogger/ActiveLoggerImpl.hpp>
-#include <Svc/LinuxTime/LinuxTimeImpl.hpp>
-#include <Svc/TlmChan/TlmChanImpl.hpp>
-#include <Svc/PrmDb/PrmDbImpl.hpp>
-#include <Fw/Obj/SimpleObjRegistry.hpp>
-#include <Svc/BufferManager/BufferManager.hpp>
-#include <Svc/Health/HealthComponentImpl.hpp>
-
-#include <Ref/PingReceiver/PingReceiverComponentImpl.hpp>
-#include <Svc/AssertFatalAdapter/AssertFatalAdapterComponentImpl.hpp>
-#include <Svc/FatalHandler/FatalHandlerComponentImpl.hpp>
-#include <Drv/BlockDriver/BlockDriverImpl.hpp>
-#include <Drv/SocketIpDriver/SocketIpDriverComponentImpl.hpp>
-#include <Svc/GroundInterface/GroundInterface.hpp>
 
 #include <App/Eps/EpsComponentImpl.hpp>
 #include <App/FlexTrak/FlexTrakComponentImpl.hpp>
@@ -28,6 +8,24 @@
 #include <App/Predictor/PredictorComponentImpl.hpp>
 #include <App/RockBlock/RockBlockComponentImpl.hpp>
 #include <App/TemperatureProbes/TemperatureProbesComponentImpl.hpp>
+#include <Drv/BlockDriver/BlockDriverImpl.hpp>
+#include <Drv/SocketIpDriver/SocketIpDriverComponentImpl.hpp>
+#include <Fw/Obj/SimpleObjRegistry.hpp>
+#include <Ref/PingReceiver/PingReceiverComponentImpl.hpp>
+#include <Svc/ActiveLogger/ActiveLoggerImpl.hpp>
+#include <Svc/ActiveRateGroup/ActiveRateGroupImpl.hpp>
+#include <Svc/AssertFatalAdapter/AssertFatalAdapterComponentImpl.hpp>
+#include <Svc/BufferManager/BufferManager.hpp>
+#include <Svc/CmdDispatcher/CommandDispatcherImpl.hpp>
+#include <Svc/CmdSequencer/CmdSequencerImpl.hpp>
+#include <Svc/FatalHandler/FatalHandlerComponentImpl.hpp>
+#include <Svc/GroundInterface/GroundInterface.hpp>
+#include <Svc/Health/HealthComponentImpl.hpp>
+#include <Svc/LinuxTime/LinuxTimeImpl.hpp>
+#include <Svc/PassiveConsoleTextLogger/ConsoleTextLoggerImpl.hpp>
+#include <Svc/PrmDb/PrmDbImpl.hpp>
+#include <Svc/RateGroupDriver/RateGroupDriverImpl.hpp>
+#include <Svc/TlmChan/TlmChanImpl.hpp>
 
 void constructAppArchitecture(void);
 bool constructApp(bool dump, U32 port_number, char* hostname);
