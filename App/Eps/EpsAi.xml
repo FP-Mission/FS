@@ -4,12 +4,13 @@
     <comment>Component handling the Flextrak battery level indication</comment>
         
     <ports>
-        <port name="batteryVoltage" data_type="U16" kind="input" max_number="1">
+        <port name="batteryVoltage" data_type="U16" kind="async_input" max_number="1">
             <comment>
                 Battery voltage level in mV
             </comment>
         </port>
     </ports>
+
     <commands>
         <command kind="async" opcode="0" mnemonic="Eps_SetWarningLevel">
             <comment>
@@ -32,6 +33,7 @@
             </args>
         </command>
     </commands>
+
     <telemetry>
         <channel id="0" name="Eps_BatteryVoltage" data_type="U16">
             <comment>
@@ -39,6 +41,7 @@
             </comment>
         </channel>
     </telemetry>
+    
     <events>
         <event id="0" name="Eps_LowBattery" severity="WARNING_HI" format_string = "Low battery level: %u mV" >
             <comment>

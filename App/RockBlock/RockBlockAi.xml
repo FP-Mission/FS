@@ -22,6 +22,7 @@
         </port>
     </ports>
     <commands>
+        <!--
         <command kind="async" opcode="0" mnemonic="Eps_SetWarningLevel">
             <comment>
                 Set low battery level
@@ -42,15 +43,19 @@
                 </arg>          
             </args>
         </command>
+        -->
     </commands>
     <telemetry>
+        <!--
         <channel id="0" name="Eps_BatteryVoltage" data_type="U16">
             <comment>
                 Battery level in mV
             </comment>
         </channel>
+        -->
     </telemetry>
     <events>
+        <!--
         <event id="0" name="Eps_LowBattery" severity="WARNING_HI" format_string = "Low battery level: %u mV" >
             <comment>
                 Sent when battery voltage reachs low battery level
@@ -71,6 +76,7 @@
                 </arg>          
             </args>
         </event>
+     -->
      </events>
 </component>
 

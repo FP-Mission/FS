@@ -28,6 +28,15 @@
     <import_component_type>Svc/LinuxTimer/LinuxTimerComponentAi.xml</import_component_type>
     <import_component_type>Drv/SocketIpDriver/SocketIpDriverComponentAi.xml</import_component_type>
 
+    <!--
+    <import_component_type>App/Eps/EpsComponentAi.xml</import_component_type>
+    <import_component_type>App/FlexTrak/FlexTrakComponentAi.xml</import_component_type>
+    <import_component_type>App/Gps/GpsComponentAi.xml</import_component_type>
+    <import_component_type>App/PiCamera/PiCameraComponentAi.xml</import_component_type>
+    <import_component_type>App/Predictor/PredictorComponentAi.xml</import_component_type>
+    <import_component_type>App/RockBlock/RockBlockComponentAi.xml</import_component_type>
+    <import_component_type>App/TemperatureProbes/TemperatureProbesComponentAi.xml</import_component_type>
+    -->
 
     <!-- ################################################################ -->
     <!-- Declare component instances - must match names in Components.hpp -->
@@ -52,12 +61,22 @@
     <instance namespace="Svc" name="rateGroup2"     type="ActiveRateGroup"      base_id="340"   base_id_window="20" />
     <instance namespace="Svc" name="rateGroup3"     type="ActiveRateGroup"      base_id="360"   base_id_window="20" />
 
-    <!-- Communications driver. May be swapped with other comm drivers like UART -->
+    <!-- Socket IP Communications driver -->
     <instance namespace="Drv" name="socketIpDriver" type="SocketIpDriver"       base_id="400"   base_id_window="20" />
 
     <!-- Reference Example Components -->
-    <instance namespace="Ref" name="pingRcvr"       type="PingReceiver"         base_id="500"    base_id_window="20" />
+    <instance namespace="Ref" name="pingRcvr"       type="PingReceiver"         base_id="500"   base_id_window="20" />
     <instance namespace="Drv" name="blockDrv"       type="BlockDriver"          base_id="520"   base_id_window="20" />
+
+    <!--
+    <instance namespace="App" name="eps"                type="Eps"                  base_id="600"   base_id_window="20" />
+    <instance namespace="App" name="flexTrak"           type="FlexTrak"             base_id="620"   base_id_window="20" />
+    <instance namespace="App" name="gps"                type="Gps"                  base_id="640"   base_id_window="20" />
+    <instance namespace="App" name="piCamera"           type="PiCamera"             base_id="660"   base_id_window="20" />
+    <instance namespace="App" name="predictor"          type="Predictor"            base_id="680"   base_id_window="20" />
+    <instance namespace="App" name="rockBlock"          type="RockBlock"            base_id="700"   base_id_window="20" />
+    <instance namespace="App" name="temperatureProbes"  type="TemperatureProbes"    base_id="720"   base_id_window="20" />
+    -->
 
     <!-- ########### -->
     <!-- Connections -->
@@ -201,7 +220,7 @@
     </connection>
     <connection name="RG2Ev">
          <source component="rateGroup2" port="Log" type="Log" num="0"/>
-         <target component="eventLo" port="LogRecv" type="Log" num="0"/>
+         <target component="eventLogger" port="LogRecv" type="Log" num="0"/>
     </connection>
     <connection name="RG3Ev">
          <source component="rateGroup3" port="Log" type="Log" num="0"/>
@@ -248,7 +267,7 @@
     </connection>
     <connection name="Rg2Text">
          <source component="rateGroup2" port="LogText" type="LogText" num="0"/>
-         <target component="textLo" port="TextLogger" type="LogText" num="0"/>
+         <target component="textLogger" port="TextLogger" type="LogText" num="0"/>
     </connection>
     <connection name="Rg3Text">
          <source component="rateGroup3" port="LogText" type="LogText" num="0"/>
@@ -309,7 +328,7 @@
     </connection>
     <connection name="rg2Time">
          <source component="rateGroup2" port="Time" type="Time" num="0"/>
-         <target component="linux" port="timeGetPort" type="Time" num="0"/>
+         <target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
     </connection>
     <connection name="rg3Time">
          <source component="rateGroup3" port="Time" type="Time" num="0"/>

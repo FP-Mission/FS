@@ -4,17 +4,18 @@
     <comment>Component handling the Flextrak temperature probes</comment>
        
     <ports>
-        <port name="internalTemperature" data_type="F32" kind="internal" max_number="1">
+        <port name="internalTemperature" data_type="F32" kind="async_input" max_number="1">
             <comment>
                 Internal temperature in °C
             </comment>
         </port>
-        <port name="externalTemperature" data_type="F32" kind="external" max_number="1">
+        <port name="externalTemperature" data_type="F32" kind="async_input" max_number="1">
             <comment>
                 External temperature in °C, provided by the DS18B20 probe
             </comment>
         </port>
     </ports>
+
     <commands>
         <command kind="async" opcode="0" mnemonic="TempProb_SetInternalLevel">
             <comment>
@@ -37,6 +38,7 @@
             </args>
         </command>
     </commands>
+
     <telemetry>
         <channel id="0" name="TempProb_InternalTemperature" data_type="F32">
             <comment>
@@ -49,8 +51,9 @@
             </comment>
         </channel>
     </telemetry>
+
     <events>
-        <event id="0" name="TempPro_LowInternalWarning" severity="WARNING_HI" format_string = "Low internal temperature: %f" >
+        <event id="0" name="TempPro_LowInternalWarning" severity="WARNING_HI" format_string="Low internal temperature: %f" >
             <comment>
                 Sent when internal temperature reachs low level
             </comment>
@@ -60,7 +63,7 @@
                 </arg>          
             </args>
         </event>
-        <event id="1" name="TempPro_LowExternalWarning" severity="WARNING_HI" format_string = "Low external temperature: %f" >
+        <event id="1" name="TempPro_LowExternalWarning" severity="WARNING_HI" format_string="Low external temperature: %f" >
             <comment>
                 Sent when external temperature reachs low level
             </comment>

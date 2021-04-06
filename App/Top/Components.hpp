@@ -21,11 +21,21 @@
 #include <Drv/SocketIpDriver/SocketIpDriverComponentImpl.hpp>
 #include <Svc/GroundInterface/GroundInterface.hpp>
 
+/*
+#include <App/Eps/EpsComponentImpl.hpp>
+#include <App/FlexTrak/FlexTrakComponentImpl.hpp>
+#include <App/Gps/GpsComponentImpl.hpp>
+#include <App/PiCamera/PiCameraComponentImpl.hpp>
+#include <App/Predictor/PredictorComponentImpl.hpp>
+#include <App/RockBlock/RockBlockComponentImpl.hpp>
+#include <App/TemperatureProbes/TemperatureProbesComponentImpl.hpp>
+*/
+
 void constructAppArchitecture(void);
 bool constructApp(bool dump, U32 port_number, char* hostname);
 void exitTasks(void);
 
-extern Svc::RateGroupDriverImpl rateGroupDriver;
+extern Svc::RateGroupDriverImpl rateGroupDrv;
 extern Svc::ActiveRateGroupImpl rateGroup1, rateGroup2, rateGroup3;
 extern Svc::CmdSequencerComponentImpl cmdSeq;
 extern Svc::GroundInterfaceComponentImpl groundIf;
@@ -42,5 +52,15 @@ extern Svc::HealthImpl health;
 extern Drv::BlockDriverImpl blockDrv;
 extern Ref::PingReceiverComponentImpl pingRcvr;
 extern Drv::SocketIpDriverComponentImpl socketIpDriver;
+
+/*
+extern App::Eps eps;
+extern App::FlexTrak flexTrak;
+extern App::Gps gps;
+extern App::PiCamera piCamera;
+extern App::Predictor predictor;
+extern App::RockBlock rockBlock;
+extern App::TemperatureProbes temperatureProbes;
+*/
 
 #endif
