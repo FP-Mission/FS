@@ -4,7 +4,7 @@
     <comment>Component handling the Pi Camera</comment>
 
     <import_port_type>Svc/Ping/PingPortAi.xml</import_port_type>
-    <import_port_type>App/PositionPort/PositionPortAi.xml</import_port_type>
+    <import_port_type>App/FlexTrak/PositionPort/PositionPortAi.xml</import_port_type>
 
     <ports>
         <port name="PingIn" data_type="Svc::Ping" kind="async_input" max_number="1">
@@ -17,17 +17,20 @@
                 Ping response port
             </comment>
         </port>
+        <!--
         <port name="pictureTaken" data_type="U8" kind="output" max_number="1">
             <comment>
                 Invoked when a picture has been taken
             </comment>
         </port>
-        <port name="position" data_type="App::Position" kind="synch_input" max_number="1">
+        -->
+        <port name="position" data_type="App::Position" kind="sync_input" max_number="1">
             <comment>
                 Current balloon position
             </comment>
         </port>
     </ports>
+
     <commands>
         <command kind="async" opcode="0" mnemonic="PiCam">
             <comment>
@@ -35,6 +38,7 @@
             </comment>
         </command>
     </commands>
+
     <telemetry>
         <channel id="0" name="PiCam_PictureCnt" data_type="U32">
             <comment>
@@ -42,13 +46,14 @@
             </comment>
         </channel>
     </telemetry>
+
     <events>
-        <event id="0" name="PiCam_PictureTaken" severity="ACTIVITY_HI" format_string = "Picture was taken" >
+        <event id="0" name="PiCam_PictureTaken" severity="ACTIVITY_LO" format_string = "Picture was taken" >
             <comment>
                 Picture was taken
             </comment>
         </event>
-        <event id="1" name="PiCam_PictureError" severity="WARNING" format_string = "Unable to take picture, error code %d" >
+        <event id="1" name="PiCam_PictureError" severity="WARNING_LO" format_string = "Unable to take picture, error code %u" >
             <comment>
                 Error when taking picture
             </comment>

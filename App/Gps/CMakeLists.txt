@@ -8,6 +8,6 @@
 # registering the component as an F prime module. This allows autocoding and more!
 ####
 set(SOURCE_FILES
-	"${CMAKE_CURRENT_LIST_DIR}/GpsAi.xml"
+	"${CMAKE_CURRENT_LIST_DIR}/GpsComponentAi.xml"
 )
 register_fprime_module()

@@ -2,6 +2,8 @@
 <?xml-model href="../../Autocoders/Python/schema/ISF/component_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <component name="Predictor" kind="active" namespace="App">
     <comment>Component predicting landing position</comment>
+
+    <import_port_type>App/FlexTrak/PositionPort/PositionPortAi.xml</import_port_type>
         
     <ports>
         <port name="position" data_type="App::Position" kind="async_input" max_number="1">
@@ -10,6 +12,7 @@
             </comment>
         </port>
     </ports>
+
     <commands>
         <command kind="async" opcode="0" mnemonic="Predi_SetPredictionRate">
             <comment>
@@ -22,6 +25,7 @@
             </args>
         </command>
     </commands>
+
     <telemetry>
         <channel id="0" name="Predi_LandingPosition" data_type="App::Position">
             <comment>
@@ -29,11 +33,18 @@
             </comment>
         </channel>
     </telemetry>
+
     <events>
         <event id="0" name="Predi_FlightMode" severity="ACTIVITY_HI" format_string = "New flight mode: %u" >
             <comment>
                 Flight mode change
             </comment>
+            <args>
+                <arg name="flightMode" type="U8">
+                    <comment>Flight mode</comment>
+                </arg>          
+            </args>
+            <!--
             <arg name="newFlightMode" type="ENUM">
                 <enum name="FlightMode">
                     <item name="FM_IDLE" value="1" comment=""/>
@@ -43,6 +54,7 @@
                 </enum>
                 <comment>Flight modes</comment>
             </arg>
+            -->
         </event>
      </events>
 </component>

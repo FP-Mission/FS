@@ -8,6 +8,6 @@
 # registering the component as an F prime module. This allows autocoding and more!
 ####
 set(SOURCE_FILES
-	"${CMAKE_CURRENT_LIST_DIR}/TemperatureProbesAi.xml"
+	"${CMAKE_CURRENT_LIST_DIR}/TemperatureProbesComponentAi.xml"
 )
 register_fprime_module()

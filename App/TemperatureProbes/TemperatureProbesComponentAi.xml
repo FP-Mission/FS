@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="../../Autocoders/Python/schema/ISF/component_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <component name="TemperatureProbes" kind="active" namespace="App">
-    <comment>Component handling the Flextrak temperature probes</comment>
+    <comment>Component handling the FlexTrak temperature probes</comment>
        
+    <import_port_type>App/FlexTrak/TemperaturePort/TemperaturePortAi.xml</import_port_type>
+
     <ports>
-        <port name="internalTemperature" data_type="F32" kind="async_input" max_number="1">
+        <port name="internalTemperature" data_type="App::Temperature" kind="async_input" max_number="1">
             <comment>
                 Internal temperature in °C
             </comment>
         </port>
-        <port name="externalTemperature" data_type="F32" kind="async_input" max_number="1">
+        <port name="externalTemperature" data_type="App::Temperature" kind="async_input" max_number="1">
             <comment>
                 External temperature in °C, provided by the DS18B20 probe
             </comment>

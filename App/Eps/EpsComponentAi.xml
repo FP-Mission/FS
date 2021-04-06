@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="../../Autocoders/Python/schema/ISF/component_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <component name="Eps" kind="active" namespace="App">
-    <comment>Component handling the Flextrak battery level indication</comment>
-        
+    <comment>Component handling the FlexTrak battery level indication</comment>
+    
+    <import_port_type>App/FlexTrak/BatteryLevelPort/BatteryLevelPortAi.xml</import_port_type>
+
     <ports>
-        <port name="batteryVoltage" data_type="U16" kind="async_input" max_number="1">
+        <port name="batteryVoltage" data_type="App::BatteryLevel" kind="async_input" max_number="1">
             <comment>
                 Battery voltage level in mV
             </comment>

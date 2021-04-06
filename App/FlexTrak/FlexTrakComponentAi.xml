@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="../../Autocoders/Python/schema/ISF/component_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
-<component name="Flextrak" kind="active" namespace="App" modeler="true">
+<component name="FlexTrak" kind="active" namespace="App" modeler="true">
     <comment>Component handling the FlexTrak board</comment>
 
     <import_port_type>Svc/Ping/PingPortAi.xml</import_port_type>   
     <import_port_type>Drv/SerialDriverPorts/SerialReadPortAi.xml</import_port_type>
     <import_port_type>Drv/SerialDriverPorts/SerialWritePortAi.xml</import_port_type>
-    
+    <import_port_type>App/FlexTrak/TemperaturePort/TemperaturePortAi.xml</import_port_type>
+    <import_port_type>App/FlexTrak/BatteryLevelPort/BatteryLevelPortAi.xml</import_port_type>
+    <import_port_type>Fw/Buffer/BufferSendPortAi.xml</import_port_type>
+
     <ports>
         <port name="PingIn" data_type="Svc::Ping" kind="async_input" max_number="1">
             <comment>
@@ -25,28 +28,31 @@
         <port name="sendData" data_type="Fw::BufferSend" kind="sync_input" max_number="1">
         </port>
 
+        <!--
         <port name="pictureTaken" data_type="U8" kind="async_input" max_number="1">
             <comment>
                 Picture taken by the Pi Camera
             </comment>
         </port>
-        <port name="batteryVoltage" data_type="U16" kind="output" max_number="1">
+        -->
+        
+        <port name="batteryVoltage" data_type="App::BatteryLevel" kind="output" max_number="1">
             <comment>
                 Battery votlage level in mV
             </comment>
         </port>
-        <port name="internalTemp" data_type="F32" kind="output" max_number="1">
+        <port name="internalTemp" data_type="App::Temperature" kind="output" max_number="1">
             <comment>
                 Internal temperature in °C
             </comment>
         </port>
-        <port name="externalTemp" data_type="F32" kind="output" max_number="1">
+        <port name="externalTemp" data_type="App::Temperature" kind="output" max_number="1">
             <comment>
                 External temperature in °C
             </comment>
         </port>
-
     </ports>
+
     <commands>
         <command kind="async" opcode="0" mnemonic="FT_Version">
             <comment>
@@ -54,6 +60,7 @@
             </comment>
         </command>
     </commands>
+
     <telemetry>
         <channel id="0" name="FT_SSDVBufferLength" data_type="U16">
             <comment>
@@ -61,8 +68,9 @@
             </comment>
         </channel>
     </telemetry>
+
     <events>
-        <event id="0" name="FT_Version" severity="ACTIVITY_LOW" format_string = "Current FlexTrak version: %u" >
+        <event id="0" name="FT_Version" severity="ACTIVITY_LO" format_string = "Current FlexTrak version: %u" >
             <comment>
                 FlexTrak version response
             </comment>
@@ -74,4 +82,3 @@
         </event>
      </events>
 </component>
-
