@@ -44,8 +44,6 @@ include("${FPRIME_FRAMEWORK_PATH}/cmake/FPrime-Code.cmake")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/PositionPort/")
 
 add_fprime_subdirectory("${FPRIME_FRAMEWORK_PATH}/Ref/PingReceiver/")
-#add_fprime_subdirectory("${FPRIME_FRAMEWORK_PATH}/Ref/RecvBuffApp/")
-#add_fprime_subdirectory("${FPRIME_FRAMEWORK_PATH}/Ref/SendBuffApp/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Eps/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Flextrak/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Gps/")

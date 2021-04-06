@@ -22,7 +22,6 @@ enum {
 
 Os::Log osLogger;
 
-
 // Registry
 #if FW_OBJECT_REGISTRATION == 1
 static Fw::SimpleObjRegistry simpleReg;
@@ -30,16 +29,16 @@ static Fw::SimpleObjRegistry simpleReg;
 
 // Component instance pointers
 static NATIVE_INT_TYPE rgDivs[Svc::RateGroupDriverImpl::DIVIDER_SIZE] = {1,2,4};
-Svc::RateGroupDriverImpl rateGroupDriverComp(FW_OPTIONAL_NAME("RGDvr"),rgDivs,FW_NUM_ARRAY_ELEMENTS(rgDivs));
+Svc::RateGroupDriverImpl rateGroupDriver(FW_OPTIONAL_NAME("RGDvr"),rgDivs,FW_NUM_ARRAY_ELEMENTS(rgDivs));
 
 static NATIVE_UINT_TYPE rg1Context[] = {0,0,0,0,0,0,0,0,0,0};
-Svc::ActiveRateGroupImpl rateGroup1Comp(FW_OPTIONAL_NAME("RG1"),rg1Context,FW_NUM_ARRAY_ELEMENTS(rg1Context));
+Svc::ActiveRateGroupImpl rateGroup1(FW_OPTIONAL_NAME("RG1"),rg1Context,FW_NUM_ARRAY_ELEMENTS(rg1Context));
 
 static NATIVE_UINT_TYPE rg2Context[] = {0,0,0,0,0,0,0,0,0,0};
-Svc::ActiveRateGroupImpl rateGroup2Comp(FW_OPTIONAL_NAME("RG2"),rg2Context,FW_NUM_ARRAY_ELEMENTS(rg2Context));
+Svc::ActiveRateGroupImpl rateGroup2(FW_OPTIONAL_NAME("RG2"),rg2Context,FW_NUM_ARRAY_ELEMENTS(rg2Context));
 
 static NATIVE_UINT_TYPE rg3Context[] = {0,0,0,0,0,0,0,0,0,0};
-Svc::ActiveRateGroupImpl rateGroup3Comp(FW_OPTIONAL_NAME("RG3"),rg3Context,FW_NUM_ARRAY_ELEMENTS(rg3Context));
+Svc::ActiveRateGroupImpl rateGroup3(FW_OPTIONAL_NAME("RG3"),rg3Context,FW_NUM_ARRAY_ELEMENTS(rg3Context));
 
 // Command Components
 Svc::GroundInterfaceComponentImpl groundIf(FW_OPTIONAL_NAME("GNDIF"));
@@ -71,14 +70,6 @@ Ref::PingReceiverComponentImpl pingRcvr(FW_OPTIONAL_NAME("PngRecv"));
 
 Drv::SocketIpDriverComponentImpl socketIpDriver(FW_OPTIONAL_NAME("SocketIpDriver"));
 
-Svc::FileUplink fileUplink(FW_OPTIONAL_NAME("fileUplink"));
-
-Svc::FileDownlink fileDownlink(FW_OPTIONAL_NAME("fileDownlink"));
-
-Svc::FileManager fileManager(FW_OPTIONAL_NAME("fileManager"));
-
-Svc::BufferManager fileUplinkBufferManager(FW_OPTIONAL_NAME("fileUplinkBufferManager"), UPLINK_BUFFER_STORE_SIZE, UPLINK_BUFFER_QUEUE_SIZE);
-
 Svc::HealthImpl health(FW_OPTIONAL_NAME("health"));
 
 Svc::AssertFatalAdapterComponentImpl fatalAdapter(FW_OPTIONAL_NAME("fatalAdapter"));
@@ -100,14 +91,14 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
 #endif    
 
     // Initialize rate group driver
-    rateGroupDriverComp.init();
+    rateGroupDriver.init();
 
     // Initialize the rate groups
-    rateGroup1Comp.init(10,0);
+    rateGroup1.init(10,0);
     
-    rateGroup2Comp.init(10,1);
+    rateGroup2.init(10,1);
     
-    rateGroup3Comp.init(10,2);
+    rateGroup3.init(10,2);
 
     // Initialize block driver
     blockDrv.init(10);
@@ -134,11 +125,6 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     groundIf.init(0);
     socketIpDriver.init(0);
 
-    fileUplink.init(30, 0);
-    fileDownlink.init(30, 0);
-    fileDownlink.configure(1000, 1000, 1000, 10);
-    fileManager.init(30, 0);
-    fileUplinkBufferManager.init(0);
     fatalAdapter.init(0);
     fatalHandler.init(0);
     health.init(25,0);
@@ -159,8 +145,6 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     cmdDisp.regCommands();
     eventLogger.regCommands();
     prmDb.regCommands();
-    fileDownlink.regCommands();
-    fileManager.regCommands();
     health.regCommands();
     pingRcvr.regCommands();
 
@@ -170,19 +154,16 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     // set health ping entries
 
     Svc::HealthImpl::PingEntry pingEntries[] = {
-        {3,5,getHealthName(rateGroup1Comp)}, // 0
-        {3,5,getHealthName(rateGroup2Comp)}, // 1
-        {3,5,getHealthName(rateGroup3Comp)}, // 2
-        {3,5,getHealthName(cmdDisp)}, // 3
-        {3,5,getHealthName(eventLogger)}, // 4
-        {3,5,getHealthName(cmdSeq)}, // 5
-        {3,5,getHealthName(chanTlm)}, // 6
-        {3,5,getHealthName(prmDb)}, // 7
-        {3,5,getHealthName(fileUplink)}, // 8
-        {3,5,getHealthName(fileDownlink)}, // 9
-        {3,5,getHealthName(pingRcvr)}, // 10
-        {3,5,getHealthName(blockDrv)}, // 11
-        {3,5,getHealthName(fileManager)}, // 12
+        {3,5,getHealthName(rateGroup1)},    // 0
+        {3,5,getHealthName(rateGroup2)},    // 1
+        {3,5,getHealthName(rateGroup3)},    // 2
+        {3,5,getHealthName(cmdDisp)},       // 3
+        {3,5,getHealthName(eventLogger)},   // 4
+        {3,5,getHealthName(cmdSeq)},        // 5
+        {3,5,getHealthName(chanTlm)},       // 6
+        {3,5,getHealthName(prmDb)},         // 7
+        {3,5,getHealthName(pingRcvr)},      // 8
+        {3,5,getHealthName(blockDrv)},      // 9
     };
 
     // register ping table
@@ -190,9 +171,9 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
 
     // Active component startup
     // start rate groups
-    rateGroup1Comp.start(0, 120,10 * 1024);
-    rateGroup2Comp.start(0, 119,10 * 1024);
-    rateGroup3Comp.start(0, 118,10 * 1024);
+    rateGroup1.start(0, 120,10 * 1024);
+    rateGroup2.start(0, 119,10 * 1024);
+    rateGroup3.start(0, 118,10 * 1024);
     // start driver
     blockDrv.start(0,140,10*1024);
     // start dispatcher
@@ -204,10 +185,6 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     chanTlm.start(0,97,10*1024);
     prmDb.start(0,96,10*1024);
 
-    fileDownlink.start(0, 100, 10*1024);
-    fileUplink.start(0, 100, 10*1024);
-    fileManager.start(0, 100, 10*1024);
-
     pingRcvr.start(0, 100, 10*1024);
 
     // Initialize socket server if and only if there is a valid specification
@@ -218,35 +195,28 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
 }
 
 void exitTasks(void) {
-    rateGroup1Comp.exit();
-    rateGroup2Comp.exit();
-    rateGroup3Comp.exit();
+    rateGroup1.exit();
+    rateGroup2.exit();
+    rateGroup3.exit();
     blockDrv.exit();
     cmdDisp.exit();
     eventLogger.exit();
     chanTlm.exit();
     prmDb.exit();
-    fileUplink.exit();
-    fileDownlink.exit();
-    fileManager.exit();
     cmdSeq.exit();
     pingRcvr.exit();
     // join the component threads with NULL pointers to free them
-    (void) rateGroup1Comp.ActiveComponentBase::join(NULL);
-    (void) rateGroup2Comp.ActiveComponentBase::join(NULL);
-    (void) rateGroup3Comp.ActiveComponentBase::join(NULL);
+    (void) rateGroup1.ActiveComponentBase::join(NULL);
+    (void) rateGroup2.ActiveComponentBase::join(NULL);
+    (void) rateGroup3.ActiveComponentBase::join(NULL);
     (void) blockDrv.ActiveComponentBase::join(NULL);
     (void) cmdDisp.ActiveComponentBase::join(NULL);
     (void) eventLogger.ActiveComponentBase::join(NULL);
     (void) chanTlm.ActiveComponentBase::join(NULL);
     (void) prmDb.ActiveComponentBase::join(NULL);
-    (void) fileUplink.ActiveComponentBase::join(NULL);
-    (void) fileDownlink.ActiveComponentBase::join(NULL);
-    (void) fileManager.ActiveComponentBase::join(NULL);
     (void) cmdSeq.ActiveComponentBase::join(NULL);
     (void) pingRcvr.ActiveComponentBase::join(NULL);
     socketIpDriver.exitSocketTask();
     (void) socketIpDriver.joinSocketTask(NULL);
     cmdSeq.deallocateBuffer(seqMallocator);
 }
-

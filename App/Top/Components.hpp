@@ -11,9 +11,6 @@
 #include <Svc/TlmChan/TlmChanImpl.hpp>
 #include <Svc/PrmDb/PrmDbImpl.hpp>
 #include <Fw/Obj/SimpleObjRegistry.hpp>
-#include <Svc/FileUplink/FileUplink.hpp>
-#include <Svc/FileDownlink/FileDownlink.hpp>
-#include <Svc/FileManager/FileManager.hpp>
 #include <Svc/BufferManager/BufferManager.hpp>
 #include <Svc/Health/HealthComponentImpl.hpp>
 
@@ -28,9 +25,8 @@ void constructAppArchitecture(void);
 bool constructApp(bool dump, U32 port_number, char* hostname);
 void exitTasks(void);
 
-
-extern Svc::RateGroupDriverImpl rateGroupDriverComp;
-extern Svc::ActiveRateGroupImpl rateGroup1Comp, rateGroup2Comp, rateGroup3Comp;
+extern Svc::RateGroupDriverImpl rateGroupDriver;
+extern Svc::ActiveRateGroupImpl rateGroup1, rateGroup2, rateGroup3;
 extern Svc::CmdSequencerComponentImpl cmdSeq;
 extern Svc::GroundInterfaceComponentImpl groundIf;
 extern Svc::ConsoleTextLoggerImpl textLogger;
@@ -39,10 +35,6 @@ extern Svc::LinuxTimeImpl linuxTime;
 extern Svc::TlmChanImpl chanTlm;
 extern Svc::CommandDispatcherImpl cmdDisp;
 extern Svc::PrmDbImpl prmDb;
-extern Svc::FileUplink fileUplink;
-extern Svc::FileDownlink fileDownlink;
-extern Svc::FileManager fileManager;
-extern Svc::BufferManager fileUplinkBufferManager;
 extern Svc::AssertFatalAdapterComponentImpl fatalAdapter;
 extern Svc::FatalHandlerComponentImpl fatalHandler;
 extern Svc::HealthImpl health;

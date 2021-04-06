@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="../../Autocoders/Python/schema/ISF/component_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
-<component name="Flextrak" kind="active" namespace="App">
+<component name="Flextrak" kind="active" namespace="App" modeler="true">
     <comment>Component handling the FlexTrak board</comment>
 
     <import_port_type>Svc/Ping/PingPortAi.xml</import_port_type>   
@@ -21,6 +21,8 @@
         <port name="serialSend" data_type="Drv::SerialWrite" kind="output" max_number="1">
         </port>
         <port name="serialRecv" data_type="Drv::SerialRead" kind="synch_input"  max_number="1">
+        </port>
+        <port name="sendData" data_type="Fw::BufferSend" kind="sync_input" max_number="1">
         </port>
 
         <port name="pictureTaken" data_type="U8" kind="async_input" max_number="1">
