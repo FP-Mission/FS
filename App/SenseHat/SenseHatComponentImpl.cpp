@@ -58,6 +58,7 @@ namespace App {
     )
   {
     char buf[] = { 0,0};
+    int fd=wiringPiI2CSetup(SHTC3_I2C_ADDRESS);
     wiringPiI2CWriteReg8(fd,buf[0],buf[1]);   
   }
 
