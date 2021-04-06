@@ -85,6 +85,8 @@ Svc::AssertFatalAdapterComponentImpl fatalAdapter(FW_OPTIONAL_NAME("fatalAdapter
 
 Svc::FatalHandlerComponentImpl fatalHandler(FW_OPTIONAL_NAME("fatalHandler"));
 
+App::SenseHatComponentImpl senseHat(FW_OPTIONAL_NAME("senseHat"));
+
 const char* getHealthName(Fw::ObjBase& comp) {
    #if FW_OBJECT_NAMES == 1
        return comp.getObjName();
@@ -143,6 +145,8 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     fatalHandler.init(0);
     health.init(25,0);
     pingRcvr.init(10);
+
+    senseHat.init(30,0);
     // Connect rate groups to rate group driver
     constructAppArchitecture();
 
@@ -163,6 +167,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     fileManager.regCommands();
     health.regCommands();
     pingRcvr.regCommands();
+    senseHat.regCommands();
 
     // read parameters
     prmDb.readParamFile();
@@ -183,6 +188,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
         {3,5,getHealthName(pingRcvr)}, // 10
         {3,5,getHealthName(blockDrv)}, // 11
         {3,5,getHealthName(fileManager)}, // 12
+        {3,5,getHealthName(senseHat)}, // 13
     };
 
     // register ping table
@@ -210,6 +216,8 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
 
     pingRcvr.start(0, 100, 10*1024);
 
+    senseHat.start(0, 100, 10*1024);
+
     // Initialize socket server if and only if there is a valid specification
     if (hostname != NULL && port_number != 0) {
         socketIpDriver.startSocketTask(100, 10 * 1024, hostname, port_number);
@@ -231,6 +239,7 @@ void exitTasks(void) {
     fileManager.exit();
     cmdSeq.exit();
     pingRcvr.exit();
+    senseHat.exit();
     // join the component threads with NULL pointers to free them
     (void) rateGroup1Comp.ActiveComponentBase::join(NULL);
     (void) rateGroup2Comp.ActiveComponentBase::join(NULL);
@@ -245,6 +254,7 @@ void exitTasks(void) {
     (void) fileManager.ActiveComponentBase::join(NULL);
     (void) cmdSeq.ActiveComponentBase::join(NULL);
     (void) pingRcvr.ActiveComponentBase::join(NULL);
+    (void) senseHat.ActiveComponentBase::join(NULL);
     socketIpDriver.exitSocketTask();
     (void) socketIpDriver.joinSocketTask(NULL);
     cmdSeq.deallocateBuffer(seqMallocator);

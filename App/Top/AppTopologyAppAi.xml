@@ -28,6 +28,7 @@
     <import_component_type>Svc/GroundInterface/GroundInterfaceComponentAi.xml</import_component_type>
     <import_component_type>Svc/LinuxTimer/LinuxTimerComponentAi.xml</import_component_type>
     <import_component_type>Drv/SocketIpDriver/SocketIpDriverComponentAi.xml</import_component_type>
+    <import_component_type>App/SenseHat/SenseHatComponentAi.xml</import_component_type>
 
     <!-- Declare component instances - must match names in Components.hpp -->
 
@@ -62,6 +63,7 @@
 
     <instance namespace="Ref" name="pingRcvr" type="PingReceiver" base_id="41"  base_id_window="20" />
     <instance namespace="Drv" name="blockDrv" type="BlockDriver" base_id="481"  base_id_window="20" />
+    <instance namespace="App" name="senseHat" type ="SenseHat" base_id="1050" base_id_window="10" />
 
     <!-- Connections -->
     <!-- Communications driver connections -->
@@ -642,8 +644,67 @@
         <target component = "fatalHandler" port = "FatalReceive" type = "FatalEvent" num = "0"/>
     </connection>
     
-    <!-- Reference App Connections -->
+    <!-- App Connections -->
+
+    <!-- SenseHat -->
+
+    <connection name = "Rg1SenseHat">
+          <source component = "rateGroup1Comp" port = "RateGroupMemberOut" type = "Sched" num = "1"/>
+          <target component = "senseHat" port = "Schedin" type = "Sched" num = "0"/>
+     </connection>
+
+   <connection name = "SenseHatReg">
+        <source component = "senseHat" port = "CmdReg" type = "CmdReg" num = "0"/>
+        <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "25"/>
+   </connection>
+   
+    <!-- Command Dispatch Ports - Dispatch port number must match registration port for each component -->
+
+   <connection name = "SenseHatDisp">
+        <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "25"/>
+        <target component = "senseHat" port = "CmdDisp" type = "Cmd" num = "0"/>
+   </connection>
+  
+    <!-- Command Reply Ports - Go to the same response port on the dispatcher -->
+
+   <connection name = "SenseHatReply">
+      <source component = "senseHat" port = "CmdStatus" type = "CmdResponse" num = "0"/>
+      <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
+   </connection>
+
+   
+         <!-- Event Logger Binary Connections -->
+   
+   <connection name = "SenseHatLog">
+       <source component = "senseHat" port = "Log" type = "Log" num = "0"/>
+        <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+   </connection>
     
+       
+   <connection name = "SenseHatTextLog">
+       <source component = "senseHat" port = "LogText" type = "LogText" num = "0"/>
+        <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
+   </connection>
+
+   <connection name = "SenseHatTime">
+       <source component = "senseHat" port = "Time" type = "Time" num = "0"/>
+        <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+   </connection>
+
+
+    <connection name = "SenseHatTlm">
+          <source component = "senseHat" port = "Tlm" type = "Tlm" num = "0"/>
+          <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
+     </connection>
+
+     <connection name = "SenseHatPingSend">
+          <source component = "health" port = "PingSend" type = "Ping" num = "13"/>
+          <target component = "senseHat" port = "PingIn" type = "Ping" num = "0"/>
+     </connection>
+     <connection name = "SenseHatPingRecv">
+          <source component = "senseHat" port = "PingOut" type = "Ping" num = "0"/>
+          <target component = "health" port = "PingReturn" type = "Ping" num = "13"/>
+     </connection>
 
     
 </assembly>

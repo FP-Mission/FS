@@ -32,4 +32,40 @@
             </comment>
         </port>
     </ports>
+    <commands>
+        <command kind="async" opcode="0" mnemonic="MS_GET_TM">
+            <comment>
+            Send telemetry to SEnseHat
+            </comment>
+        </command>
+    </commands>
+     <telemetry>
+        <channel id="0" name="SENSE_LAST_TM_DATA" data_type="F32">
+            <comment>
+            Tm Value
+            </comment>
+        </channel>
+    </telemetry>
+    <events>
+        <event id="0" name="MS_TM_SEND_ADCS" severity="ACTIVITY_LO" format_string="TM id=%hu send to ADCS"  >
+            <comment>
+            Send Tm command
+            </comment>
+            <args>
+                <arg name="id" type="U8">
+                    <comment>The telemetry id</comment>
+                </arg>
+            </args>          
+        </event>
+        <event id="1" name="MS_TM_RECV_TEMP" severity="ACTIVITY_LO" format_string = "temp : %6.2f C°" >
+            <comment>
+            Received TM data
+            </comment>
+            <args>
+                <arg name="tm" type="F32">
+                    <comment>The telemetry data</comment>
+                </arg>          
+            </args>
+        </event>
+    </events>
 </component>
