@@ -50,6 +50,7 @@ namespace App {
       // Handler implementations for user-defined typed input ports
       // ----------------------------------------------------------------------
 
+      int fd;
       //! Handler implementation for Schedin
       //!
       void Schedin_handler(
@@ -63,6 +64,8 @@ namespace App {
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           U32 key /*!< Value to return to pinger*/
       );
+
+      void SHTC3_WriteCommand(unsigned short cmd);
 
 
     };

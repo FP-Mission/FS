@@ -16,7 +16,10 @@
 
 #include <wiringPi.h>
 #include <wiringPiI2C.h>
+#include <stdio.h>
+#include <math.h>
 #include"SHTC3.h"
+#include <unistd.h>
 
 namespace App {
 
@@ -57,9 +60,23 @@ namespace App {
         NATIVE_UINT_TYPE context
     )
   {
-    char buf[] = { 0,0};
-    int fd=wiringPiI2CSetup(SHTC3_I2C_ADDRESS);
-    wiringPiI2CWriteReg8(fd,buf[0],buf[1]);   
+    float TH_Value,RH_Value;
+    fd=wiringPiI2CSetup(SHTC3_I2C_ADDRESS);
+    SHTC3_WriteCommand(SHTC3_Software_RES);                 // Write reset command
+    delayMicroseconds(300);   
+        SHTC3_WriteCommand(SHTC3_WakeUp);                  // write wake_up command  
+    delayMicroseconds(300); 
+
+        unsigned short TH_DATA,RH_DATA;
+    char buf[3];
+   SHTC3_WriteCommand(SHTC3_NM_CD_ReadTH);                 //Read temperature first,clock streching disabled (polling)
+    delay(20);
+    read(fd, buf, 3);  
+    TH_DATA=(buf[0]<<8|buf[1]);
+
+    TH_Value=175 * (float)TH_DATA / 65536.0f - 45.0f; 
+  printf("temp : %6.2f°C \n",TH_Value);
+
   }
 
   void SenseHatComponentImpl ::
@@ -70,5 +87,12 @@ namespace App {
   {
     // TODO
   }
+
+  void SenseHatComponentImpl::SHTC3_WriteCommand(unsigned short cmd)
+    {   
+      char buf[] = { (cmd>>8) ,cmd};
+      wiringPiI2CWriteReg8(fd,buf[0],buf[1]);          
+                                                    //1:error 0:No error
+    }
 
 } // end namespace App
