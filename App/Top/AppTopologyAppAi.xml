@@ -29,6 +29,8 @@
     <import_component_type>Svc/LinuxTimer/LinuxTimerComponentAi.xml</import_component_type>
     <import_component_type>Drv/SocketIpDriver/SocketIpDriverComponentAi.xml</import_component_type>
     <import_component_type>App/SenseHat/SenseHatComponentAi.xml</import_component_type>
+    <import_component_type>Drv/LinuxI2cDriver/LinuxI2cDriverComponentAi.xml</import_component_type>
+
 
     <!-- Declare component instances - must match names in Components.hpp -->
 
@@ -64,6 +66,8 @@
     <instance namespace="Ref" name="pingRcvr" type="PingReceiver" base_id="41"  base_id_window="20" />
     <instance namespace="Drv" name="blockDrv" type="BlockDriver" base_id="481"  base_id_window="20" />
     <instance namespace="App" name="senseHat" type ="SenseHat" base_id="1050" base_id_window="10" />
+    <instance namespace="Drv" name="linuxI2cDriver" type="LinuxI2cDriver" base_id="1100" base_id_window="20" />
+
 
     <!-- Connections -->
     <!-- Communications driver connections -->
@@ -704,6 +708,11 @@
      <connection name = "SenseHatPingRecv">
           <source component = "senseHat" port = "PingOut" type = "Ping" num = "0"/>
           <target component = "health" port = "PingReturn" type = "Ping" num = "13"/>
+     </connection>
+
+     <connection name = "I2CDriverSenseHat">
+       <source component = "senseHat" port = "I2cDriver" type = "Drv::I2c" num = "0"/>
+        <target component = "linuxI2cDriver" port = "read" type = "Drv::I2c" num = "0"/>
      </connection>
 
     

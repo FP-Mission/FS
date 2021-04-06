@@ -25,6 +25,7 @@
 #include <Svc/GroundInterface/GroundInterface.hpp>
 
 #include <App/SenseHat/SenseHatComponentImpl.hpp>
+#include <Drv/LinuxI2cDriver/LinuxI2cDriverComponentImpl.hpp>
 
 void constructAppArchitecture(void);
 bool constructApp(bool dump, U32 port_number, char* hostname);
@@ -54,5 +55,6 @@ extern Ref::PingReceiverComponentImpl pingRcvr;
 extern Drv::SocketIpDriverComponentImpl socketIpDriver;
 
 extern App::SenseHatComponentImpl senseHat;
+extern Drv::LinuxI2cDriverComponentImpl linuxI2cDriver;
 
 #endif

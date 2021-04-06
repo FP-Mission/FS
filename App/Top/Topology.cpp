@@ -21,7 +21,7 @@ enum {
 };
 
 Os::Log osLogger;
-
+const char SHTC3= 0x70;
 
 // Registry
 #if FW_OBJECT_REGISTRATION == 1
@@ -87,6 +87,8 @@ Svc::FatalHandlerComponentImpl fatalHandler(FW_OPTIONAL_NAME("fatalHandler"));
 
 App::SenseHatComponentImpl senseHat(FW_OPTIONAL_NAME("senseHat"));
 
+Drv::LinuxI2cDriverComponentImpl linuxI2cDriver(FW_OPTIONAL_NAME("linuxI2cDriver"));
+
 const char* getHealthName(Fw::ObjBase& comp) {
    #if FW_OBJECT_NAMES == 1
        return comp.getObjName();
@@ -147,6 +149,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     pingRcvr.init(10);
 
     senseHat.init(30,0);
+    linuxI2cDriver.init(0);
     // Connect rate groups to rate group driver
     constructAppArchitecture();
 
@@ -222,6 +225,9 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     if (hostname != NULL && port_number != 0) {
         socketIpDriver.startSocketTask(100, 10 * 1024, hostname, port_number);
     }
+
+
+    linuxI2cDriver.open(&SHTC3);
     return false;
 }
 

@@ -13,12 +13,13 @@
 
 #include <App/SenseHat/SenseHatComponentImpl.hpp>
 #include "Fw/Types/BasicTypes.hpp"
+#include <Fw/Buffer/Buffer.hpp>
 
 #include <wiringPi.h>
 #include <wiringPiI2C.h>
 #include <stdio.h>
 #include <math.h>
-#include"SHTC3.h"
+#include "SHTC3/SHTC3.h"
 #include <unistd.h>
 
 namespace App {
@@ -84,11 +85,11 @@ namespace App {
         const U32 cmdSeq
     )
   {
-    float TH_Value,RH_Value;
+   /* float TH_Value,RH_Value;
     fd=wiringPiI2CSetup(SHTC3_I2C_ADDRESS);
     SHTC3_WriteCommand(SHTC3_Software_RES);                 // Write reset command
     delayMicroseconds(300);   
-        SHTC3_WriteCommand(SHTC3_WakeUp);                  // write wake_up command  
+    SHTC3_WriteCommand(SHTC3_WakeUp);                  // write wake_up command  
     delayMicroseconds(300); 
 
         unsigned short TH_DATA,RH_DATA;
@@ -99,6 +100,23 @@ namespace App {
     TH_DATA=(buf[0]<<8|buf[1]);
 
     TH_Value=175 * (float)TH_DATA / 65536.0f - 45.0f; 
+    printf("temp : %6.2f°C \n",TH_Value);
+    log_ACTIVITY_LO_MS_TM_RECV_TEMP(TH_Value);
+    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);*/
+    Fw::Buffer buf;
+    U8 bufTab[3];
+    buf.setData(bufTab);
+    I2cDriver_out(0,SHTC3_Software_RES,buf);
+    delayMicroseconds(300);   
+    I2cDriver_out(0,SHTC3_WakeUp,buf);                  // write wake_up command  
+    delayMicroseconds(300); 
+
+     I2cDriver_out(0,SHTC3_NM_CD_ReadTH,buf);                     //Read temperature first,clock streching disabled (polling)
+    delay(20);
+    unsigned short TH_DATA;
+    TH_DATA=(buf.getData()[0]<<8|buf.getData()[1]);
+
+    float TH_Value=175 * (float)TH_DATA / 65536.0f - 45.0f; 
     printf("temp : %6.2f°C \n",TH_Value);
     log_ACTIVITY_LO_MS_TM_RECV_TEMP(TH_Value);
     this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
