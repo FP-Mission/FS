@@ -1,0 +1,35 @@
+<component name="SenseHat" kind="active" namespace="App">
+    <comment>Component that manage SenseHat</comment>
+    <import_port_type>App/SenseHat/SenseHatPort/SenseHatFloatDataPortAi.xml</import_port_type>
+    <import_port_type>Svc/Sched/SchedPortAi.xml</import_port_type>
+    <import_port_type>Svc/Ping/PingPortAi.xml</import_port_type>
+    <ports>
+        <port name="SHTTemperature" data_type="App::SenseHatFloatData" kind="output">
+            <comment>
+            Port for sending Temperature
+            </comment>
+        </port>
+        <port name="SHTHumidity" data_type="App::SenseHatFloatData" kind="output">
+            <comment>
+           Port for sending humidity
+            </comment>
+        </port>
+        <port name="Schedin" data_type="Sched" kind="sync_input">
+            <comment>
+            The rate groupe scheduler input
+            </comment>
+        </port>
+                <!-- Output ping port -->
+        <port name="PingIn" data_type="Svc::Ping" kind="async_input" max_number="1">
+            <comment>
+            The ping input port
+            </comment>
+        </port>
+        <!-- Output ping port -->
+        <port name="PingOut" data_type="Svc::Ping" kind="output" max_number="1">
+            <comment>
+            The ping input port
+            </comment>
+        </port>
+    </ports>
+</component>
