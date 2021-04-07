@@ -79,7 +79,8 @@ namespace App {
     )
   {
     shtc3.cycle();
-    log_ACTIVITY_LO_MS_DATA_TEST(shtc3.getTemperatureValue());
+    lps22.cycle();
+    log_ACTIVITY_LO_MS_DATA_TEST(lps22.getTemperatureValue());
     this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
     
   }
