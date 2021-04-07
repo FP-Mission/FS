@@ -3,7 +3,6 @@
     <import_port_type>App/SenseHat/SenseHatPort/SenseHatFloatDataPortAi.xml</import_port_type>
     <import_port_type>Svc/Sched/SchedPortAi.xml</import_port_type>
     <import_port_type>Svc/Ping/PingPortAi.xml</import_port_type>
-    <import_port_type>Drv/I2cDriverPorts/I2cPortAi.xml</import_port_type>
     <ports>
         <port name="SHTTemperature" data_type="App::SenseHatFloatData" kind="output">
             <comment>
@@ -13,11 +12,6 @@
         <port name="SHTHumidity" data_type="App::SenseHatFloatData" kind="output">
             <comment>
            Port for sending humidity
-            </comment>
-        </port>
-        <port name="I2cDriver" data_type="Drv::I2c" kind="output">
-            <comment>
-           Test fprime driver
             </comment>
         </port>
         <port name="Schedin" data_type="Sched" kind="sync_input">
@@ -45,33 +39,26 @@
             </comment>
         </command>
     </commands>
-     <telemetry>
-        <channel id="0" name="SENSE_LAST_TM_DATA" data_type="F32">
-            <comment>
-            Tm Value
-            </comment>
-        </channel>
-    </telemetry>
     <events>
-        <event id="0" name="MS_TM_SEND_ADCS" severity="ACTIVITY_LO" format_string="TM id=%hu send to ADCS"  >
+        <event id="0" name="MS_DATA" severity="ACTIVITY_LO" format_string="Sense hat data update"  >
             <comment>
-            Send Tm command
-            </comment>
-            <args>
-                <arg name="id" type="U8">
-                    <comment>The telemetry id</comment>
-                </arg>
-            </args>          
+            Sense hat data update
+            </comment>        
         </event>
-        <event id="1" name="MS_TM_RECV_TEMP" severity="ACTIVITY_LO" format_string = "temp : %6.2f C°" >
+        <event id="1" name="MS_DATA_TEST" severity="ACTIVITY_LO" format_string = "temp : %6.2f C°" >
             <comment>
             Received TM data
             </comment>
             <args>
                 <arg name="tm" type="F32">
-                    <comment>The telemetry data</comment>
+                    <comment>The data</comment>
                 </arg>          
             </args>
+        </event>
+        <event id="3" name="MS_ERROR" severity="WARNING_HI" format_string = "Sense update data error" >
+            <comment>
+            Received TM data
+            </comment>
         </event>
     </events>
 </component>

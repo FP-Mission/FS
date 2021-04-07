@@ -21,3 +21,7 @@
 #define CRC_POLYNOMIAL              0x131 // P(x) = x^8 + x^5 + x^4 + 1 = 100110001
 
 #endif
+
+
+
+

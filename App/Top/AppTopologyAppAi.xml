@@ -696,11 +696,6 @@
    </connection>
 
 
-    <connection name = "SenseHatTlm">
-          <source component = "senseHat" port = "Tlm" type = "Tlm" num = "0"/>
-          <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
-     </connection>
-
      <connection name = "SenseHatPingSend">
           <source component = "health" port = "PingSend" type = "Ping" num = "13"/>
           <target component = "senseHat" port = "PingIn" type = "Ping" num = "0"/>
@@ -710,10 +705,4 @@
           <target component = "health" port = "PingReturn" type = "Ping" num = "13"/>
      </connection>
 
-     <connection name = "I2CDriverSenseHat">
-       <source component = "senseHat" port = "I2cDriver" type = "Drv::I2c" num = "0"/>
-        <target component = "linuxI2cDriver" port = "read" type = "Drv::I2c" num = "0"/>
-     </connection>
-
-    
 </assembly>

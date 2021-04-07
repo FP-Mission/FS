@@ -14,6 +14,7 @@
 #define SenseHat_HPP
 
 #include "App/SenseHat/SenseHatComponentAc.hpp"
+#include "SHTC3/SHTC3.hpp"
 
 namespace App {
 
@@ -79,6 +80,11 @@ namespace App {
       );
 
       void SHTC3_WriteCommand(unsigned short cmd);
+
+    // data
+    F32 temperature;
+    F32 humidity;
+    Shtc3 shtc3;
 
 
     };

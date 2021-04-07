@@ -1,6 +1,7 @@
 set(SOURCE_FILES
 	"${CMAKE_CURRENT_LIST_DIR}/SenseHatComponentAi.xml"
 	"${CMAKE_CURRENT_LIST_DIR}/SenseHatComponentImpl.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/SHTC3/SHTC3.cpp"
 )
 
 register_fprime_module()
