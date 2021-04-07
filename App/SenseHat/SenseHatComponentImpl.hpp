@@ -73,7 +73,6 @@ namespace App {
       // Command handler implementations
       // ----------------------------------------------------------------------
 
-      int fd;
       //! Implementation for MS_GET_TM command handler
       //! Send telemetry to SEnseHat
       void MS_GET_TM_cmdHandler(
@@ -81,16 +80,13 @@ namespace App {
           const U32 cmdSeq /*!< The command sequence number*/
       );
 
-      void SHTC3_WriteCommand(unsigned short cmd);
-
-    // data
-    F32 SHTemperature=0.0f;
-    F32 LPTemperature=0.0f;
-    F32 humidity=0.0f;
-    F32 pressure = 0.0f;
-    Shtc3 shtc3;
-    Lps22 lps22;
-    Icm icm;
+      F32 SHTemperature=0.0f;
+      F32 LPTemperature=0.0f;
+      F32 humidity=0.0f;
+      F32 pressure = 0.0f;
+      Shtc3 shtc3;
+      Lps22 lps22;
+      Icm icm;
 
 
     };

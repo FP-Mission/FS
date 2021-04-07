@@ -13,7 +13,6 @@
 
 #include <App/SenseHat/SenseHatComponentImpl.hpp>
 #include "Fw/Types/BasicTypes.hpp"
-#include <Fw/Buffer/Buffer.hpp>
 
 namespace App {
 
@@ -54,8 +53,7 @@ namespace App {
         NATIVE_UINT_TYPE context
     )
   {
-    //log_ACTIVITY_LO_MS_TM_RECV_TEMP(12.6f);
-    //tlmWrite_SENSE_LAST_TM_DATA(12.8f);
+    // TODO
   }
 
   void SenseHatComponentImpl ::
@@ -64,8 +62,7 @@ namespace App {
         U32 key
     )
   {
-
-      PingOut_out(portNum,key);
+    PingOut_out(portNum,key);
   }
 
   // ----------------------------------------------------------------------
@@ -81,6 +78,8 @@ namespace App {
     shtc3.cycle();
     lps22.cycle();
     icm.cycle();
+    SHT_out(0,shtc3.getTemperatureValue(),shtc3.getHumidityValue());
+    LPS_out(0,lps22.getTemperatureValue(),lps22.getPressureValue());
     log_ACTIVITY_LO_MS_DATA_TEST(icm.getAngles().fRoll);
     this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
     

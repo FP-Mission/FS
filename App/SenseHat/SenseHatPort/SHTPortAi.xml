@@ -1,0 +1,13 @@
+<interface name="SHTPort" namespace="App">
+    <comment>
+    Port to return the result of Sense hat SHT
+    </comment>
+    <args>
+        <arg name="temperature" type="F32">
+            <comment>sht temperature</comment>
+        </arg>
+        <arg name="humidity" type="F32">
+            <comment>sht humidity</comment>
+        </arg>
+    </args>
+</interface>

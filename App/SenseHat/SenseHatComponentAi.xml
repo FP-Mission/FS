@@ -1,17 +1,18 @@
 <component name="SenseHat" kind="active" namespace="App">
     <comment>Component that manage SenseHat</comment>
-    <import_port_type>App/SenseHat/SenseHatPort/SenseHatFloatDataPortAi.xml</import_port_type>
+    <import_port_type>App/SenseHat/SenseHatPort/SHTPortAi.xml</import_port_type>
+    <import_port_type>App/SenseHat/SenseHatPort/LPSPortAi.xml</import_port_type>
     <import_port_type>Svc/Sched/SchedPortAi.xml</import_port_type>
     <import_port_type>Svc/Ping/PingPortAi.xml</import_port_type>
     <ports>
-        <port name="SHTTemperature" data_type="App::SenseHatFloatData" kind="output">
+        <port name="SHT" data_type="App::SHTPort" kind="output">
             <comment>
-            Port for sending Temperature
+            Port for sending SHT data
             </comment>
         </port>
-        <port name="SHTHumidity" data_type="App::SenseHatFloatData" kind="output">
+        <port name="LPS" data_type="App::LPSPort" kind="output">
             <comment>
-           Port for sending humidity
+            Port for sending LPS data
             </comment>
         </port>
         <port name="Schedin" data_type="Sched" kind="sync_input">
