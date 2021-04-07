@@ -11,7 +11,6 @@ namespace App{
 
   Lps22::Lps22() {
       init();
-      startOneShot(); 
   }
 
   Lps22::~Lps22(void) {
@@ -20,6 +19,7 @@ namespace App{
 
  void Lps22::cycle(){
    U8 buf[3];
+   startOneShot(); 
    if((readByte(LPS_STATUS)&0x01)==0x01)   //a new pressure data is generated
         {
             buf[0]=readByte(LPS_PRESS_OUT_XL);
