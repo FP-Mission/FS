@@ -19,9 +19,9 @@ namespace App{
   }
 
  void Shtc3::cycle(){
+    wakeUp();
     readData();
     sleep();
-    wakeUp();
  }
 
 void Shtc3::writeCommand(U16 cmd){
