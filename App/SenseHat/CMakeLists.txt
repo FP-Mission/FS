@@ -3,6 +3,7 @@ set(SOURCE_FILES
 	"${CMAKE_CURRENT_LIST_DIR}/SenseHatComponentImpl.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/SHTC3/SHTC3.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/LPS22/LPS22.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/ICM/ICM.cpp"
 )
 
 register_fprime_module()

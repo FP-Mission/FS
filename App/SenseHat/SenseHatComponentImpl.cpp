@@ -80,7 +80,8 @@ namespace App {
   {
     shtc3.cycle();
     lps22.cycle();
-    log_ACTIVITY_LO_MS_DATA_TEST(lps22.getPressureValue());
+    icm.cycle();
+    log_ACTIVITY_LO_MS_DATA_TEST(icm.getAngles().fRoll);
     this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
     
   }

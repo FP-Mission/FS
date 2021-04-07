@@ -68,6 +68,7 @@ namespace App{
   }
 
   U8 Lps22::init(){
+    wiringPiSetup();
     fd=wiringPiI2CSetup(LPS22HB_I2C_ADDRESS);
     if(readByte(LPS_WHO_AM_I)!=LPS_ID) return 0;    //Check device ID 
     reset();                                    //Wait for reset to complete

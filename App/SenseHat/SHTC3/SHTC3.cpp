@@ -10,6 +10,7 @@ namespace App{
 
 
   Shtc3::Shtc3() {
+    wiringPiSetup();
     fd=wiringPiI2CSetup(SHTC3_I2C_ADDRESS);
     softReset();
   }

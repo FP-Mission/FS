@@ -16,6 +16,7 @@
 #include "App/SenseHat/SenseHatComponentAc.hpp"
 #include "SHTC3/SHTC3.hpp"
 #include "LPS22/LPS22.hpp"
+#include "ICM/ICM.hpp"
 
 namespace App {
 
@@ -89,6 +90,7 @@ namespace App {
     F32 pressure = 0.0f;
     Shtc3 shtc3;
     Lps22 lps22;
+    Icm icm;
 
 
     };
