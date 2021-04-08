@@ -14,6 +14,9 @@
 
 #include "Fw/Types/BasicTypes.hpp"
 
+#define DEBUG_PRINT(x,...) printf(x,##__VA_ARGS__); fflush(stdout)
+//#define DEBUG_PRINT(x,...)
+
 namespace App {
 
 // ----------------------------------------------------------------------
@@ -44,6 +47,11 @@ void FlexTrakComponentImpl ::serialRecv_handler(const NATIVE_INT_TYPE portNum,
                                                 Fw::Buffer &serBuffer,
                                                 Drv::SerialReadStatus &status) {
     // TODO
+    if(status == Drv::SER_OK) {
+        DEBUG_PRINT("[FlexTrakRx] %s \n", serBuffer.getData());
+    } else {
+        DEBUG_PRINT("[FlexTrakRx] error %u\n", status);
+    }
 }
 
 void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,

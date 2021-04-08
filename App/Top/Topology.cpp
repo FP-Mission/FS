@@ -225,10 +225,10 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     }
 
     serialDriver1.open("/dev/ttyAMA0",
-                       Drv::LinuxSerialDriverComponentImpl::BAUD_115K,
-                       Drv::LinuxSerialDriverComponentImpl::HW_FLOW,
-                       Drv::LinuxSerialDriverComponentImpl::PARITY_ODD, false);
-    // serialDriver1.startReadThread();
+                       Drv::LinuxSerialDriverComponentImpl::BAUD_38400,
+                       Drv::LinuxSerialDriverComponentImpl::NO_FLOW,
+                       Drv::LinuxSerialDriverComponentImpl::PARITY_NONE, false);
+    serialDriver1.startReadThread(100, 10 * 1024);
 
     return false;
 }
