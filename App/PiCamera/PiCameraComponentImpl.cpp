@@ -14,6 +14,9 @@
 
 #include "Fw/Types/BasicTypes.hpp"
 
+// #include <raspicam.h>
+#include <wiringPi.h>
+
 namespace App {
 
 // ----------------------------------------------------------------------
@@ -26,6 +29,14 @@ PiCameraComponentImpl ::PiCameraComponentImpl(const char *const compName)
 void PiCameraComponentImpl ::init(const NATIVE_INT_TYPE queueDepth,
                                   const NATIVE_INT_TYPE instance) {
     PiCameraComponentBase::init(queueDepth, instance);
+    
+    wiringPiSetup();
+    /*
+    raspicam::RaspiCam Camera;
+    if (!Camera.open())
+        printf("Error opening camera\n");
+    */
+
 }
 
 PiCameraComponentImpl ::~PiCameraComponentImpl(void) {}
