@@ -10,6 +10,7 @@
 #include <App/TemperatureProbes/TemperatureProbesComponentImpl.hpp>
 #include <Drv/BlockDriver/BlockDriverImpl.hpp>
 #include <Drv/SocketIpDriver/SocketIpDriverComponentImpl.hpp>
+#include <Drv/LinuxSerialDriver/LinuxSerialDriverComponentImpl.hpp>
 #include <Fw/Obj/SimpleObjRegistry.hpp>
 #include <Ref/PingReceiver/PingReceiverComponentImpl.hpp>
 #include <Svc/ActiveLogger/ActiveLoggerImpl.hpp>
@@ -48,6 +49,7 @@ extern Svc::HealthImpl health;
 extern Drv::BlockDriverImpl blockDrv;
 extern Ref::PingReceiverComponentImpl pingRcvr;
 extern Drv::SocketIpDriverComponentImpl socketIpDriver;
+extern Drv::LinuxSerialDriverComponentImpl serialDriver1;
 
 extern App::EpsComponentImpl eps;
 extern App::FlexTrakComponentImpl flexTrak;

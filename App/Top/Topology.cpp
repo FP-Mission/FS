@@ -68,6 +68,8 @@ Ref::PingReceiverComponentImpl pingRcvr(FW_OPTIONAL_NAME("PngRecv"));
 Drv::BlockDriverImpl blockDrv(FW_OPTIONAL_NAME("BDRV"));
 Drv::SocketIpDriverComponentImpl socketIpDriver(
     FW_OPTIONAL_NAME("SocketIpDriver"));
+Drv::LinuxSerialDriverComponentImpl serialDriver1(
+    FW_OPTIONAL_NAME("serialDriver1"));
 
 App::EpsComponentImpl eps(FW_OPTIONAL_NAME("Eps"));
 App::FlexTrakComponentImpl flexTrak(FW_OPTIONAL_NAME("FlexTrak"));
@@ -125,6 +127,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
 
     groundIf.init(0);
     socketIpDriver.init(0);
+    serialDriver1.init(0);
 
     fatalAdapter.init(0);
     fatalHandler.init(0);
@@ -220,6 +223,13 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     if (hostname != NULL && port_number != 0) {
         socketIpDriver.startSocketTask(100, 10 * 1024, hostname, port_number);
     }
+
+    serialDriver1.open("/dev/ttyAMA0",
+                       Drv::LinuxSerialDriverComponentImpl::BAUD_115K,
+                       Drv::LinuxSerialDriverComponentImpl::HW_FLOW,
+                       Drv::LinuxSerialDriverComponentImpl::PARITY_ODD, false);
+    // serialDriver1.startReadThread();
+
     return false;
 }
 
