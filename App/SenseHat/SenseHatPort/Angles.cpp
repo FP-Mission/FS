@@ -45,19 +45,19 @@ namespace App{
     Fw::SerializeStatus Angles::serialize(Fw::SerializeBufferBase& buffer) const{ // !< Serialiyawe method
 
         Fw::SerializeStatus stat = Fw::FW_SERIALIZE_OK;
-        stat = buffer.serialize(static_cast<FwTimeBaseStoreType>(this->roll));
+        stat = buffer.serialize(this->roll);
         
         if (stat != Fw::FW_SERIALIZE_OK) {
             return stat;
         }
 
-        stat = buffer.serialize(static_cast<FwTimeBaseStoreType>(this->pitch));
+        stat = buffer.serialize(this->pitch);
         
         if (stat != Fw::FW_SERIALIZE_OK) {
             return stat;
         }
 
-        return stat = buffer.serialize(static_cast<FwTimeBaseStoreType>(this->yaw));
+        return stat = buffer.serialize(this->yaw);
     }
 
     Fw::SerializeStatus Angles::deserialize(Fw::SerializeBufferBase& buffer){ // !< Deserialiyawe method

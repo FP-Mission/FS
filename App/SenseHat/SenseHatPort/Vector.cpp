@@ -45,19 +45,19 @@ namespace App{
     Fw::SerializeStatus Vector::serialize(Fw::SerializeBufferBase& buffer) const{ // !< Serialize method
 
         Fw::SerializeStatus stat = Fw::FW_SERIALIZE_OK;
-        stat = buffer.serialize(static_cast<FwTimeBaseStoreType>(this->x));
+        stat = buffer.serialize(this->x);
         
         if (stat != Fw::FW_SERIALIZE_OK) {
             return stat;
         }
 
-        stat = buffer.serialize(static_cast<FwTimeBaseStoreType>(this->y));
+        stat = buffer.serialize(this->y);
         
         if (stat != Fw::FW_SERIALIZE_OK) {
             return stat;
         }
 
-        return stat = buffer.serialize(static_cast<FwTimeBaseStoreType>(this->z));
+        return stat = buffer.serialize(this->z);
     }
 
     Fw::SerializeStatus Vector::deserialize(Fw::SerializeBufferBase& buffer){ // !< Deserialize method
