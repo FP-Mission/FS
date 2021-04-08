@@ -66,7 +66,7 @@ namespace App {
         U32 key
     )
   {
-    // TODO
+    PingOut_out(portNum,key);
   }
 
 } // end namespace App
