@@ -25,6 +25,7 @@
 #include <Svc/GroundInterface/GroundInterface.hpp>
 
 #include <App/SenseHat/SenseHatComponentImpl.hpp>
+#include <App/Thermometer/ThermometerComponentImpl.hpp>
 #include <Drv/LinuxI2cDriver/LinuxI2cDriverComponentImpl.hpp>
 
 void constructAppArchitecture(void);
@@ -56,5 +57,7 @@ extern Drv::SocketIpDriverComponentImpl socketIpDriver;
 
 extern App::SenseHatComponentImpl senseHat;
 extern Drv::LinuxI2cDriverComponentImpl linuxI2cDriver;
+
+extern App::ThermometerComponentImpl thermometer;
 
 #endif

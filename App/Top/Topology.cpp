@@ -87,6 +87,8 @@ Svc::FatalHandlerComponentImpl fatalHandler(FW_OPTIONAL_NAME("fatalHandler"));
 
 App::SenseHatComponentImpl senseHat(FW_OPTIONAL_NAME("senseHat"));
 
+App::ThermometerComponentImpl thermometer(FW_OPTIONAL_NAME("thermometer"));
+
 Drv::LinuxI2cDriverComponentImpl linuxI2cDriver(FW_OPTIONAL_NAME("linuxI2cDriver"));
 
 const char* getHealthName(Fw::ObjBase& comp) {
@@ -149,6 +151,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     pingRcvr.init(10);
 
     senseHat.init(30,0);
+    thermometer.init(30,0);
     linuxI2cDriver.init(0);
     // Connect rate groups to rate group driver
     constructAppArchitecture();
@@ -192,6 +195,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
         {3,5,getHealthName(blockDrv)}, // 11
         {3,5,getHealthName(fileManager)}, // 12
         {3,5,getHealthName(senseHat)}, // 13
+        {3,5,getHealthName(thermometer)}, //14
     };
 
     // register ping table
@@ -221,6 +225,8 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
 
     senseHat.start(0, 100, 10*1024);
 
+    thermometer.start(0, 100, 10*1024);
+
     // Initialize socket server if and only if there is a valid specification
     if (hostname != NULL && port_number != 0) {
         socketIpDriver.startSocketTask(100, 10 * 1024, hostname, port_number);
@@ -246,6 +252,7 @@ void exitTasks(void) {
     cmdSeq.exit();
     pingRcvr.exit();
     senseHat.exit();
+    thermometer.exit();
     // join the component threads with NULL pointers to free them
     (void) rateGroup1Comp.ActiveComponentBase::join(NULL);
     (void) rateGroup2Comp.ActiveComponentBase::join(NULL);
@@ -261,6 +268,7 @@ void exitTasks(void) {
     (void) cmdSeq.ActiveComponentBase::join(NULL);
     (void) pingRcvr.ActiveComponentBase::join(NULL);
     (void) senseHat.ActiveComponentBase::join(NULL);
+    (void) thermometer.ActiveComponentBase::join(NULL);
     socketIpDriver.exitSocketTask();
     (void) socketIpDriver.joinSocketTask(NULL);
     cmdSeq.deallocateBuffer(seqMallocator);
