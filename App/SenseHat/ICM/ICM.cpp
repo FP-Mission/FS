@@ -26,6 +26,21 @@ namespace App{
     return this->stAngles;
   }
 
+    IMU_ST_SENSOR_DATA& Icm::getGyro()
+  {
+    return this->stGyroRawData;
+  }
+
+    IMU_ST_SENSOR_DATA& Icm::getAccel()
+  {
+    return this->stAccelRawData;
+  }
+
+    IMU_ST_SENSOR_DATA& Icm::getMagn()
+  {
+    return this->stMagnRawData;
+  }
+
   char Icm::readOneByte(char reg){
     return wiringPiI2CReadReg8(fd, reg);
     }

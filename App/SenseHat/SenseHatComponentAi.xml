@@ -2,6 +2,7 @@
     <comment>Component that manage SenseHat</comment>
     <import_port_type>App/SenseHat/SenseHatPort/SHTPortAi.xml</import_port_type>
     <import_port_type>App/SenseHat/SenseHatPort/LPSPortAi.xml</import_port_type>
+    <import_port_type>App/SenseHat/SenseHatPort/ICMPortAi.xml</import_port_type>
     <import_port_type>Svc/Sched/SchedPortAi.xml</import_port_type>
     <import_port_type>Svc/Ping/PingPortAi.xml</import_port_type>
     <ports>
@@ -13,6 +14,11 @@
         <port name="LPS" data_type="App::LPSPort" kind="output">
             <comment>
             Port for sending LPS data
+            </comment>
+        </port>
+        <port name="ICM" data_type="App::ICMPort" kind="output">
+            <comment>
+            Port for sending ICM data
             </comment>
         </port>
         <port name="Schedin" data_type="Sched" kind="sync_input">

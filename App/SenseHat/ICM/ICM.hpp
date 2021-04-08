@@ -24,6 +24,9 @@ namespace App {
       ~Icm(void);
 
       IMU_ST_ANGLES_DATA& getAngles();
+      IMU_ST_SENSOR_DATA& getGyro();
+      IMU_ST_SENSOR_DATA& getAccel();
+      IMU_ST_SENSOR_DATA& getMagn();
 
       private:
         int fd;

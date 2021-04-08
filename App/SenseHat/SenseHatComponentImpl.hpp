@@ -17,6 +17,8 @@
 #include "SHTC3/SHTC3.hpp"
 #include "LPS22/LPS22.hpp"
 #include "ICM/ICM.hpp"
+#include "App/SenseHat/SenseHatPort/Vector.hpp"
+#include "App/SenseHat/SenseHatPort/Angles.hpp"
 
 namespace App {
 
@@ -84,11 +86,14 @@ namespace App {
       F32 LPTemperature=0.0f;
       F32 humidity=0.0f;
       F32 pressure = 0.0f;
+      Angles angles;
+      Vector gyro, accel, magn;
+
       Shtc3 shtc3;
       Lps22 lps22;
       Icm icm;
 
-
+      
     };
 
 } // end namespace App
