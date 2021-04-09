@@ -19,7 +19,7 @@ echo "purging..."; yes | fprime-util purge
 set -e
 
 #generate the build folder for UT
-echo "generating..."; fprime-util generate
+echo "generating..."; fprime-util generate --ut
 
 echo "Searchign Unit Test on $base_directory..."
 #get directories that have test in them

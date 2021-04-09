@@ -15,6 +15,12 @@ fi
 cd $1
 echo "purging..."; yes | fprime-util purge
 
+#build project
+echo "building..."
+sudo fprime-util generate
+sudo fprime-util build
+
+
 #now exit on error
 set -e
 
