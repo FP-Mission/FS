@@ -26,7 +26,7 @@
 
 #include <App/SenseHat/SenseHatComponentImpl.hpp>
 #include <App/Thermometer/ThermometerComponentImpl.hpp>
-#include <Drv/LinuxI2cDriver/LinuxI2cDriverComponentImpl.hpp>
+#include <App/MotionTracking/MotionTrackingComponentImpl.hpp>
 
 void constructAppArchitecture(void);
 bool constructApp(bool dump, U32 port_number, char* hostname);
@@ -56,8 +56,7 @@ extern Ref::PingReceiverComponentImpl pingRcvr;
 extern Drv::SocketIpDriverComponentImpl socketIpDriver;
 
 extern App::SenseHatComponentImpl senseHat;
-extern Drv::LinuxI2cDriverComponentImpl linuxI2cDriver;
-
 extern App::ThermometerComponentImpl thermometer;
+extern App::MotionTrackingComponentImpl motionTracking;
 
 #endif

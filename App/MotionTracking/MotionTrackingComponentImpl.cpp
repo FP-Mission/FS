@@ -1,7 +1,7 @@
 // ======================================================================
-// \title  ThermometerComponentImpl.cpp
+// \title  MotionTrackingComponentImpl.cpp
 // \author root
-// \brief  cpp file for Thermometer component implementation class
+// \brief  cpp file for MotionTracking component implementation class
 //
 // \copyright
 // Copyright 2009-2015, by the California Institute of Technology.
@@ -11,7 +11,7 @@
 // ======================================================================
 
 
-#include <App/Thermometer/ThermometerComponentImpl.hpp>
+#include <App/MotionTracking/MotionTrackingComponentImpl.hpp>
 #include "Fw/Types/BasicTypes.hpp"
 
 namespace App {
@@ -20,25 +20,25 @@ namespace App {
   // Construction, initialization, and destruction
   // ----------------------------------------------------------------------
 
-  ThermometerComponentImpl ::
-    ThermometerComponentImpl(
+  MotionTrackingComponentImpl ::
+    MotionTrackingComponentImpl(
         const char *const compName
-    ) : ThermometerComponentBase(compName)
+    ) : MotionTrackingComponentBase(compName)
   {
 
   }
 
-  void ThermometerComponentImpl ::
+  void MotionTrackingComponentImpl ::
     init(
         const NATIVE_INT_TYPE queueDepth,
         const NATIVE_INT_TYPE instance
     )
   {
-    ThermometerComponentBase::init(queueDepth, instance);
+    MotionTrackingComponentBase::init(queueDepth, instance);
   }
 
-  ThermometerComponentImpl ::
-    ~ThermometerComponentImpl(void)
+  MotionTrackingComponentImpl ::
+    ~MotionTrackingComponentImpl(void)
   {
 
   }
@@ -47,18 +47,26 @@ namespace App {
   // Handler implementations for user-defined typed input ports
   // ----------------------------------------------------------------------
 
-  void ThermometerComponentImpl ::
+  void MotionTrackingComponentImpl ::
     DataIn_handler(
         const NATIVE_INT_TYPE portNum,
-        F32 temperature,
-        F32 humidity
+        App::Angles &angles,
+        App::Vector &gyro,
+        App::Vector &accel,
+        App::Vector &magn
     )
   {
-    tlmWrite_THERMOMETER_TEMP(temperature);
-    tlmWrite_THERMOMETER_HUMI(humidity);
+    AnglesTlm angleTlm(angles.getRoll(),angles.getPitch(),angles.getYaw());
+    VectorTlm gyroTlm(gyro.getX(), gyro.getY(), gyro.getZ());
+    VectorTlm accelTlm(accel.getX(), accel.getY(), accel.getZ());
+    VectorTlm magnTlm(magn.getX(), magn.getY(), magn.getZ());
+    tlmWrite_MOTIONTRACKING_ANGLES(angleTlm);
+    tlmWrite_MOTIONTRACKING_GYRO(gyroTlm);
+    tlmWrite_MOTIONTRACKING_ACCEL(accelTlm);
+    tlmWrite_MOTIONTRACKING_MAGN(magnTlm);
   }
 
-  void ThermometerComponentImpl ::
+  void MotionTrackingComponentImpl ::
     PingIn_handler(
         const NATIVE_INT_TYPE portNum,
         U32 key

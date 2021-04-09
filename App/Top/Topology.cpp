@@ -89,7 +89,8 @@ App::SenseHatComponentImpl senseHat(FW_OPTIONAL_NAME("senseHat"));
 
 App::ThermometerComponentImpl thermometer(FW_OPTIONAL_NAME("thermometer"));
 
-Drv::LinuxI2cDriverComponentImpl linuxI2cDriver(FW_OPTIONAL_NAME("linuxI2cDriver"));
+App::MotionTrackingComponentImpl motionTracking(FW_OPTIONAL_NAME("motionTracking"));
+
 
 const char* getHealthName(Fw::ObjBase& comp) {
    #if FW_OBJECT_NAMES == 1
@@ -152,7 +153,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
 
     senseHat.init(30,0);
     thermometer.init(30,0);
-    linuxI2cDriver.init(0);
+    motionTracking.init(30,0);
     // Connect rate groups to rate group driver
     constructAppArchitecture();
 
@@ -196,6 +197,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
         {3,5,getHealthName(fileManager)}, // 12
         {3,5,getHealthName(senseHat)}, // 13
         {3,5,getHealthName(thermometer)}, //14
+        {3,5,getHealthName(motionTracking)}, //15
     };
 
     // register ping table
@@ -227,13 +229,13 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
 
     thermometer.start(0, 100, 10*1024);
 
+    motionTracking.start(0, 100, 10*1024);
+
     // Initialize socket server if and only if there is a valid specification
     if (hostname != NULL && port_number != 0) {
         socketIpDriver.startSocketTask(100, 10 * 1024, hostname, port_number);
     }
 
-
-    linuxI2cDriver.open(&SHTC3);
     return false;
 }
 
@@ -253,6 +255,7 @@ void exitTasks(void) {
     pingRcvr.exit();
     senseHat.exit();
     thermometer.exit();
+    motionTracking.exit();
     // join the component threads with NULL pointers to free them
     (void) rateGroup1Comp.ActiveComponentBase::join(NULL);
     (void) rateGroup2Comp.ActiveComponentBase::join(NULL);
@@ -269,6 +272,7 @@ void exitTasks(void) {
     (void) pingRcvr.ActiveComponentBase::join(NULL);
     (void) senseHat.ActiveComponentBase::join(NULL);
     (void) thermometer.ActiveComponentBase::join(NULL);
+    (void) motionTracking.ActiveComponentBase::join(NULL);
     socketIpDriver.exitSocketTask();
     (void) socketIpDriver.joinSocketTask(NULL);
     cmdSeq.deallocateBuffer(seqMallocator);

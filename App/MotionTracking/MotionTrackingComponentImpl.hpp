@@ -1,7 +1,7 @@
 // ======================================================================
-// \title  ThermometerComponentImpl.hpp
+// \title  MotionTrackingComponentImpl.hpp
 // \author root
-// \brief  hpp file for Thermometer component implementation class
+// \brief  hpp file for MotionTracking component implementation class
 //
 // \copyright
 // Copyright 2009-2015, by the California Institute of Technology.
@@ -10,15 +10,15 @@
 //
 // ======================================================================
 
-#ifndef Thermometer_HPP
-#define Thermometer_HPP
+#ifndef MotionTracking_HPP
+#define MotionTracking_HPP
 
-#include "App/Thermometer/ThermometerComponentAc.hpp"
+#include "App/MotionTracking/MotionTrackingComponentAc.hpp"
 
 namespace App {
 
-  class ThermometerComponentImpl :
-    public ThermometerComponentBase
+  class MotionTrackingComponentImpl :
+    public MotionTrackingComponentBase
   {
 
     public:
@@ -27,22 +27,22 @@ namespace App {
       // Construction, initialization, and destruction
       // ----------------------------------------------------------------------
 
-      //! Construct object Thermometer
+      //! Construct object MotionTracking
       //!
-      ThermometerComponentImpl(
+      MotionTrackingComponentImpl(
           const char *const compName /*!< The component name*/
       );
 
-      //! Initialize object Thermometer
+      //! Initialize object MotionTracking
       //!
       void init(
           const NATIVE_INT_TYPE queueDepth, /*!< The queue depth*/
           const NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
       );
 
-      //! Destroy object Thermometer
+      //! Destroy object MotionTracking
       //!
-      ~ThermometerComponentImpl(void);
+      ~MotionTrackingComponentImpl(void);
 
     PRIVATE:
 
@@ -54,8 +54,10 @@ namespace App {
       //!
       void DataIn_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          F32 temperature, /*!< sht temperature*/
-          F32 humidity /*!< sht humidity*/
+          App::Angles &angles, 
+          App::Vector &gyro, 
+          App::Vector &accel, 
+          App::Vector &magn 
       );
 
       //! Handler implementation for PingIn

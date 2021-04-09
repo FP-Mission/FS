@@ -44,8 +44,9 @@ include("${FPRIME_FRAMEWORK_PATH}/cmake/FPrime-Code.cmake")
 add_fprime_subdirectory("${FPRIME_FRAMEWORK_PATH}/Ref/PingReceiver/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SenseHat/SenseHatPort/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SenseHat/")
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Thermometer/ThermometerType/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Thermometer/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/MotionTracking/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/MotionTracking/MotionTrackingType/")
 
 
 

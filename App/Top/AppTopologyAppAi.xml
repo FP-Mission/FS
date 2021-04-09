@@ -29,8 +29,9 @@
     <import_component_type>Svc/LinuxTimer/LinuxTimerComponentAi.xml</import_component_type>
     <import_component_type>Drv/SocketIpDriver/SocketIpDriverComponentAi.xml</import_component_type>
     <import_component_type>App/SenseHat/SenseHatComponentAi.xml</import_component_type>
-    <import_component_type>Drv/LinuxI2cDriver/LinuxI2cDriverComponentAi.xml</import_component_type>
     <import_component_type>App/Thermometer/ThermometerComponentAi.xml</import_component_type>
+    <import_component_type>App/MotionTracking/MotionTrackingComponentAi.xml</import_component_type>
+
 
 
 
@@ -68,8 +69,9 @@
     <instance namespace="Ref" name="pingRcvr" type="PingReceiver" base_id="41"  base_id_window="20" />
     <instance namespace="Drv" name="blockDrv" type="BlockDriver" base_id="481"  base_id_window="20" />
     <instance namespace="App" name="senseHat" type ="SenseHat" base_id="1050" base_id_window="10" />
-    <instance namespace="Drv" name="linuxI2cDriver" type="LinuxI2cDriver" base_id="1100" base_id_window="20" />
     <instance namespace="App" name="thermometer" type ="Thermometer" base_id="1150" base_id_window="10" />
+    <instance namespace="App" name="motionTracking" type ="MotionTracking" base_id="1200" base_id_window="10" />
+
 
 
 
@@ -745,8 +747,48 @@
      </connection>
 
     <connection name = "SenseHatThermometer">
+          <source component = "senseHat" port = "SHT" type = "App::SHTPort" num = "0"/>
+          <target component = "thermometer" port = "DataIn" type = "App::SHTPort" num = "0"/>
+     </connection>
+
+      <!-- MotionTracking -->
+
+   
+         <!-- Event Logger Binary Connections -->
+   
+   <connection name = "MotionTrackingLog">
+       <source component = "motionTracking" port = "Log" type = "Log" num = "0"/>
+        <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+   </connection>
+    
+       
+   <connection name = "MotionTrackingTextLog">
+       <source component = "motionTracking" port = "LogText" type = "LogText" num = "0"/>
+        <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
+   </connection>
+
+<connection name = "MotionTrackingTextTlm">
+       <source component = "motionTracking" port = "Tlm" type = "Tlm" num = "0"/>
+        <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
+   </connection>
+
+   <connection name = "MotionTrackingTime">
+       <source component = "motionTracking" port = "Time" type = "Time" num = "0"/>
+        <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+   </connection>
+
+     <connection name = "MotionTrackingPingSend">
+          <source component = "health" port = "PingSend" type = "Ping" num = "14"/>
+          <target component = "motionTracking" port = "PingIn" type = "Ping" num = "0"/>
+     </connection>
+     <connection name = "MotionTrackingPingRecv">
+          <source component = "motionTracking" port = "PingOut" type = "Ping" num = "0"/>
+          <target component = "health" port = "PingReturn" type = "Ping" num = "14"/>
+     </connection>
+
+    <connection name = "SenseHatMotionTracking">
           <source component = "senseHat" port = "ICM" type = "App::ICMPort" num = "0"/>
-          <target component = "thermometer" port = "DataIn" type = "App::ICMPort" num = "0"/>
+          <target component = "motionTracking" port = "DataIn" type = "App::ICMPort" num = "0"/>
      </connection>
 
 </assembly>

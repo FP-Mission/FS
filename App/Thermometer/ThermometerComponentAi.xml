@@ -1,14 +1,11 @@
 <component name="Thermometer" kind="active" namespace="App">
     <comment>Component that manage SenseHat</comment>
-    <import_port_type>App/SenseHat/SenseHatPort/ICMPortAi.xml</import_port_type>
+    <import_port_type>App/SenseHat/SenseHatPort/SHTPortAi.xml</import_port_type>
     <import_port_type>Svc/Ping/PingPortAi.xml</import_port_type>
-    <import_serializable_type>App/Thermometer/ThermometerType/AnglesSerializableAi.xml</import_serializable_type>
-    <import_serializable_type>App/Thermometer/ThermometerType/VectorSerializableAi.xml</import_serializable_type>
-
     <ports>
-        <port name="DataIn" data_type="App::ICMPort" kind="async_input">
+        <port name="DataIn" data_type="App::SHTPort" kind="async_input">
             <comment>
-            Port for sending ICM data
+            Port for sending SHT data
             </comment>
         </port>
                 <!-- Output ping port -->
@@ -25,24 +22,14 @@
         </port>
     </ports>
     <telemetry>
-        <channel id="0" name="THERMOMETER_ANGLES" data_type="App::AnglesTlm">
+        <channel id="0" name="THERMOMETER_TEMP" data_type="F32">
             <comment>
-                Angles values
+                Temperature values
             </comment>
         </channel>
-        <channel id="1" name="THERMOMETER_GYRO" data_type="App::VectorTlm">
+        <channel id="1" name="THERMOMETER_HUMI" data_type="F32">
             <comment>
-                Gyroscope values
-            </comment>
-        </channel>
-        <channel id="2" name="THERMOMETER_ACCEL" data_type="App::VectorTlm">
-            <comment>
-                Acceleration values
-            </comment>
-        </channel>
-        <channel id="3" name="THERMOMETER_MAGN" data_type="App::VectorTlm">
-            <comment>
-                Magnetique field values
+                Humidtiy values
             </comment>
         </channel>
     </telemetry>
