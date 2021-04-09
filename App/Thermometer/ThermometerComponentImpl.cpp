@@ -57,7 +57,13 @@ namespace App {
     )
   {
     AnglesTlm angleTlm(angles.getRoll(),angles.getPitch(),angles.getYaw());
+    VectorTlm gyroTlm(gyro.getX(), gyro.getY(), gyro.getZ());
+    VectorTlm accelTlm(accel.getX(), accel.getY(), accel.getZ());
+    VectorTlm magnTlm(magn.getX(), magn.getY(), magn.getZ());
     tlmWrite_THERMOMETER_ANGLES(angleTlm);
+    tlmWrite_THERMOMETER_GYRO(gyroTlm);
+    tlmWrite_THERMOMETER_ACCEL(accelTlm);
+    tlmWrite_THERMOMETER_MAGN(magnTlm);
   }
 
   void ThermometerComponentImpl ::

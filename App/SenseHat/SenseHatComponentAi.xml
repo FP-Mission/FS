@@ -21,7 +21,7 @@
             Port for sending ICM data
             </comment>
         </port>
-        <port name="Schedin" data_type="Sched" kind="sync_input">
+        <port name="Schedin" data_type="Sched" kind="async_input">
             <comment>
             The rate groupe scheduler input
             </comment>

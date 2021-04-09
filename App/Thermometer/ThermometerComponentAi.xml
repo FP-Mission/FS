@@ -30,6 +30,21 @@
                 Angles values
             </comment>
         </channel>
+        <channel id="1" name="THERMOMETER_GYRO" data_type="App::VectorTlm">
+            <comment>
+                Gyroscope values
+            </comment>
+        </channel>
+        <channel id="2" name="THERMOMETER_ACCEL" data_type="App::VectorTlm">
+            <comment>
+                Acceleration values
+            </comment>
+        </channel>
+        <channel id="3" name="THERMOMETER_MAGN" data_type="App::VectorTlm">
+            <comment>
+                Magnetique field values
+            </comment>
+        </channel>
     </telemetry>
     <events>
         <event id="0" name="MS_DATA" severity="ACTIVITY_LO" format_string="Data Receive from Sense Hat"  >
