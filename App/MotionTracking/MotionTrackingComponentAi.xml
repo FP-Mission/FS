@@ -1,5 +1,5 @@
 <component name="MotionTracking" kind="active" namespace="App">
-    <comment>Component that manage SenseHat</comment>
+    <comment>Component that manage Motion Tracking</comment>
     <import_port_type>App/SenseHat/SenseHatPort/ICMPortAi.xml</import_port_type>
     <import_port_type>Svc/Ping/PingPortAi.xml</import_port_type>
     <import_serializable_type>App/MotionTracking/MotionTrackingType/AnglesSerializableAi.xml</import_serializable_type>

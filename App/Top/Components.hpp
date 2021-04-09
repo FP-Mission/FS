@@ -27,6 +27,7 @@
 #include <App/SenseHat/SenseHatComponentImpl.hpp>
 #include <App/Thermometer/ThermometerComponentImpl.hpp>
 #include <App/MotionTracking/MotionTrackingComponentImpl.hpp>
+#include <App/Barometer/BarometerComponentImpl.hpp>
 
 void constructAppArchitecture(void);
 bool constructApp(bool dump, U32 port_number, char* hostname);
@@ -58,5 +59,6 @@ extern Drv::SocketIpDriverComponentImpl socketIpDriver;
 extern App::SenseHatComponentImpl senseHat;
 extern App::ThermometerComponentImpl thermometer;
 extern App::MotionTrackingComponentImpl motionTracking;
+extern App::BarometerComponentImpl barometer;
 
 #endif

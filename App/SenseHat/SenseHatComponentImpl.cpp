@@ -70,7 +70,7 @@ namespace App {
 
     ICM_out(0,angles, gyro, accel, magn);
     SHT_out(0,shtc3.getTemperatureValue(),shtc3.getHumidityValue());
-    //LPS_out(0,lps22.getTemperatureValue(),lps22.getPressureValue());
+    LPS_out(0,lps22.getTemperatureValue(),lps22.getPressureValue());
 
   }
 

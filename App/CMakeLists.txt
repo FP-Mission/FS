@@ -47,6 +47,7 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SenseHat/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Thermometer/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/MotionTracking/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/MotionTracking/MotionTrackingType/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Barometer/")
 
 
 

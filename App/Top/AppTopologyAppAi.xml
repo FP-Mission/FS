@@ -31,6 +31,8 @@
     <import_component_type>App/SenseHat/SenseHatComponentAi.xml</import_component_type>
     <import_component_type>App/Thermometer/ThermometerComponentAi.xml</import_component_type>
     <import_component_type>App/MotionTracking/MotionTrackingComponentAi.xml</import_component_type>
+    <import_component_type>App/Barometer/BarometerComponentAi.xml</import_component_type>
+
 
 
 
@@ -71,6 +73,8 @@
     <instance namespace="App" name="senseHat" type ="SenseHat" base_id="1050" base_id_window="10" />
     <instance namespace="App" name="thermometer" type ="Thermometer" base_id="1150" base_id_window="10" />
     <instance namespace="App" name="motionTracking" type ="MotionTracking" base_id="1200" base_id_window="10" />
+    <instance namespace="App" name="barometer" type ="Barometer" base_id="1250" base_id_window="10" />
+
 
 
 
@@ -789,6 +793,46 @@
     <connection name = "SenseHatMotionTracking">
           <source component = "senseHat" port = "ICM" type = "App::ICMPort" num = "0"/>
           <target component = "motionTracking" port = "DataIn" type = "App::ICMPort" num = "0"/>
+     </connection>
+
+  <!-- Barometer -->
+
+   
+         <!-- Event Logger Binary Connections -->
+   
+   <connection name = "BarometerLog">
+       <source component = "barometer" port = "Log" type = "Log" num = "0"/>
+        <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+   </connection>
+    
+       
+   <connection name = "BarometerTextLog">
+       <source component = "barometer" port = "LogText" type = "LogText" num = "0"/>
+        <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
+   </connection>
+
+<connection name = "BarometerTextTlm">
+       <source component = "barometer" port = "Tlm" type = "Tlm" num = "0"/>
+        <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
+   </connection>
+
+   <connection name = "BarometerTime">
+       <source component = "barometer" port = "Time" type = "Time" num = "0"/>
+        <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+   </connection>
+
+     <connection name = "BarometerPingSend">
+          <source component = "health" port = "PingSend" type = "Ping" num = "16"/>
+          <target component = "barometer" port = "PingIn" type = "Ping" num = "0"/>
+     </connection>
+     <connection name = "BarometerPingRecv">
+          <source component = "barometer" port = "PingOut" type = "Ping" num = "0"/>
+          <target component = "health" port = "PingReturn" type = "Ping" num = "16"/>
+     </connection>
+
+    <connection name = "SenseHatBarometer">
+          <source component = "senseHat" port = "LPS" type = "App::LPSPort" num = "0"/>
+          <target component = "barometer" port = "DataIn" type = "App::LPSPort" num = "0"/>
      </connection>
 
 </assembly>

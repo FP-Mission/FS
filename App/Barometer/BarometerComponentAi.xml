@@ -1,9 +1,9 @@
-<component name="Thermometer" kind="active" namespace="App">
-    <comment>Component that manage Thermometer</comment>
-    <import_port_type>App/SenseHat/SenseHatPort/SHTPortAi.xml</import_port_type>
+<component name="Barometer" kind="active" namespace="App">
+    <comment>Component that manage Barometer</comment>
+    <import_port_type>App/SenseHat/SenseHatPort/LPSPortAi.xml</import_port_type>
     <import_port_type>Svc/Ping/PingPortAi.xml</import_port_type>
     <ports>
-        <port name="DataIn" data_type="App::SHTPort" kind="async_input">
+        <port name="DataIn" data_type="App::LPSPort" kind="async_input">
             <comment>
             Port for sending SHT data
             </comment>
@@ -22,14 +22,14 @@
         </port>
     </ports>
     <telemetry>
-        <channel id="0" name="THERMOMETER_TEMP" data_type="F32">
+        <channel id="0" name="BAROMETER_TEMP" data_type="F32">
             <comment>
                 Temperature values
             </comment>
         </channel>
-        <channel id="1" name="THERMOMETER_HUMI" data_type="F32">
+        <channel id="1" name="BAROMETER_PRESS" data_type="F32">
             <comment>
-                Humidtiy values
+                Pressure values
             </comment>
         </channel>
     </telemetry>
