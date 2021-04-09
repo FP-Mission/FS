@@ -105,6 +105,12 @@ jobs:
           chmod +x ./scripts-ci/init-venv.sh
           ./scripts-ci/init-venv.sh
 
+        # Build the project (project script)
+      - name: Build the project
+        run: | 
+          chmod +x ./scripts-ci/build.sh
+          ./scripts-ci/build.sh ${{env.path}}    
+
       # Build the unit tests and check them one by one in the app
       - name: Build and run the unit test
         run: |

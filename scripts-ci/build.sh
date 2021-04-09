@@ -10,6 +10,12 @@ fi
 #Activate the python environnement
 . ./fprime-venv/bin/activate
 
+#Install Wiring pi
+sudo git clone https://github.com/WiringPi/WiringPi.git
+cd WiringPi
+./build
+cd ..
+
 #purge an old app if it exists
 cd $1
 echo "purging..."; yes | fprime-util purge $2
