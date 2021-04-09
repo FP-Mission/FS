@@ -778,12 +778,12 @@
    </connection>
 
      <connection name = "MotionTrackingPingSend">
-          <source component = "health" port = "PingSend" type = "Ping" num = "14"/>
+          <source component = "health" port = "PingSend" type = "Ping" num = "15"/>
           <target component = "motionTracking" port = "PingIn" type = "Ping" num = "0"/>
      </connection>
      <connection name = "MotionTrackingPingRecv">
           <source component = "motionTracking" port = "PingOut" type = "Ping" num = "0"/>
-          <target component = "health" port = "PingReturn" type = "Ping" num = "14"/>
+          <target component = "health" port = "PingReturn" type = "Ping" num = "15"/>
      </connection>
 
     <connection name = "SenseHatMotionTracking">
