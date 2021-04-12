@@ -752,18 +752,18 @@
     
      <!-- App Connections -->
           <!-- Serial Driver 1 - FlexTrak -->
-    <connection name="serialDriverRecv">
+     <connection name="serialDriverRecv">
         <source component="serialDriver1" port="serialRecv" type="SerialRead" num="0"/>
         <target component="flexTrak" port="serialRecv" type="SerialRead" num="0"/>
+     </connection>
+     <connection name = "serialDriverBuff">
+        <source component = "flexTrak" port = "serialBufferOut" type = "BufferSend" num = "0"/>
+        <target component = "serialDriver1" port = "readBufferSend" type = "BufferSend" num = "0"/>
     </connection>
-    <connection name="serialDriverSend">
-        <source component="flexTrak" port="serialSend" type="SerialWrite" num="0"/>
-        <target component="serialDriver1" port="serialSend" type="SerialWrite" num="0"/>
-    </connection>
-    <connection name="serialDriverSend">
-        <source component="flexTrak" port="serialSend" type="SerialWrite" num="0"/>
-        <target component="serialDriver1" port="serialSend" type="SerialWrite" num="0"/>
-    </connection>
+     <connection name="serialDriverSend">
+          <source component="flexTrak" port="serialSend" type="SerialWrite" num="0"/>
+          <target component="serialDriver1" port="serialSend" type="SerialWrite" num="0"/>
+     </connection>
           <!-- FlexTrak - Sensors -->
     <connection name="flexTrakInternalTemp">
         <source component="flexTrak" port="internalTemp" type="Temperature" num="0"/>
@@ -778,6 +778,7 @@
         <target component="eps" port="batteryVoltage" type="BatteryLevel" num="0"/>
     </connection>
         <!-- GPS -->
+    <!--
     <connection name="gpsPredictor">
         <source component="gps" port="position" type="Position" num="0"/>
         <target component="predictor" port="position" type="Position" num="0"/>
@@ -786,5 +787,6 @@
         <source component="gps" port="position" type="Position" num="1"/>
         <target component="piCamera" port="position" type="Position" num="0"/>
     </connection> 
+    -->
     
 </assembly>

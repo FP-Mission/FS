@@ -27,6 +27,9 @@
         </port>
         <port name="sendData" data_type="Fw::BufferSend" kind="sync_input" max_number="1">
         </port>
+        <!-- Used at startup to supply buffers to the serial driver -->
+        <port name="serialBufferOut" data_type="Fw::BufferSend"  kind="output"  max_number="1">
+        </port>
 
         <!--
         <port name="pictureTaken" data_type="U8" kind="async_input" max_number="1">

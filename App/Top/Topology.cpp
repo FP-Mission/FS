@@ -89,6 +89,7 @@ const char* getHealthName(Fw::ObjBase& comp) {
 }
 
 bool constructApp(bool dump, U32 port_number, char* hostname) {
+    bool flextrak_connected = false;
 #if FW_PORT_TRACING
     Fw::PortBase::setTrace(false);
 #endif
@@ -193,6 +194,18 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     health.setPingEntries(pingEntries, FW_NUM_ARRAY_ELEMENTS(pingEntries),
                           0x123);
 
+    if (!serialDriver1.open("/dev/ttyAMA0",
+                   Drv::LinuxSerialDriverComponentImpl::BAUD_38400,
+                   Drv::LinuxSerialDriverComponentImpl::NO_FLOW, 
+                   Drv::LinuxSerialDriverComponentImpl::PARITY_NONE,
+                   true))
+    {
+        Fw::Logger::logMsg("[ERROR] Failed to open FlexTrak UART\n");
+    } else {
+        Fw::Logger::logMsg("[INFO] Opened FlexTrak UART\n");
+        flextrak_connected = true;
+    }
+
     // Active component startup
     // start rate groups
     rateGroup1.start(0, 120, 10 * 1024);
@@ -212,8 +225,12 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     pingRcvr.start(0, 100, 10 * 1024);
 
     // App
-    eps.start(0, 100, 10 * 1024);
     flexTrak.start(0, 100, 10 * 1024);
+    if (flextrak_connected) {
+        serialDriver1.startReadThread(90, 20 * 1024);
+    }
+
+    eps.start(0, 100, 10 * 1024);
     piCamera.start(0, 100, 10 * 1024);
     predictor.start(0, 100, 10 * 1024);
     rockBlock.start(0, 100, 10 * 1024);
@@ -224,11 +241,8 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
         socketIpDriver.startSocketTask(100, 10 * 1024, hostname, port_number);
     }
 
-    serialDriver1.open("/dev/ttyAMA0",
-                       Drv::LinuxSerialDriverComponentImpl::BAUD_38400,
-                       Drv::LinuxSerialDriverComponentImpl::NO_FLOW,
-                       Drv::LinuxSerialDriverComponentImpl::PARITY_NONE, false);
-    serialDriver1.startReadThread(100, 10 * 1024);
+
+
 
     return false;
 }

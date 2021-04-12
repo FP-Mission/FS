@@ -15,6 +15,9 @@
 
 #include "App/FlexTrak/FlexTrakComponentAc.hpp"
 
+#define NUM_UART_BUFFERS 20
+#define UART_READ_BUFF_SIZE 1024
+
 namespace App {
 
 class FlexTrakComponentImpl : public FlexTrakComponentBase {
@@ -33,6 +36,10 @@ class FlexTrakComponentImpl : public FlexTrakComponentBase {
     void init(const NATIVE_INT_TYPE queueDepth,  /*!< The queue depth*/
               const NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
     );
+
+    //! Preamble
+    //!
+    void preamble(void);
 
     //! Destroy object FlexTrak
     //!
@@ -77,6 +84,9 @@ class FlexTrakComponentImpl : public FlexTrakComponentBase {
             const FwOpcodeType opCode, /*!< The opcode*/
             const U32 cmdSeq           /*!< The command sequence number*/
         );
+
+    Fw::Buffer m_recvBuffers[NUM_UART_BUFFERS];
+    BYTE m_uartBuffers[NUM_UART_BUFFERS][UART_READ_BUFF_SIZE];
 };
 
 }  // end namespace App
