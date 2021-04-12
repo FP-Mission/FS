@@ -760,6 +760,10 @@
         <source component="flexTrak" port="serialSend" type="SerialWrite" num="0"/>
         <target component="serialDriver1" port="serialSend" type="SerialWrite" num="0"/>
     </connection>
+    <connection name="serialDriverSend">
+        <source component="flexTrak" port="serialSend" type="SerialWrite" num="0"/>
+        <target component="serialDriver1" port="serialSend" type="SerialWrite" num="0"/>
+    </connection>
           <!-- FlexTrak - Sensors -->
     <connection name="flexTrakInternalTemp">
         <source component="flexTrak" port="internalTemp" type="Temperature" num="0"/>
