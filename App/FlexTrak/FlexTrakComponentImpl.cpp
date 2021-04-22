@@ -98,11 +98,27 @@ void FlexTrakComponentImpl ::serialRecv_handler(const NATIVE_INT_TYPE portNum,
 
 void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
                                               Fw::Buffer &fwBuffer) {
-    printf("Data %u\n", fwBuffer.getSize());
-    char text[] = "~CV\r\n";
+    char *pointer = reinterpret_cast<char *>(fwBuffer.getData());
+
+    printf("sendData_handler buffer size %u\n", fwBuffer.getSize());
+    //
+    char data[30];
+    data[0] = '~';
+    data[1] = 'L';
+    data[2] = 'D';
+    U8 i = 0;
+    for (i; i < 26; i++) {
+        data[3 + i] = *(pointer + i);
+    }
+    data[29] = '\r';
+    //*/
+    //char data[] = "~LMCoucou\r"; // 10
+    //char data[] = "~CV\r";  // 4
+    U8 dataSize = 30;
+
     Fw::Buffer buf;
-    buf.setData((U8*)text);
-    buf.setSize(strlen(text));
+    buf.setData((U8*)data);
+    buf.setSize(dataSize);
 
     this->serialSend_out(0, buf);
 }
