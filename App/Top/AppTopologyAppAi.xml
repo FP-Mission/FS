@@ -42,39 +42,39 @@
     <!-- ################################################################ -->
 
     <!-- Core C&DH Components -->
-    <instance namespace="Svc" name="fatalHandler"   type="FatalHandler"         base_id="1"     base_id_window="20" />
-    <instance namespace="Svc" name="chanTlm"        type="TlmChan"              base_id="21"    base_id_window="20" />
-    <instance namespace="Svc" name="cmdDisp"        type="CommandDispatcher"    base_id="41"    base_id_window="20" />
-    <instance namespace="Svc" name="prmDb"          type="PrmDb"                base_id="61"    base_id_window="20" />
-    <instance namespace="Svc" name="fatalAdapter"   type="AssertFatalAdapter"   base_id="81"    base_id_window="20" />
-    <instance namespace="Svc" name="health"         type="Health"               base_id="101"   base_id_window="20" />
-    <instance namespace="Svc" name="groundIf"       type="GroundInterface"      base_id="121"   base_id_window="20" />
-    <instance namespace="Svc" name="eventLogger"    type="ActiveLogger"         base_id="141"   base_id_window="20" />
-    <instance namespace="Svc" name="linuxTime"      type="Time"                 base_id="161"   base_id_window="20" />
-    <instance namespace="Svc" name="textLogger"     type="PassiveTextLogger"    base_id="181"   base_id_window="20" />
-    <instance namespace="Svc" name="cmdSeq"         type="CmdSequencer"         base_id="201"   base_id_window="23" />
+    <instance namespace="Svc" name="fatalHandler"   type="FatalHandler"         base_id="1"     base_id_window="0" />
+    <instance namespace="Svc" name="chanTlm"        type="TlmChan"              base_id="1"    base_id_window="0" />
+    <instance namespace="Svc" name="cmdDisp"        type="CommandDispatcher"    base_id="1"    base_id_window="10" />
+    <instance namespace="Svc" name="prmDb"          type="PrmDb"                base_id="11"    base_id_window="8" />
+    <instance namespace="Svc" name="fatalAdapter"   type="AssertFatalAdapter"   base_id="19"    base_id_window="8" />
+    <instance namespace="Svc" name="health"         type="Health"               base_id="27"   base_id_window="8" />
+    <instance namespace="Svc" name="groundIf"       type="GroundInterface"      base_id="35"   base_id_window="1" />
+    <instance namespace="Svc" name="eventLogger"    type="ActiveLogger"         base_id="36"   base_id_window="5" />
+    <instance namespace="Svc" name="linuxTime"      type="Time"                 base_id="41"   base_id_window="0" />
+    <instance namespace="Svc" name="textLogger"     type="PassiveTextLogger"    base_id="41"   base_id_window="0" />
+    <instance namespace="Svc" name="cmdSeq"         type="CmdSequencer"         base_id="41"   base_id_window="23" />
 
     <!-- Rate Group Components -->
-    <instance namespace="Svc" name="rateGroupDrv"   type="RateGroupDriver"      base_id="300"   base_id_window="20" />
-    <instance namespace="Svc" name="rateGroup1"     type="ActiveRateGroup"      base_id="320"   base_id_window="20" />
-    <instance namespace="Svc" name="rateGroup2"     type="ActiveRateGroup"      base_id="340"   base_id_window="20" />
-    <instance namespace="Svc" name="rateGroup3"     type="ActiveRateGroup"      base_id="360"   base_id_window="20" />
+    <instance namespace="Svc" name="rateGroupDrv"   type="RateGroupDriver"      base_id="64"   base_id_window="0" />
+    <instance namespace="Svc" name="rateGroup1"     type="ActiveRateGroup"      base_id="64"   base_id_window="2" />
+    <instance namespace="Svc" name="rateGroup2"     type="ActiveRateGroup"      base_id="66"   base_id_window="2" />
+    <instance namespace="Svc" name="rateGroup3"     type="ActiveRateGroup"      base_id="68"   base_id_window="2" />
 
     <!-- Socket IP Communications driver -->
-    <instance namespace="Drv" name="socketIpDriver" type="SocketIpDriver"       base_id="400"   base_id_window="20" />
+    <instance namespace="Drv" name="socketIpDriver" type="SocketIpDriver"       base_id="70"   base_id_window="0" />
 
     <!-- Reference Example Components -->
-    <instance namespace="Ref" name="pingRcvr"       type="PingReceiver"         base_id="500"   base_id_window="20" />
-    <instance namespace="Drv" name="blockDrv"       type="BlockDriver"          base_id="520"   base_id_window="20" />
-    <instance namespace="Drv" name="serialDriver1"  type="LinuxSerialDriver"    base_id="540"   base_id_window="20" />
+    <instance namespace="Ref" name="pingRcvr"       type="PingReceiver"         base_id="70"   base_id_window="2" />
+    <instance namespace="Drv" name="blockDrv"       type="BlockDriver"          base_id="72"   base_id_window="1" />
+    <instance namespace="Drv" name="serialDriver1"  type="LinuxSerialDriver"    base_id="73"   base_id_window="7" />
 
-    <instance namespace="App" name="eps"                type="Eps"                  base_id="600"   base_id_window="20" />
-    <instance namespace="App" name="flexTrak"           type="FlexTrak"             base_id="620"   base_id_window="20" />
-    <instance namespace="App" name="gps"                type="Gps"                  base_id="640"   base_id_window="20" />
-    <instance namespace="App" name="piCamera"           type="PiCamera"             base_id="660"   base_id_window="20" />
-    <instance namespace="App" name="predictor"          type="Predictor"            base_id="680"   base_id_window="20" />
-    <instance namespace="App" name="rockBlock"          type="RockBlock"            base_id="700"   base_id_window="20" />
-    <instance namespace="App" name="temperatureProbes"  type="TemperatureProbes"    base_id="720"   base_id_window="20" />
+    <instance namespace="App" name="eps"                type="Eps"                  base_id="80"   base_id_window="10" />
+    <instance namespace="App" name="flexTrak"           type="FlexTrak"             base_id="90"   base_id_window="10" />
+    <instance namespace="App" name="gps"                type="Gps"                  base_id="100"   base_id_window="10" />
+    <instance namespace="App" name="piCamera"           type="PiCamera"             base_id="110"   base_id_window="10" />
+    <instance namespace="App" name="predictor"          type="Predictor"            base_id="120"   base_id_window="10" />
+    <instance namespace="App" name="rockBlock"          type="RockBlock"            base_id="130"   base_id_window="10" />
+    <instance namespace="App" name="temperatureProbes"  type="TemperatureProbes"    base_id="140"   base_id_window="10" />
 
     <!-- ########### -->
     <!-- Connections -->
@@ -85,11 +85,17 @@
         <source component="socketIpDriver" port="recv" type="Fw::BufferSend" num="0"/>
         <target component="groundIf" port="readCallback" type="Fw::BufferSend" num="0"/>
     </connection>
+    <!--
     <connection name="CommunicationSend">
         <source component="groundIf" port="write" type="Fw::BufferSend" num="0"/>
         <target component="socketIpDriver" port="send" type="Fw::BufferSend" num="0"/>
+     </connection>
+     -->
+     <!-- Send data to FlexTrak -->
+     <connection name="CommunicationSend">
+        <source component="groundIf" port="write" type="Fw::BufferSend" num="0"/>
+        <target component="flexTrak" port="sendData" type="Fw::BufferSend" num="0"/>
     </connection>
-    
     <!-- Command Registration/Dispatch/Reply Connections -->
    
         <!-- Command Registration Ports - Registration port number must match dispatch port for each component -->
