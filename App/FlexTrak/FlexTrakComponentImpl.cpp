@@ -11,8 +11,8 @@
 // ======================================================================
 
 #include <App/FlexTrak/FlexTrakComponentImpl.hpp>
-#include "Fw/Logger/Logger.hpp"
 
+#include "Fw/Logger/Logger.hpp"
 #include "Fw/Types/BasicTypes.hpp"
 
 #define DEBUG_PRINT(x, ...)   \
@@ -42,7 +42,7 @@ void FlexTrakComponentImpl ::init(const NATIVE_INT_TYPE queueDepth,
 //        system runs at steady-state. This allows for initialization code that
 //        invokes working ports.
 void FlexTrakComponentImpl::preamble(void) {
-    for (NATIVE_INT_TYPE buffer = 0; buffer < NUM_UART_BUFFERS; buffer++) {
+    for (NATIVE_INT_TYPE buffer = 0; buffer < DR_MAX_NUM_BUFFERS; buffer++) {
         // Assign the raw data to the buffer. Make sure to include the side of
         // the region assigned.
         this->m_recvBuffers[buffer].setData(this->m_uartBuffers[buffer]);
@@ -86,16 +86,10 @@ void FlexTrakComponentImpl ::serialRecv_handler(const NATIVE_INT_TYPE portNum,
         this->serialBufferOut_out(0, serBuffer);
         return;
     }
-    // If not enough data is available for a full messsage, return the buffer
-    // and abort.
-    else if (buffsize < 24) {
-        // Return buffer (see above note)
-        serBuffer.setSize(UART_READ_BUFF_SIZE);
-        this->serialBufferOut_out(0, serBuffer);
-        return;
-    }
-
-    printf("[FlexTrak] Received buffer: %s\n", pointer);
+    char text[100];
+    memcpy(text, pointer, buffsize);
+    text[buffsize] = '\n';
+    printf("[FlexTrak] Received buffer (%u): %s\n", buffsize, pointer);
 
     // Return buffer (see above note)
     serBuffer.setSize(UART_READ_BUFF_SIZE);

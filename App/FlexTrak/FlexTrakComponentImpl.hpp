@@ -14,9 +14,9 @@
 #define FlexTrak_HPP
 
 #include "App/FlexTrak/FlexTrakComponentAc.hpp"
+#include "fprime/config/LinuxSerialDriverComponentImplCfg.hpp"
 
-#define NUM_UART_BUFFERS 20
-#define UART_READ_BUFF_SIZE 1024
+#define UART_READ_BUFF_SIZE 500
 
 namespace App {
 
@@ -85,8 +85,8 @@ class FlexTrakComponentImpl : public FlexTrakComponentBase {
             const U32 cmdSeq           /*!< The command sequence number*/
         );
 
-    Fw::Buffer m_recvBuffers[NUM_UART_BUFFERS];
-    BYTE m_uartBuffers[NUM_UART_BUFFERS][UART_READ_BUFF_SIZE];
+    Fw::Buffer m_recvBuffers[DR_MAX_NUM_BUFFERS];
+    BYTE m_uartBuffers[DR_MAX_NUM_BUFFERS][UART_READ_BUFF_SIZE];
 };
 
 }  // end namespace App
