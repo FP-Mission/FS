@@ -228,6 +228,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     flexTrak.start(0, 100, 10 * 1024);
     if (flextrak_connected) {
         serialDriver1.startReadThread(90, 20 * 1024);
+        flexTrak.configureHardware();
     }
 
     eps.start(0, 100, 10 * 1024);

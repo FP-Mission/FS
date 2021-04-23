@@ -16,6 +16,10 @@
 #include "App/FlexTrak/FlexTrakComponentAc.hpp"
 #include "fprime/config/LinuxSerialDriverComponentImplCfg.hpp"
 
+#include <string>
+#include <sstream>
+#include <iostream>
+
 #define UART_READ_BUFF_SIZE 500
 
 namespace App {
@@ -44,6 +48,8 @@ class FlexTrakComponentImpl : public FlexTrakComponentBase {
     //! Destroy object FlexTrak
     //!
     ~FlexTrakComponentImpl(void);
+    
+    void configureHardware();
 
     PRIVATE :
 
@@ -71,6 +77,10 @@ class FlexTrakComponentImpl : public FlexTrakComponentBase {
     void sendData_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
                           Fw::Buffer &fwBuffer);
 
+    void sendFlexTrak(Fw::Buffer &buffer);
+    void sendFlexTrakCommand(std::string command);
+
+
     PRIVATE :
 
         // ----------------------------------------------------------------------
@@ -87,6 +97,18 @@ class FlexTrakComponentImpl : public FlexTrakComponentBase {
 
     Fw::Buffer m_recvBuffers[DR_MAX_NUM_BUFFERS];
     BYTE m_uartBuffers[DR_MAX_NUM_BUFFERS][UART_READ_BUFF_SIZE];
+
+    struct LoRaConfig {
+        U8 implicit;
+        U8 coding;
+        U8 bandwidth;
+        U8 spreading;
+        U8 lowopt;
+    };
+
+    LoRaConfig modes[2];
+    U8 mode;
+    F32 frequency;
 };
 
 }  // end namespace App

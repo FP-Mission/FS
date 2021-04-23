@@ -32,6 +32,31 @@ FlexTrakComponentImpl ::FlexTrakComponentImpl(const char *const compName)
 void FlexTrakComponentImpl ::init(const NATIVE_INT_TYPE queueDepth,
                                   const NATIVE_INT_TYPE instance) {
     FlexTrakComponentBase::init(queueDepth, instance);
+
+    /*/ Modes
+    [{'implicit': 0, 'coding': 8, 'bandwidth': 3, 'spreading': 11, 'lowopt': 1},  # 0
+    {'implicit': 1, 'coding': 5, 'bandwidth': 3, 'spreading':  6, 'lowopt': 0},  # 1
+    {'implicit': 0, 'coding': 8, 'bandwidth': 6, 'spreading':  8, 'lowopt': 0},  # 2
+    {'implicit': 0, 'coding': 6, 'bandwidth': 8, 'spreading':  7, 'lowopt': 0},  # 3
+    {'implicit': 1, 'coding': 5, 'bandwidth': 8, 'spreading':  6, 'lowopt': 0},  # 4
+    {'implicit': 0, 'coding': 8, 'bandwidth': 5, 'spreading': 11, 'lowopt': 0},  # 5
+    {'implicit': 1, 'coding': 5, 'bandwidth': 5, 'spreading':  6, 'lowopt': 0}]  # 6
+    //*/
+    mode = 0;
+    frequency = 434.225;
+
+    modes[0].implicit = 0;
+    modes[0].coding = 8;
+    modes[0].bandwidth = 3;
+    modes[0].spreading = 11;
+    modes[0].lowopt = 1;
+
+    modes[1].implicit = 1;
+    modes[1].coding = 5;
+    modes[1].bandwidth = 3;
+    modes[1].spreading = 6;
+    modes[1].lowopt = 0;
+
 }
 
 // Step 0: The linux serial driver keeps its storage externally. This means that
@@ -101,7 +126,7 @@ void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
     char *pointer = reinterpret_cast<char *>(fwBuffer.getData());
 
     printf("sendData_handler buffer size %u\n", fwBuffer.getSize());
-    //
+    /*/
     char data[30];
     data[0] = '~';
     data[1] = 'L';
@@ -111,16 +136,62 @@ void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
         data[3 + i] = *(pointer + i);
     }
     data[29] = '\r';
-    //*/
-    //char data[] = "~LMCoucou\r"; // 10
-    //char data[] = "~CV\r";  // 4
-    U8 dataSize = 30;
 
-    Fw::Buffer buf;
+    U8 dataSize = 10;
+
+    Fw::Buffer buf; 
     buf.setData((U8*)data);
     buf.setSize(dataSize);
+    
+    sendFlexTrak(buf);
+    //*/
 
-    this->serialSend_out(0, buf);
+    // Coucou test
+    static U8 cnt = 0;
+    char data[100];
+    sprintf(data, "LMCoucou%u", cnt);
+    cnt++;
+    sendFlexTrakCommand(data);
+    //*/
+
+    //char data[] = "~CV\r";  // 4
+}
+
+void FlexTrakComponentImpl:: sendFlexTrak(Fw::Buffer &buffer) {
+    this->serialSend_out(0, buffer);
+}
+
+void FlexTrakComponentImpl:: sendFlexTrakCommand(std::string command) {
+    char commandToSend[30]; 
+    Fw::Buffer buf;
+
+    sprintf(commandToSend, "~%s\r", command.c_str());
+    buf.setData((U8*)commandToSend);
+    buf.setSize(command.size() + 2);
+    sendFlexTrak(buf);
+}
+
+void FlexTrakComponentImpl:: configureHardware() {
+    char temp[20]; 
+    // ensure array is big enough to contain command, parameters and additional 
+    // '\r' added by sendFlexTrakCommand()
+    sendFlexTrakCommand("CH0"); // Low priority mode
+    sendFlexTrakCommand("CV");  // Ask version
+    sendFlexTrakCommand("CPFP1");   // Set payload name to FP1
+    // Set LoRa parameters
+    sprintf(temp, "LI%u", modes[mode].implicit);
+    sendFlexTrakCommand(temp);
+    sprintf(temp, "LE%u", modes[mode].coding);
+    sendFlexTrakCommand(temp);
+    sprintf(temp, "LB%u", modes[mode].bandwidth);
+    sendFlexTrakCommand(temp);
+    sprintf(temp, "LS%u", modes[mode].spreading);
+    sendFlexTrakCommand(temp);
+    sprintf(temp, "LL%u", modes[mode].lowopt);
+    sendFlexTrakCommand(temp);
+    sprintf(temp, "LF%.3f", frequency);
+    sendFlexTrakCommand(temp);
+    sendFlexTrakCommand("CS");  // Save settings
 }
 
 // ----------------------------------------------------------------------
