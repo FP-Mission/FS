@@ -114,7 +114,7 @@ void FlexTrakComponentImpl ::serialRecv_handler(const NATIVE_INT_TYPE portNum,
     char text[100];
     memcpy(text, pointer, buffsize);
     text[buffsize] = '\n';
-    printf("[FlexTrak] Received buffer (%u): %s\n", buffsize, pointer);
+    DEBUG_PRINT("[FlexTrak] Rx (%u): %s\n", buffsize, pointer);
 
     // Return buffer (see above note)
     serBuffer.setSize(UART_READ_BUFF_SIZE);
@@ -125,28 +125,34 @@ void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
                                               Fw::Buffer &fwBuffer) {
     char *pointer = reinterpret_cast<char *>(fwBuffer.getData());
 
-    printf("sendData_handler buffer size %u\n", fwBuffer.getSize());
-    /*/
+    U8 packetSize = fwBuffer.getSize();
+    DEBUG_PRINT("sendData_handler buffer size %u\n", packetSize);
+    sendFlexTrakCommand("CH1");
+
+    //
     char data[30];
     data[0] = '~';
     data[1] = 'L';
     data[2] = 'D';
     U8 i = 0;
+    printf("[FlexTrak] ");
     for (i; i < 26; i++) {
         data[3 + i] = *(pointer + i);
+        printf("%X", data[3 + i]);
     }
+    printf("\n");
     data[29] = '\r';
 
-    U8 dataSize = 10;
+    U8 commandSize = packetSize + 4;
 
     Fw::Buffer buf; 
     buf.setData((U8*)data);
-    buf.setSize(dataSize);
+    buf.setSize(commandSize);
     
     sendFlexTrak(buf);
     //*/
 
-    // Coucou test
+    /*/ Coucou test
     static U8 cnt = 0;
     char data[100];
     sprintf(data, "LMCoucou%u", cnt);
@@ -155,20 +161,26 @@ void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
     //*/
 
     //char data[] = "~CV\r";  // 4
+    sendFlexTrakCommand("CH0");
+
 }
 
 void FlexTrakComponentImpl:: sendFlexTrak(Fw::Buffer &buffer) {
+    DEBUG_PRINT("[FlexTrak] Tx (%u)\n", buffer.getSize());
     this->serialSend_out(0, buffer);
 }
 
 void FlexTrakComponentImpl:: sendFlexTrakCommand(std::string command) {
     char commandToSend[30]; 
-    Fw::Buffer buf;
+    Fw::Buffer buffer;
+    U16 size = command.size() + 2;
 
     sprintf(commandToSend, "~%s\r", command.c_str());
-    buf.setData((U8*)commandToSend);
-    buf.setSize(command.size() + 2);
-    sendFlexTrak(buf);
+    buffer.setData((U8*)commandToSend);
+    buffer.setSize(size);
+    // sendFlexTrak(buf); // directly call serialSend_out() to avoid sendFlexTrak() log
+    this->serialSend_out(0, buffer);
+    DEBUG_PRINT("[FlexTrak] Tx (%u) ~s%s\n", size, command.c_str());
 }
 
 void FlexTrakComponentImpl:: configureHardware() {
