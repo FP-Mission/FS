@@ -20,7 +20,6 @@
 #include <sstream>
 #include <iostream>
 
-#define UART_READ_BUFF_SIZE 500
 
 namespace App {
 
