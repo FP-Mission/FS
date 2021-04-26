@@ -13,6 +13,7 @@
 
 #include <App/SenseHat/SenseHatComponentImpl.hpp>
 #include "Fw/Types/BasicTypes.hpp"
+#include "wiringPi.h"
 
 namespace App {
 
@@ -25,7 +26,7 @@ namespace App {
         const char *const compName
     ) : SenseHatComponentBase(compName)
   {
-
+      wiringPiSetup();
   }
 
   void SenseHatComponentImpl ::
@@ -96,5 +97,6 @@ namespace App {
 
     
   }
+
 
 } // end namespace App

@@ -82,6 +82,7 @@ namespace App {
           const U32 cmdSeq /*!< The command sequence number*/
       );
 
+
       F32 SHTemperature=0.0f;
       F32 LPTemperature=0.0f;
       F32 humidity=0.0f;
@@ -89,9 +90,10 @@ namespace App {
       Angles angles;
       Vector gyro, accel, magn;
 
+      Icm icm;
       Shtc3 shtc3;
       Lps22 lps22;
-      Icm icm;
+
 
       
     };
