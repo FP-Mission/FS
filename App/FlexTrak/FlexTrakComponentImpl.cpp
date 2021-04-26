@@ -111,9 +111,7 @@ void FlexTrakComponentImpl ::serialRecv_handler(const NATIVE_INT_TYPE portNum,
         this->serialBufferOut_out(0, serBuffer);
         return;
     }
-    char text[100];
-    memcpy(text, pointer, buffsize);
-    text[buffsize] = '\n';
+    *(pointer + buffsize) = '\0';
     DEBUG_PRINT("[FlexTrak] Rx (%u): %s\n", buffsize, pointer);
 
     // Return buffer (see above note)
@@ -125,25 +123,51 @@ void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
                                               Fw::Buffer &fwBuffer) {
     char *pointer = reinterpret_cast<char *>(fwBuffer.getData());
 
-    U8 packetSize = fwBuffer.getSize();
+    U16 packetSize = fwBuffer.getSize();
+
     DEBUG_PRINT("sendData_handler buffer size %u\n", packetSize);
+
+    if(packetSize > 255) {
+        printf("[FlexTrak] Too big payload\n");
+        return;
+        // @todo Implement event (?)
+    }
+
     sendFlexTrakCommand("CH1");
 
-    //
-    char data[30];
+    /*/ Hex test
+    char data[31];
     data[0] = '~';
     data[1] = 'L';
     data[2] = 'D';
+
+    data[3] = 3;
+    data[4] = 0xAB;
+    data[5] = 0xCD;
+    data[6] = 0xEF;
+    data[7] = '\r';
+
+    U8 commandSize = 8;
+    //*/
+
+    // 
+    // data[3] = fwBuffer.getSize();
+    char data[31];
+    data[0] = '~';
+    data[1] = 'L';
+    data[2] = 'D';
+    data[3] = packetSize;
     U8 i = 0;
     printf("[FlexTrak] ");
     for (i; i < 26; i++) {
-        data[3 + i] = *(pointer + i);
-        printf("%X", data[3 + i]);
+        data[4 + i] = *(pointer + i);
+        printf("%X", data[4 + i]);
     }
     printf("\n");
-    data[29] = '\r';
+    data[30] = '\r';
+    U8 commandSize = packetSize + 5;
+    //*/
 
-    U8 commandSize = packetSize + 4;
 
     Fw::Buffer buf; 
     buf.setData((U8*)data);
