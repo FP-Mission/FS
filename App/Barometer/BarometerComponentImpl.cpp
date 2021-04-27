@@ -56,9 +56,11 @@ namespace App {
         F32 pressure
     )
   {
+    U16 altitude = getAltitude(pressure);
     tlmWrite_BAROMETER_TEMP(temperature);
     tlmWrite_BAROMETER_PRESS(pressure);
-    tlmWrite_BAROMETER_ALT(getAltitude(pressure));
+    tlmWrite_BAROMETER_ALT(altitude);
+    log_ACTIVITY_LO_MS_DATA(temperature,pressure,altitude);
   }
 
   void BarometerComponentImpl ::
