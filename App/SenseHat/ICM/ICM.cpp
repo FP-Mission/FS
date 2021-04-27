@@ -51,7 +51,7 @@ namespace App{
 
   void Icm::imuInit(IMU_EN_SENSOR_TYPE *penMotionSensorType){
       bool bRet = false;
-      
+      wiringPiSetup();
       fd=wiringPiI2CSetup(I2C_ADD_ICM20948);
       bRet = icm20948Check();
       if( true == bRet)

@@ -26,7 +26,7 @@ namespace App {
         const char *const compName
     ) : SenseHatComponentBase(compName)
   {
-      wiringPiSetup();
+      
   }
 
   void SenseHatComponentImpl ::
