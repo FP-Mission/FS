@@ -13,6 +13,8 @@
 
 #include <App/Barometer/BarometerComponentImpl.hpp>
 #include "Fw/Types/BasicTypes.hpp"
+#include "App/Barometer/config/BarometerConfig.hpp"
+#include <math.h>
 
 namespace App {
 
@@ -56,6 +58,7 @@ namespace App {
   {
     tlmWrite_BAROMETER_TEMP(temperature);
     tlmWrite_BAROMETER_PRESS(pressure);
+    tlmWrite_BAROMETER_ALT(getAltitude(pressure));
   }
 
   void BarometerComponentImpl ::
@@ -65,6 +68,10 @@ namespace App {
     )
   {
     PingOut_out(portNum,key);
+  }
+
+  U16 BarometerComponentImpl::getAltitude(F32 pressure){
+    return -1 *(44330.8* (1-powf32(BASE_PRESSION/pressure,0.190289))-BASE_ALTITUDE);
   }
 
 } // end namespace App

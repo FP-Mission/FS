@@ -65,6 +65,8 @@ namespace App {
           U32 key /*!< Value to return to pinger*/
       );
 
+      U16 getAltitude(F32 pressure);
+
 
     };
 
