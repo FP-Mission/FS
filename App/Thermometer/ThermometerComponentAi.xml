@@ -34,10 +34,23 @@
         </channel>
     </telemetry>
     <events>
-        <event id="0" name="MS_DATA" severity="ACTIVITY_LO" format_string="Data Receive from Sense Hat"  >
+        <event id="0" name="MS_DATA" severity="ACTIVITY_LO" format_string="Data Receive from Sense Hat: temperatur: %.2f, humidity:  %.2f"  >
             <comment>
-            Sense hat data update
-            </comment>        
+            Thermometer data receive
+            </comment>
+                        <args>
+                <arg name="temp" type="F32">
+                    <comment>SHT temp</comment>
+                </arg>    
+                <arg name="humi" type="F32">
+                    <comment>SHT humi</comment>
+                </arg>    
+            </args>        
+        </event>
+        <event id="1" name="MS_ERROR" severity="WARNING_HI" format_string = "Thermometer error" >
+            <comment>
+            Error thermometer
+            </comment>
         </event>
     </events>
 </component>

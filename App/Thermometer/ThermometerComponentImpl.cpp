@@ -56,6 +56,7 @@ namespace App {
   {
     tlmWrite_THERMOMETER_TEMP(temperature);
     tlmWrite_THERMOMETER_HUMI(humidity);
+    log_ACTIVITY_LO_MS_DATA(temperature,humidity);
   }
 
   void ThermometerComponentImpl ::

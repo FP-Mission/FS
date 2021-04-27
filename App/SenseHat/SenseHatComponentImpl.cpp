@@ -69,6 +69,8 @@ namespace App {
     this->accel.setXyz(accelData.s16X ,accelData.s16Y ,accelData.s16Z);
     this->magn.setXyz(magnData.s16X, magnData.s16Y, magnData.s16Z);
 
+    log_ACTIVITY_LO_MS_DATA();
+
     ICM_out(0,angles, gyro, accel, magn);
     SHT_out(0,shtc3.getTemperatureValue(),shtc3.getHumidityValue());
     LPS_out(0,lps22.getTemperatureValue(),lps22.getPressureValue());
