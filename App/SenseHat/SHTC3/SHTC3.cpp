@@ -45,7 +45,7 @@ void Shtc3::softReset(){
 }
 
 void Shtc3::readData(){
-    U16 TH_DATA,RH_DATA;
+    U16 TH_DATA = 0, RH_DATA=0;
     I8 buf[3];
     writeCommand(SHTC3_NM_CD_ReadTH);                 //Read temperature first,clock streching disabled (polling)
     delay(20);
