@@ -44,7 +44,8 @@ namespace App {
 
       //! To do
       //!
-      void toDo(void);
+      void testCmdMS_GET_TM(void);
+      void testSchedIn(void);
 
     private:
 

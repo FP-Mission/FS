@@ -47,10 +47,37 @@ namespace App {
   // ----------------------------------------------------------------------
 
   void Tester ::
-    toDo(void) 
+    testCmdMS_GET_TM(void) 
   {
-    // TODO
+
+    //send MS_GET_TM command
+    this->sendCmd_MS_GET_TM(0,10);
+    this->component.doDispatch();
+
+    //check event
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_MS_DATA_SIZE(1);
+
+    //check command
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    // verify the command response was correct as expected
+    ASSERT_CMD_RESPONSE(0,SenseHatComponentBase::OPCODE_MS_GET_TM,10,Fw::COMMAND_OK);
+
   }
+  void Tester ::
+    testSchedIn(void) 
+  {
+    //invok sched in port 
+    this->invoke_to_Schedin(1,0);
+
+    //check event
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_MS_DATA_SIZE(1);
+
+    //check command
+    ASSERT_CMD_RESPONSE_SIZE(1);
+  }
+
 
   // ----------------------------------------------------------------------
   // Handlers for typed from ports
