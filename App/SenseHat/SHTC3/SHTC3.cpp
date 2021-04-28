@@ -26,7 +26,7 @@ namespace App{
  }
 
 void Shtc3::writeCommand(U16 cmd){
-    I8 buf[] = { (cmd>>8) ,cmd};
+    I8 buf[] = { (I8)(cmd>>8) ,(I8)cmd};
     wiringPiI2CWriteReg8(fd,buf[0],buf[1]);    
 }
 
