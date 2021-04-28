@@ -69,6 +69,7 @@ namespace App {
   {
     //invok sched in port 
     this->invoke_to_Schedin(1,0);
+    this->component.doDispatch();
 
     //check event
     ASSERT_EVENTS_SIZE(1);
