@@ -82,6 +82,8 @@ namespace App {
           const U32 cmdSeq /*!< The command sequence number*/
       );
 
+      void process();
+
 
       F32 SHTemperature=0.0f;
       F32 LPTemperature=0.0f;
