@@ -80,22 +80,27 @@
     <!-- Connections -->
     <!-- ########### -->
 
-    <!-- Communications driver connections -->
+    <!-- Communications driver connections
     <connection name="CommunicationRecv">
         <source component="socketIpDriver" port="recv" type="Fw::BufferSend" num="0"/>
         <target component="groundIf" port="readCallback" type="Fw::BufferSend" num="0"/>
     </connection>
-    <!--
+    -->
+
+    <!-- GROUND INTERFACE DOWNLINK - CHOSE BETWEEN IP OR FLEXTRAK -->
+    <!-- Send data to Ip -->
     <connection name="CommunicationSend">
         <source component="groundIf" port="write" type="Fw::BufferSend" num="0"/>
         <target component="socketIpDriver" port="send" type="Fw::BufferSend" num="0"/>
      </connection>
-     -->
+     <!-- -->
      <!-- Send data to FlexTrak -->
      <connection name="CommunicationSend">
         <source component="groundIf" port="write" type="Fw::BufferSend" num="0"/>
         <target component="flexTrak" port="sendData" type="Fw::BufferSend" num="0"/>
-    </connection>
+     </connection>
+     <!-- -->
+
     <!-- Command Registration/Dispatch/Reply Connections -->
    
         <!-- Command Registration Ports - Registration port number must match dispatch port for each component -->
