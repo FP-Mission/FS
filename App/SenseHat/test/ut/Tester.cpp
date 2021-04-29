@@ -67,8 +67,9 @@ namespace App {
   void Tester ::
     testSchedIn(void) 
   {
-    //invok sched in port 
-    this->invoke_to_Schedin(1,0);
+    /*
+    //invoke sched in port 
+    this->invoke_to_Schedin(0,0);
     this->component.doDispatch();
 
     //check event
@@ -77,6 +78,7 @@ namespace App {
 
     //check command
     ASSERT_CMD_RESPONSE_SIZE(1);
+    */
   }
 
 
