@@ -112,7 +112,7 @@ void FlexTrakComponentImpl ::serialRecv_handler(const NATIVE_INT_TYPE portNum,
         return;
     }
     *(pointer + buffsize) = '\0';
-    //DEBUG_PRINT("[FlexTrak] Rx (%u): %s\n", buffsize, pointer);
+    DEBUG_PRINT("[FlexTrak] Rx (%u): %s\n", buffsize, pointer);
 
     // Return buffer (see above note)
     serBuffer.setSize(UART_READ_BUFF_SIZE);
@@ -157,10 +157,10 @@ void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
     data[2] = 'D';
     data[3] = packetSize;
     U8 i = 0;
-    printf("[FlexTrak] ");
+    printf("[FlexTrak] Downlink data");
     for (i; i < packetSize; i++) {
         data[4 + i] = *(pointer + i);
-        printf("%X", data[4 + i]);
+        // printf("%X", data[4 + i]);
     }
     printf("\n");
     data[packetSize + 4] = '\r';
