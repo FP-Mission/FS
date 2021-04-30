@@ -1,4 +1,4 @@
-name: Application Build and UT
+name: Application Build and static analyse (github)
 
 # Builds project on every push and PR
 on:  [push, pull_request]

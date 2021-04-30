@@ -1,4 +1,4 @@
-name: Application Build and UT
+name: Application local unit test nd build (Pi)
 
 # Builds project on every push and PR
 on:  [push, pull_request]
