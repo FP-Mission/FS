@@ -46,7 +46,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: Build
-          path: ${{ env.path }}/build-fprime-automatic-native
+          path: ${{ env.path }}/build-*
 
   static_code_analysis:
     needs: build

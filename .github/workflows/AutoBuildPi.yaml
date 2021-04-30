@@ -7,7 +7,24 @@ env:
   path: App
 
 jobs:
+  app_unit_test:
+    runs-on: self-hosted
+    name: Local unit tests
+
+    steps:
+      # checkout the repository with submodules
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      # Build the unit tests and check them one by one in the app
+      - name: Build and run the unit test
+        run: |
+          chmod +x ./scripts-ci/local-unit-test.sh
+          ./scripts-ci/local-unit-test.sh ${{env.path}} pi
+
   build:
+    needs: app_unit_test
     runs-on: self-hosted
     name: Build application
     
@@ -29,35 +46,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: Build
-          path: ${{ env.path }}/build-artifacts
-
-  app_unit_test:
-    runs-on: self-hosted
-    name: Local unit tests
-
-    steps:
-      # checkout the repository with submodules
-      - uses: actions/checkout@v2
-        with:
-          submodules: true
-
-      # Build the unit tests and check them one by one in the app
-      - name: Build and run the unit test
-        run: |
-          chmod +x ./scripts-ci/local-unit-test.sh
-          ./scripts-ci/local-unit-test.sh ${{env.path}} pi
-
-  global_unit_test:
-    runs-on: self-hosted
-    name: Global unit tests
-    steps:
-      # checkout the repository with submodules
-      - uses: actions/checkout@v2
-        with:
-          submodules: true
-
-      # Build the unit tests and check them one by one in the app using fprime check --all
-      - name: Build and run all the unit tests
-        run: |
-          chmod +x ./scripts-ci/global-unit-test.sh
-          ./scripts-ci/global-unit-test.sh ${{env.path}} pi
+          path: ${{ env.path }}/build-*
