@@ -6,7 +6,7 @@
 
 TEST(Nominal, TestPort) {
     App::Tester tester;
-    TEST_CASE(SenseHat.0,"Test scheduler in port");
+    TEST_CASE(Thermometer.0,"Test Data in port");
     tester.testDataIn();
 }
 

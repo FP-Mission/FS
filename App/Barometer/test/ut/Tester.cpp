@@ -47,9 +47,28 @@ namespace App {
   // ----------------------------------------------------------------------
 
   void Tester ::
-    toDo(void) 
+    testDataIn(void) 
   {
-    // TODO
+    F32 temperatureTheoritical = 23.6;
+    F32 pressureTheoritical = 900.7;
+    U16 altitudeTheoritical = 920;
+
+    this->invoke_to_DataIn(0,temperatureTheoritical, pressureTheoritical);
+    this->component.doDispatch();
+
+    // Event
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_MS_DATA_SIZE(1);
+    ASSERT_EVENTS_MS_DATA(0,temperatureTheoritical,pressureTheoritical,altitudeTheoritical);
+
+    //telemetry
+    ASSERT_TLM_SIZE(3);
+    ASSERT_TLM_BAROMETER_TEMP_SIZE(1);
+    ASSERT_TLM_BAROMETER_PRESS_SIZE(1);
+    ASSERT_TLM_BAROMETER_ALT_SIZE(1);
+    ASSERT_TLM_BAROMETER_TEMP(0,temperatureTheoritical);
+    ASSERT_TLM_BAROMETER_PRESS(0,pressureTheoritical);
+    ASSERT_TLM_BAROMETER_ALT(0,altitudeTheoritical);
   }
 
   // ----------------------------------------------------------------------

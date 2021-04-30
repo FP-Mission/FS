@@ -58,6 +58,12 @@ namespace App {
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_MS_DATA_SIZE(1);
 
+    //check port out
+    ASSERT_FROM_PORT_HISTORY_SIZE(3);
+    ASSERT_from_SHT_SIZE(1);    
+    ASSERT_from_LPS_SIZE(1);
+    ASSERT_from_ICM_SIZE(1);
+
     //check command
     ASSERT_CMD_RESPONSE_SIZE(1);
     // verify the command response was correct as expected
@@ -67,7 +73,7 @@ namespace App {
   void Tester ::
     testSchedIn(void) 
   {
-    /*
+    
     //invoke sched in port 
     this->invoke_to_Schedin(0,0);
     this->component.doDispatch();
@@ -76,9 +82,12 @@ namespace App {
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_MS_DATA_SIZE(1);
 
-    //check command
-    ASSERT_CMD_RESPONSE_SIZE(1);
-    */
+    //check port out
+    ASSERT_FROM_PORT_HISTORY_SIZE(3);
+    ASSERT_from_SHT_SIZE(1);    
+    ASSERT_from_LPS_SIZE(1);
+    ASSERT_from_ICM_SIZE(1);
+
   }
 
 

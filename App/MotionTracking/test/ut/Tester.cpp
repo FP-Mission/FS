@@ -47,9 +47,37 @@ namespace App {
   // ----------------------------------------------------------------------
 
   void Tester ::
-    toDo(void) 
+    testDataIn(void) 
   {
-    // TODO
+    Angles anglesTheoritical(12.0,45.9,34.8);
+    Vector gyroTheoritical(12,-34,344);
+    Vector accelTheoritical(-45,567,34);
+    Vector magnTheoritical(345,4674,-3575);
+
+    AnglesTlm angleTlmTheoritical(anglesTheoritical.getRoll(),anglesTheoritical.getPitch(),anglesTheoritical.getYaw());
+    VectorTlm gyroTlmTheoritical(gyroTheoritical.getX(), gyroTheoritical.getY(), gyroTheoritical.getZ());
+    VectorTlm accelTlmTheoritical(accelTheoritical.getX(), accelTheoritical.getY(), accelTheoritical.getZ());
+    VectorTlm magnTlmTheoritical(magnTheoritical.getX(), magnTheoritical.getY(), magnTheoritical.getZ());
+
+    this->invoke_to_DataIn(0,anglesTheoritical, gyroTheoritical,accelTheoritical,magnTheoritical);
+    this->component.doDispatch();
+
+    // Event
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_MS_DATA_SIZE(1);
+
+    //telemetry
+    ASSERT_TLM_SIZE(4);
+    ASSERT_TLM_MOTIONTRACKING_ANGLES_SIZE(1);
+    ASSERT_TLM_MOTIONTRACKING_GYRO_SIZE(1);
+    ASSERT_TLM_MOTIONTRACKING_ACCEL_SIZE(1);
+    ASSERT_TLM_MOTIONTRACKING_MAGN_SIZE(1);
+
+    ASSERT_TLM_MOTIONTRACKING_ANGLES(0,angleTlmTheoritical);
+    ASSERT_TLM_MOTIONTRACKING_GYRO(0,gyroTlmTheoritical);
+    ASSERT_TLM_MOTIONTRACKING_ACCEL(0,accelTlmTheoritical);
+    ASSERT_TLM_MOTIONTRACKING_MAGN(0,magnTlmTheoritical);
+
   }
 
   // ----------------------------------------------------------------------
