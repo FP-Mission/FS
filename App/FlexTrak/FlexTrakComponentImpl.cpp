@@ -243,6 +243,7 @@ void FlexTrakComponentImpl :: FT_CHANGE_MODE_cmdHandler(
         this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
         return;
     }
+    Fw::Logger::logMsg("[ERROR] Invalid mode for LoRa - Please use 0 or 1");
     this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_EXECUTION_ERROR);
 }
 
