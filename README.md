@@ -32,7 +32,7 @@ python3 -m pip install ./Fw/Python ./Gds
 
 F' compilation
 
-Before compiling, you need to know if the flight sofrware will be used with the FPrime GDS or PUS demonstrator.
+Before compiling, you need to know if the flight sofrware will be used with the FPrime GDS or PUS demonstrator
 
 In ./App/CMakeLists.txt comment and uncomment your choice
 
