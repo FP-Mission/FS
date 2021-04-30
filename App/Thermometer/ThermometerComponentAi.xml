@@ -1,0 +1,56 @@
+<component name="Thermometer" kind="active" namespace="App">
+    <comment>Component that manage Thermometer</comment>
+    <import_port_type>App/SenseHat/SenseHatPort/SHTPortAi.xml</import_port_type>
+    <import_port_type>Svc/Ping/PingPortAi.xml</import_port_type>
+    <ports>
+        <port name="DataIn" data_type="App::SHTPort" kind="async_input">
+            <comment>
+            Port for sending SHT data
+            </comment>
+        </port>
+                <!-- Output ping port -->
+        <port name="PingIn" data_type="Svc::Ping" kind="async_input" max_number="1">
+            <comment>
+            The ping input port
+            </comment>
+        </port>
+        <!-- Output ping port -->
+        <port name="PingOut" data_type="Svc::Ping" kind="output" max_number="1">
+            <comment>
+            The ping input port
+            </comment>
+        </port>
+    </ports>
+    <telemetry>
+        <channel id="0" name="THERMOMETER_TEMP" data_type="F32">
+            <comment>
+                Temperature value
+            </comment>
+        </channel>
+        <channel id="1" name="THERMOMETER_HUMI" data_type="F32">
+            <comment>
+                Humidtiy value
+            </comment>
+        </channel>
+    </telemetry>
+    <events>
+        <event id="0" name="MS_DATA" severity="ACTIVITY_LO" format_string="Data Receive from Sense Hat: temperature: %.2f C°, humidity:  %.2f %%"  >
+            <comment>
+            Thermometer data receive
+            </comment>
+            <args>
+                <arg name="temp" type="F32">
+                    <comment>SHT temp</comment>
+                </arg>    
+                <arg name="humi" type="F32">
+                    <comment>SHT humi</comment>
+                </arg>    
+            </args>        
+        </event>
+        <event id="1" name="MS_ERROR" severity="WARNING_HI" format_string = "Thermometer error" >
+            <comment>
+            Error thermometer
+            </comment>
+        </event>
+    </events>
+</component>

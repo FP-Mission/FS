@@ -24,6 +24,11 @@
 #include <Drv/SocketIpDriver/SocketIpDriverComponentImpl.hpp>
 #include <Svc/GroundInterface/GroundInterface.hpp>
 
+#include <App/SenseHat/SenseHatComponentImpl.hpp>
+#include <App/Thermometer/ThermometerComponentImpl.hpp>
+#include <App/MotionTracking/MotionTrackingComponentImpl.hpp>
+#include <App/Barometer/BarometerComponentImpl.hpp>
+
 void constructAppArchitecture(void);
 bool constructApp(bool dump, U32 port_number, char* hostname);
 void exitTasks(void);
@@ -50,5 +55,10 @@ extern Svc::HealthImpl health;
 extern Drv::BlockDriverImpl blockDrv;
 extern Ref::PingReceiverComponentImpl pingRcvr;
 extern Drv::SocketIpDriverComponentImpl socketIpDriver;
+
+extern App::SenseHatComponentImpl senseHat;
+extern App::ThermometerComponentImpl thermometer;
+extern App::MotionTrackingComponentImpl motionTracking;
+extern App::BarometerComponentImpl barometer;
 
 #endif

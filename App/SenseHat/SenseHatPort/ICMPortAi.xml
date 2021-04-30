@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Type_Schema.rnc" type="compact"?>
+
+<interface name="ICMPort" namespace="App">
+    <include_header>App/SenseHat/SenseHatPort/Vector.hpp</include_header>
+    <include_header>App/SenseHat/SenseHatPort/Angles.hpp</include_header>
+    <args>
+        <arg name="angles" type="App::Angles" pass_by="reference">
+        </arg>
+        <arg name="gyro" type="App::Vector" pass_by="reference">
+        </arg>
+        <arg name="accel" type="App::Vector" pass_by="reference">
+        </arg>
+        <arg name="magn" type="App::Vector" pass_by="reference">
+        </arg>
+    </args>
+</interface>

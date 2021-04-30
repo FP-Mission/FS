@@ -1,0 +1,13 @@
+<interface name="LPSPort" namespace="App">
+    <comment>
+    Port to return the result of Sense hat LPS
+    </comment>
+    <args>
+        <arg name="temperature" type="F32">
+            <comment>lps temperature</comment>
+        </arg>
+        <arg name="pressure" type="F32">
+            <comment>lps humidity</comment>
+        </arg>
+    </args>
+</interface>

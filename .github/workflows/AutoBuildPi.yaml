@@ -1,31 +1,33 @@
-name: Daily Aplication Build
+name: Application local unit test and build (Pi)
 
-# Builds project every day at 5:00
-on:
-  schedule:
-    - cron: "0 3 * * *"
+# Builds project on every push and PR
+on:  [push, pull_request]
 
 env:
   path: App
 
 jobs:
-  global_unit_test:
+  app_unit_test:
     runs-on: self-hosted
-    name: Global unit tests
+    name: Local unit tests
+
     steps:
       # checkout the repository with submodules
       - uses: actions/checkout@v2
         with:
           submodules: true
 
-      # Build the unit tests and check them one by one in the app using fprime check --all
-      - name: Build and run all the unit tests
+      # Build the unit tests and check them one by one in the app
+      - name: Build and run the unit test
         run: |
-          chmod +x ./scripts-ci/global-unit-test.sh
-          ./scripts-ci/global-unit-test.sh ${{env.path}} pi
+          chmod +x ./scripts-ci/local-unit-test.sh
+          ./scripts-ci/local-unit-test.sh ${{env.path}} pi
+
   build:
+    needs: app_unit_test
     runs-on: self-hosted
-    needs: global_unit_test
+    name: Build application
+    
     # https://docs.github.com/en/free-pro-team@latest/actions/guides/building-and-testing-python
     steps:
       # checkout the repository with submodules
@@ -39,9 +41,9 @@ jobs:
           chmod +x ./scripts-ci/build.sh
           ./scripts-ci/build.sh ${{env.path}} pi
 
-      # Upload the artifact
-      - name: Upload the application binaries
+      # Upload build artifact for static analysis
+      - name: Upload the Build final folder
         uses: actions/upload-artifact@v2
         with:
-          name: Application binaries
-          path: ${{env.path}}/build-*
+          name: Build
+          path: ${{ env.path }}/build-*

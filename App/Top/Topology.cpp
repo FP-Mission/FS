@@ -21,7 +21,7 @@ enum {
 };
 
 Os::Log osLogger;
-
+const char SHTC3= 0x70;
 
 // Registry
 #if FW_OBJECT_REGISTRATION == 1
@@ -85,6 +85,15 @@ Svc::AssertFatalAdapterComponentImpl fatalAdapter(FW_OPTIONAL_NAME("fatalAdapter
 
 Svc::FatalHandlerComponentImpl fatalHandler(FW_OPTIONAL_NAME("fatalHandler"));
 
+App::SenseHatComponentImpl senseHat(FW_OPTIONAL_NAME("senseHat"));
+
+App::ThermometerComponentImpl thermometer(FW_OPTIONAL_NAME("thermometer"));
+
+App::MotionTrackingComponentImpl motionTracking(FW_OPTIONAL_NAME("motionTracking"));
+
+App::BarometerComponentImpl barometer(FW_OPTIONAL_NAME("barometer"));
+
+
 const char* getHealthName(Fw::ObjBase& comp) {
    #if FW_OBJECT_NAMES == 1
        return comp.getObjName();
@@ -143,6 +152,11 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     fatalHandler.init(0);
     health.init(25,0);
     pingRcvr.init(10);
+
+    senseHat.init(30,0);
+    thermometer.init(30,0);
+    motionTracking.init(30,0);
+    barometer.init(30,0);
     // Connect rate groups to rate group driver
     constructAppArchitecture();
 
@@ -163,6 +177,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     fileManager.regCommands();
     health.regCommands();
     pingRcvr.regCommands();
+    senseHat.regCommands();
 
     // read parameters
     prmDb.readParamFile();
@@ -183,6 +198,10 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
         {3,5,getHealthName(pingRcvr)}, // 10
         {3,5,getHealthName(blockDrv)}, // 11
         {3,5,getHealthName(fileManager)}, // 12
+        {3,5,getHealthName(senseHat)}, // 13
+        {3,5,getHealthName(thermometer)}, //14
+        {3,5,getHealthName(motionTracking)}, //15
+        {3,5,getHealthName(barometer)}, //16
     };
 
     // register ping table
@@ -210,10 +229,19 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
 
     pingRcvr.start(0, 100, 10*1024);
 
+    senseHat.start(0, 100, 10*1024);
+
+    thermometer.start(0, 100, 10*1024);
+
+    motionTracking.start(0, 100, 10*1024);
+
+    barometer.start(0, 100, 10*1024);
+
     // Initialize socket server if and only if there is a valid specification
     if (hostname != NULL && port_number != 0) {
         socketIpDriver.startSocketTask(100, 10 * 1024, hostname, port_number);
     }
+
     return false;
 }
 
@@ -231,6 +259,10 @@ void exitTasks(void) {
     fileManager.exit();
     cmdSeq.exit();
     pingRcvr.exit();
+    senseHat.exit();
+    thermometer.exit();
+    motionTracking.exit();
+    barometer.exit();
     // join the component threads with NULL pointers to free them
     (void) rateGroup1Comp.ActiveComponentBase::join(NULL);
     (void) rateGroup2Comp.ActiveComponentBase::join(NULL);
@@ -245,6 +277,10 @@ void exitTasks(void) {
     (void) fileManager.ActiveComponentBase::join(NULL);
     (void) cmdSeq.ActiveComponentBase::join(NULL);
     (void) pingRcvr.ActiveComponentBase::join(NULL);
+    (void) senseHat.ActiveComponentBase::join(NULL);
+    (void) thermometer.ActiveComponentBase::join(NULL);
+    (void) motionTracking.ActiveComponentBase::join(NULL);
+    (void) barometer.ActiveComponentBase::join(NULL);
     socketIpDriver.exitSocketTask();
     (void) socketIpDriver.joinSocketTask(NULL);
     cmdSeq.deallocateBuffer(seqMallocator);

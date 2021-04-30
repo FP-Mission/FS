@@ -28,6 +28,14 @@
     <import_component_type>Svc/GroundInterface/GroundInterfaceComponentAi.xml</import_component_type>
     <import_component_type>Svc/LinuxTimer/LinuxTimerComponentAi.xml</import_component_type>
     <import_component_type>Drv/SocketIpDriver/SocketIpDriverComponentAi.xml</import_component_type>
+    <import_component_type>App/SenseHat/SenseHatComponentAi.xml</import_component_type>
+    <import_component_type>App/Thermometer/ThermometerComponentAi.xml</import_component_type>
+    <import_component_type>App/MotionTracking/MotionTrackingComponentAi.xml</import_component_type>
+    <import_component_type>App/Barometer/BarometerComponentAi.xml</import_component_type>
+
+
+
+
 
     <!-- Declare component instances - must match names in Components.hpp -->
 
@@ -62,6 +70,14 @@
 
     <instance namespace="Ref" name="pingRcvr" type="PingReceiver" base_id="41"  base_id_window="20" />
     <instance namespace="Drv" name="blockDrv" type="BlockDriver" base_id="481"  base_id_window="20" />
+    <instance namespace="App" name="senseHat" type ="SenseHat" base_id="1050" base_id_window="10" />
+    <instance namespace="App" name="thermometer" type ="Thermometer" base_id="1150" base_id_window="10" />
+    <instance namespace="App" name="motionTracking" type ="MotionTracking" base_id="1200" base_id_window="10" />
+    <instance namespace="App" name="barometer" type ="Barometer" base_id="1250" base_id_window="10" />
+
+
+
+
 
     <!-- Connections -->
     <!-- Communications driver connections -->
@@ -642,8 +658,181 @@
         <target component = "fatalHandler" port = "FatalReceive" type = "FatalEvent" num = "0"/>
     </connection>
     
-    <!-- Reference App Connections -->
-    
+    <!-- App Connections -->
 
+    <!-- SenseHat -->
+
+    <connection name = "Rg1SenseHat">
+          <source component = "rateGroup1Comp" port = "RateGroupMemberOut" type = "Sched" num = "1"/>
+          <target component = "senseHat" port = "Schedin" type = "Sched" num = "0"/>
+     </connection>
+
+   <connection name = "SenseHatReg">
+        <source component = "senseHat" port = "CmdReg" type = "CmdReg" num = "0"/>
+        <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "25"/>
+   </connection>
+   
+    <!-- Command Dispatch Ports - Dispatch port number must match registration port for each component -->
+
+   <connection name = "SenseHatDisp">
+        <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "25"/>
+        <target component = "senseHat" port = "CmdDisp" type = "Cmd" num = "0"/>
+   </connection>
+  
+    <!-- Command Reply Ports - Go to the same response port on the dispatcher -->
+
+   <connection name = "SenseHatReply">
+      <source component = "senseHat" port = "CmdStatus" type = "CmdResponse" num = "0"/>
+      <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
+   </connection>
+
+   
+         <!-- Event Logger Binary Connections -->
+   
+   <connection name = "SenseHatLog">
+       <source component = "senseHat" port = "Log" type = "Log" num = "0"/>
+        <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+   </connection>
     
+       
+   <connection name = "SenseHatTextLog">
+       <source component = "senseHat" port = "LogText" type = "LogText" num = "0"/>
+        <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
+   </connection>
+
+   <connection name = "SenseHatTime">
+       <source component = "senseHat" port = "Time" type = "Time" num = "0"/>
+        <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+   </connection>
+
+
+     <connection name = "SenseHatPingSend">
+          <source component = "health" port = "PingSend" type = "Ping" num = "13"/>
+          <target component = "senseHat" port = "PingIn" type = "Ping" num = "0"/>
+     </connection>
+     <connection name = "SenseHatPingRecv">
+          <source component = "senseHat" port = "PingOut" type = "Ping" num = "0"/>
+          <target component = "health" port = "PingReturn" type = "Ping" num = "13"/>
+     </connection>
+
+     <!-- Thermometer -->
+
+   
+         <!-- Event Logger Binary Connections -->
+   
+   <connection name = "ThermometerLog">
+       <source component = "thermometer" port = "Log" type = "Log" num = "0"/>
+        <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+   </connection>
+    
+       
+   <connection name = "ThermometerTextLog">
+       <source component = "thermometer" port = "LogText" type = "LogText" num = "0"/>
+        <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
+   </connection>
+
+<connection name = "ThermometerTextTlm">
+       <source component = "thermometer" port = "Tlm" type = "Tlm" num = "0"/>
+        <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
+   </connection>
+
+   <connection name = "ThermometerTime">
+       <source component = "thermometer" port = "Time" type = "Time" num = "0"/>
+        <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+   </connection>
+
+     <connection name = "ThermometerPingSend">
+          <source component = "health" port = "PingSend" type = "Ping" num = "14"/>
+          <target component = "thermometer" port = "PingIn" type = "Ping" num = "0"/>
+     </connection>
+     <connection name = "ThermometerPingRecv">
+          <source component = "thermometer" port = "PingOut" type = "Ping" num = "0"/>
+          <target component = "health" port = "PingReturn" type = "Ping" num = "14"/>
+     </connection>
+
+    <connection name = "SenseHatThermometer">
+          <source component = "senseHat" port = "SHT" type = "App::SHTPort" num = "0"/>
+          <target component = "thermometer" port = "DataIn" type = "App::SHTPort" num = "0"/>
+     </connection>
+
+      <!-- MotionTracking -->
+
+   
+         <!-- Event Logger Binary Connections -->
+   
+   <connection name = "MotionTrackingLog">
+       <source component = "motionTracking" port = "Log" type = "Log" num = "0"/>
+        <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+   </connection>
+    
+       
+   <connection name = "MotionTrackingTextLog">
+       <source component = "motionTracking" port = "LogText" type = "LogText" num = "0"/>
+        <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
+   </connection>
+
+<connection name = "MotionTrackingTextTlm">
+       <source component = "motionTracking" port = "Tlm" type = "Tlm" num = "0"/>
+        <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
+   </connection>
+
+   <connection name = "MotionTrackingTime">
+       <source component = "motionTracking" port = "Time" type = "Time" num = "0"/>
+        <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+   </connection>
+
+     <connection name = "MotionTrackingPingSend">
+          <source component = "health" port = "PingSend" type = "Ping" num = "15"/>
+          <target component = "motionTracking" port = "PingIn" type = "Ping" num = "0"/>
+     </connection>
+     <connection name = "MotionTrackingPingRecv">
+          <source component = "motionTracking" port = "PingOut" type = "Ping" num = "0"/>
+          <target component = "health" port = "PingReturn" type = "Ping" num = "15"/>
+     </connection>
+
+    <connection name = "SenseHatMotionTracking">
+          <source component = "senseHat" port = "ICM" type = "App::ICMPort" num = "0"/>
+          <target component = "motionTracking" port = "DataIn" type = "App::ICMPort" num = "0"/>
+     </connection>
+
+  <!-- Barometer -->
+
+   
+         <!-- Event Logger Binary Connections -->
+   
+   <connection name = "BarometerLog">
+       <source component = "barometer" port = "Log" type = "Log" num = "0"/>
+        <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+   </connection>
+    
+       
+   <connection name = "BarometerTextLog">
+       <source component = "barometer" port = "LogText" type = "LogText" num = "0"/>
+        <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
+   </connection>
+
+<connection name = "BarometerTextTlm">
+       <source component = "barometer" port = "Tlm" type = "Tlm" num = "0"/>
+        <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
+   </connection>
+
+   <connection name = "BarometerTime">
+       <source component = "barometer" port = "Time" type = "Time" num = "0"/>
+        <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+   </connection>
+
+     <connection name = "BarometerPingSend">
+          <source component = "health" port = "PingSend" type = "Ping" num = "16"/>
+          <target component = "barometer" port = "PingIn" type = "Ping" num = "0"/>
+     </connection>
+     <connection name = "BarometerPingRecv">
+          <source component = "barometer" port = "PingOut" type = "Ping" num = "0"/>
+          <target component = "health" port = "PingReturn" type = "Ping" num = "16"/>
+     </connection>
+
+    <connection name = "SenseHatBarometer">
+          <source component = "senseHat" port = "LPS" type = "App::LPSPort" num = "0"/>
+          <target component = "barometer" port = "DataIn" type = "App::LPSPort" num = "0"/>
+     </connection>
+
 </assembly>

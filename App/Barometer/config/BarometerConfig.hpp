@@ -1,0 +1,2 @@
+int BASE_ALTITUDE = 479;
+float BASE_PRESSION = 948.8;

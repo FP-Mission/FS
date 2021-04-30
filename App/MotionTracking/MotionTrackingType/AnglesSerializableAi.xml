@@ -1,0 +1,10 @@
+<serializable namespace="App" name="AnglesTlm">
+    <comment>
+    This value holds the values of ICM angles
+    </comment>
+    <members>
+        <member name="roll" type="F32"/>
+        <member name="pitch" type="F32"/>
+        <member name="yaw" type="F32"/>
+    </members>
+</serializable>
