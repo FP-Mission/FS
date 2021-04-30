@@ -15,9 +15,7 @@
 #include "Fw/Logger/Logger.hpp"
 #include "Fw/Types/BasicTypes.hpp"
 
-#define DEBUG_PRINT(x, ...)   \
-    printf(x, ##__VA_ARGS__); \
-    fflush(stdout)
+#define DEBUG_PRINT(x, ...)  printf(x, ##__VA_ARGS__); fflush(stdout)
 //#define DEBUG_PRINT(x,...)
 
 namespace App {
@@ -112,7 +110,7 @@ void FlexTrakComponentImpl ::serialRecv_handler(const NATIVE_INT_TYPE portNum,
         return;
     }
     *(pointer + buffsize) = '\0';
-    DEBUG_PRINT("[FlexTrak] Rx (%u): %s\n", buffsize, pointer);
+    printf("[FlexTrak] Rx (%u): %s\n", buffsize, pointer);
 
     // Return buffer (see above note)
     serBuffer.setSize(UART_READ_BUFF_SIZE);
@@ -125,10 +123,10 @@ void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
 
     U16 packetSize = fwBuffer.getSize();
 
-    DEBUG_PRINT("sendData_handler buffer size %u\n", packetSize);
+    DEBUG_PRINT("Tx buffer size %u\n", packetSize);
 
     if(packetSize > FW_COM_BUFFER_MAX_SIZE) {
-        printf("[FlexTrak] Too big packet\n");
+        Fw::Logger::logMsg("Too big packet to downlink %u\n", packetSize);
         return;
         // @todo Implement event (?)
     }
@@ -157,12 +155,11 @@ void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
     data[2] = 'D';
     data[3] = packetSize;
     U8 i = 0;
-    printf("[FlexTrak] Downlink data");
+    //printf("Downlink data");
     for (i; i < packetSize; i++) {
         data[4 + i] = *(pointer + i);
         // printf("%X", data[4 + i]);
     }
-    printf("\n");
     data[packetSize + 4] = '\r';
     U8 commandSize = packetSize + 5;
     //*/
@@ -189,7 +186,7 @@ void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
 }
 
 void FlexTrakComponentImpl:: sendFlexTrak(Fw::Buffer &buffer) {
-    DEBUG_PRINT("[FlexTrak] Tx (%u)\n", buffer.getSize());
+    DEBUG_PRINT("Tx (%u) %.3s\n", buffer.getSize(), buffer.getData());
     this->serialSend_out(0, buffer);
 }
 
@@ -203,7 +200,7 @@ void FlexTrakComponentImpl:: sendFlexTrakCommand(std::string command) {
     buffer.setSize(size);
     // sendFlexTrak(buf); // directly call serialSend_out() to avoid sendFlexTrak() log
     this->serialSend_out(0, buffer);
-    DEBUG_PRINT("[FlexTrak] Tx (%u) ~s%s\n", size, command.c_str());
+    DEBUG_PRINT("Tx (%u) ~%s\n", size, command.c_str());
 }
 
 void FlexTrakComponentImpl:: configureHardware() {
