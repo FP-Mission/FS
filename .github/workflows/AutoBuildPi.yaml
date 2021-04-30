@@ -17,6 +17,18 @@ jobs:
       - uses: actions/checkout@v2
         with:
           submodules: true
+      
+      - name: test python is functionnal
+        run: python -c "import sys; print(sys.version)"
+      
+      - name: Prepare dependencies python, cmake
+        run: |
+          python -m pip install --upgrade pip
+          sudo apt install cmake -y
+        
+      # Init the virtual environnement (project script)
+      - name: Prepare venv
+        run: sh ./scripts-ci/init-venv.sh
 
       # Build the project (project script)
       - name: Build the project
@@ -68,6 +80,18 @@ jobs:
       - uses: actions/checkout@v2
         with:
           submodules: true
+      
+      - name: test python is functionnal
+        run: python -c "import sys; print(sys.version)"
+      
+      - name: Prepare dependencies python, cmake
+        run: |
+          python -m pip install --upgrade pip
+          sudo apt install cmake -y
+        
+      # Init the virtual environnement (project script)
+      - name: Prepare venv
+        run: sh ./scripts-ci/init-venv.sh
 
       # Build the unit tests and check them one by one in the app
       - name: Build and run the unit test
@@ -84,7 +108,17 @@ jobs:
         with:
           submodules: true
 
-      # checkout PUSopen into fprime
+      - name: test python is functionnal
+        run: python -c "import sys; print(sys.version)"
+      
+      - name: Prepare dependencies python, cmake
+        run: |
+          python -m pip install --upgrade pip
+          sudo apt install cmake -y
+        
+      # Init the virtual environnement (project script)
+      - name: Prepare venv
+        run: sh ./scripts-ci/init-venv.sh
 
       # Build the unit tests and check them one by one in the app using fprime check --all
       - name: Build and run all the unit tests
