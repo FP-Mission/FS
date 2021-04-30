@@ -86,12 +86,12 @@ class FlexTrakComponentImpl : public FlexTrakComponentBase {
         // Command handler implementations
         // ----------------------------------------------------------------------
 
-        //! Implementation for FT_Version command handler
-        //! Ask version
-        void
-        FT_Version_cmdHandler(
-            const FwOpcodeType opCode, /*!< The opcode*/
-            const U32 cmdSeq           /*!< The command sequence number*/
+        //! Implementation for FT_CHANGE_MODe command handler
+        //! Change LoRa mode (0 or 1)
+        void FT_CHANGE_MODE_cmdHandler(
+            const FwOpcodeType opCode,
+            const U32 cmdSeq,
+            U8 mode
         );
 
     Fw::Buffer m_recvBuffers[DR_MAX_NUM_BUFFERS];

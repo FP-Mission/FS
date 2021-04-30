@@ -230,11 +230,20 @@ void FlexTrakComponentImpl:: configureHardware() {
 // Command handler implementations
 // ----------------------------------------------------------------------
 
-void FlexTrakComponentImpl ::FT_Version_cmdHandler(const FwOpcodeType opCode,
-                                                   const U32 cmdSeq) {
-    // @todo Implement version request
-    this->log_ACTIVITY_LO_FT_Version(1);
-    this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
+
+void FlexTrakComponentImpl :: FT_CHANGE_MODE_cmdHandler(
+    const FwOpcodeType opCode,
+    const U32 cmdSeq,
+    U8 mode
+){
+    if(mode == 0 || mode == 1) {
+        this->mode = mode;
+        this->configureHardware();
+        this->log_ACTIVITY_HI_FT_Mode(mode);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
+        return;
+    }
+    this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_EXECUTION_ERROR);
 }
 
 }  // end namespace App

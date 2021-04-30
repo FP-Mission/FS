@@ -57,10 +57,15 @@
     </ports>
 
     <commands>
-        <command kind="async" opcode="0" mnemonic="FT_Version">
+        <command kind="async" opcode="0" mnemonic="FT_CHANGE_MODE">
             <comment>
-                Ask version
+                Change FlexTrak LoRa mode
             </comment>
+            <args>
+                <arg name="mode" type="U8">
+                    <comment>Mode (0 or 1)</comment>
+                </arg>          
+            </args>
         </command>
     </commands>
 
@@ -73,13 +78,13 @@
     </telemetry>
 
     <events>
-        <event id="0" name="FT_Version" severity="ACTIVITY_LO" format_string = "Current FlexTrak version: %u" >
+        <event id="0" name="FT_Mode" severity="ACTIVITY_HI" format_string = "Current FlexTrak mode : %u" >
             <comment>
-                FlexTrak version response
+                FlexTrak LoRa mode changed
             </comment>
             <args>
-                <arg name="version" type="U8">
-                    <comment>Version</comment>
+                <arg name="mode" type="U8">
+                    <comment>Mode (0 or 1)</comment>
                 </arg>          
             </args>
         </event>

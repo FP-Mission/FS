@@ -213,8 +213,10 @@
         <arg name="voltage" type="U16"/>
       </args>
     </command>
-    <command component="flexTrak" mnemonic="FT_Version" opcode="0x5a">
-      <args/>
+    <command component="flexTrak" mnemonic="FT_CHANGE_MODE" opcode="0x5a">
+      <args>
+        <arg name="mode" type="U8"/>
+      </args>
     </command>
     <command component="gps" mnemonic="Gps_SetFlightModeAltitude" opcode="0x64">
       <args>
@@ -243,25 +245,25 @@
   <events>
     <event component="cmdDisp" name="OpCodeRegistered" id="0x1" severity="DIAGNOSTIC" format_string="Opcode 0x%04X registered to port %d slot %d">
       <args>
-        <arg name="Opcode" type="U32"/>
+        <arg name="Opcode" type="U8"/>
         <arg name="port" type="I32"/>
         <arg name="slot" type="I32"/>
       </args>
     </event>
     <event component="cmdDisp" name="OpCodeDispatched" id="0x2" severity="COMMAND" format_string="Opcode 0x%04X dispatched to port %d">
       <args>
-        <arg name="Opcode" type="U32"/>
+        <arg name="Opcode" type="U8"/>
         <arg name="port" type="I32"/>
       </args>
     </event>
     <event component="cmdDisp" name="OpCodeCompleted" id="0x3" severity="COMMAND" format_string="Opcode 0x%04X completed">
       <args>
-        <arg name="Opcode" type="U32"/>
+        <arg name="Opcode" type="U8"/>
       </args>
     </event>
     <event component="cmdDisp" name="OpCodeError" id="0x4" severity="WARNING_HI" format_string="Opcode 0x%04X completed with error %s ">
       <args>
-        <arg name="Opcode" type="U32"/>
+        <arg name="Opcode" type="U8"/>
         <arg name="error" type="CommandDispatcher::error::ErrorResponse"/>
       </args>
     </event>
@@ -272,12 +274,12 @@
     </event>
     <event component="cmdDisp" name="InvalidCommand" id="0x6" severity="WARNING_HI" format_string="Invalid opcode 0x%04X received.">
       <args>
-        <arg name="Opcode" type="U32"/>
+        <arg name="Opcode" type="U8"/>
       </args>
     </event>
     <event component="cmdDisp" name="TooManyCommands" id="0x7" severity="WARNING_HI" format_string="Too many outstanding commands. opcode=0x%04X">
       <args>
-        <arg name="Opcode" type="U32"/>
+        <arg name="Opcode" type="U8"/>
       </args>
     </event>
     <event component="cmdDisp" name="NoOpReceived" id="0x8" severity="ACTIVITY_HI" format_string="Received a NO-OP command">
@@ -699,9 +701,9 @@
         <arg name="voltage" type="U16"/>
       </args>
     </event>
-    <event component="flexTrak" name="FT_Version" id="0x5a" severity="ACTIVITY_LO" format_string="Current FlexTrak version: %u">
+    <event component="flexTrak" name="FT_Mode" id="0x5a" severity="ACTIVITY_HI" format_string="Current FlexTrak mode : %u">
       <args>
-        <arg name="version" type="U8"/>
+        <arg name="mode" type="U8"/>
       </args>
     </event>
     <event component="gps" name="Gps_Error" id="0x64" severity="ACTIVITY_HI" format_string="Error">
