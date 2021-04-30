@@ -8,14 +8,17 @@ then
 	exit 1
 fi
 
-#activate the python environnement
+if [ -z "$2" ]
+then
+#Activate the python environnement
 . ./fprime-venv/bin/activate
 
-# WiringPI
+#Install Wiring pi
 sudo git clone https://github.com/WiringPi/WiringPi.git
 cd WiringPi
 sudo ./build
 cd ..
+fi
 
 #purge an old app if it exists
 cd $1

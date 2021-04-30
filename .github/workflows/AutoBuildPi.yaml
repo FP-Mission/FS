@@ -1,0 +1,93 @@
+name: Application Build and UT
+
+# Builds project on every push and PR
+on:  [push, pull_request]
+
+env:
+  path: App
+
+jobs:
+  build:
+    runs-on: self-hosted
+    name: Build application
+    
+    # https://docs.github.com/en/free-pro-team@latest/actions/guides/building-and-testing-python
+    steps:
+      # checkout the repository with submodules
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      # Build the project (project script)
+      - name: Build the project
+        run: |
+          chmod +x ./scripts-ci/build.sh
+          ./scripts-ci/build.sh ${{env.path}} pi
+
+      # Upload build artifact for static analysis
+      - name: Upload the Build final folder
+        uses: actions/upload-artifact@v2
+        with:
+          name: Build
+          path: ${{ env.path }}/build-fprime-automatic-native
+
+  static_code_analysis:
+    needs: build
+    runs-on: ubuntu-latest
+    name: Static code Analysis
+    steps:
+
+      - name: download buld folder
+        uses: actions/download-artifact@v2
+        with:
+          name: Build
+
+      - name : prepare cppcheck
+        run: |
+          sudo apt install cppcheck -y
+          sudo apt install python-pygments -y
+      - name: Compute cppcheck code analysis
+        run: cppcheck --xml --force . 2>./cppcheck.xml
+
+      - name: Transform  XML into HTML
+        run: |
+          mkdir check-html/
+          cppcheck-htmlreport --file=cppcheck.xml --report-dir=./check-html/ --source-dir=. --title=CHESS-mission
+      - name: upload HTML files 
+        uses: actions/upload-artifact@v2
+        with:
+          name: cppCheck coverage report
+          path: ./check-html
+
+  app_unit_test:
+    runs-on: ubuntu-latest
+    name: Local unit tests
+
+    steps:
+      # checkout the repository with submodules
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      # Build the unit tests and check them one by one in the app
+      - name: Build and run the unit test
+        run: |
+          chmod +x ./scripts-ci/local-unit-test.sh
+          ./scripts-ci/local-unit-test.sh ${{env.path}} pi
+
+  global_unit_test:
+    runs-on: ubuntu-latest
+    name: Global unit tests
+    steps:
+      # checkout the repository with submodules
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      # checkout PUSopen into fprime
+
+      # Build the unit tests and check them one by one in the app using fprime check --all
+      - name: Build and run all the unit tests
+        run: |
+          chmod +x ./scripts-ci/global-unit-test.sh
+          ./scripts-ci/global-unit-test.sh ${{env.path}} pi
