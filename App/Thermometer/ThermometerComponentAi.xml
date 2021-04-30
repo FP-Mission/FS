@@ -24,12 +24,12 @@
     <telemetry>
         <channel id="0" name="THERMOMETER_TEMP" data_type="F32">
             <comment>
-                Temperature values
+                Temperature value
             </comment>
         </channel>
         <channel id="1" name="THERMOMETER_HUMI" data_type="F32">
             <comment>
-                Humidtiy values
+                Humidtiy value
             </comment>
         </channel>
     </telemetry>

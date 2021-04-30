@@ -24,17 +24,17 @@
     <telemetry>
         <channel id="0" name="BAROMETER_TEMP" data_type="F32">
             <comment>
-                Temperature values
+                Temperature value
             </comment>
         </channel>
         <channel id="1" name="BAROMETER_PRESS" data_type="F32">
             <comment>
-                Pressure values
+                Pressure value
             </comment>
         </channel>
         <channel id="2" name="BAROMETER_ALT" data_type="U16">
             <comment>
-                Altitude values
+                Altitude value
             </comment>
         </channel>
     </telemetry>

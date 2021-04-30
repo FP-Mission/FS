@@ -1,12 +1,13 @@
 // ----------------------------------------------------------------------
 // TestMain.cpp
 // ----------------------------------------------------------------------
-
+#include <Fw/Test/UnitTest.hpp>
 #include "Tester.hpp"
 
-TEST(Nominal, ToDo) {
+TEST(Nominal, TestPort) {
     App::Tester tester;
-    tester.toDo();
+    TEST_CASE(SenseHat.0,"Test scheduler in port");
+    tester.testDataIn();
 }
 
 int main(int argc, char **argv) {

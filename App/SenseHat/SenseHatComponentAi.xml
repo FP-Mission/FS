@@ -42,7 +42,7 @@
     <commands>
         <command kind="async" opcode="0" mnemonic="MS_GET_TM">
             <comment>
-            Send telemetry to SEnseHat
+            Ask telemetry
             </comment>
         </command>
     </commands>
@@ -52,7 +52,7 @@
             Sense hat data update
             </comment>        
         </event>
-        <event id="2" name="MS_ERROR" severity="WARNING_HI" format_string = "Sense update data error" >
+        <event id="1" name="MS_ERROR" severity="WARNING_HI" format_string = "Sense update data error" >
             <comment>
             Sense Hat error
             </comment>

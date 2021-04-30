@@ -44,7 +44,7 @@ namespace App {
 
       //! To do
       //!
-      void toDo(void);
+      void testDataIn(void);
 
     private:
 

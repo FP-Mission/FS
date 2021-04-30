@@ -47,9 +47,25 @@ namespace App {
   // ----------------------------------------------------------------------
 
   void Tester ::
-    toDo(void) 
+    testDataIn(void) 
   {
-    // TODO
+    F32 temperatureTheoritical = 23.6;
+    F32 humidityTheoritical = 45.5;
+
+    this->invoke_to_DataIn(10,temperatureTheoritical, humidityTheoritical);
+    this->component.doDispatch();
+
+    // Event
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_MS_DATA_SIZE(1);
+    ASSERT_EVENTS_MS_DATA(0,temperatureTheoritical,humidityTheoritical);
+
+    //telemetry
+    ASSERT_TLM_SIZE(2);
+    ASSERT_TLM_THERMOMETER_TEMP_SIZE(1);
+    ASSERT_TLM_THERMOMETER_HUMI_SIZE(1);
+    ASSERT_TLM_THERMOMETER_TEMP(0,temperatureTheoritical);
+    ASSERT_TLM_THERMOMETER_HUMI(0,humidityTheoritical);
   }
 
   // ----------------------------------------------------------------------
