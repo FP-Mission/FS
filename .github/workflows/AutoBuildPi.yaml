@@ -29,7 +29,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: Build
-          path: ${{ env.path }}/build-fprime-automatic-native
+          path: ${{ env.path }}/build-artifacts
 
   app_unit_test:
     runs-on: self-hosted
