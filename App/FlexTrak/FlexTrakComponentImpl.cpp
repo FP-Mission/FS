@@ -170,7 +170,7 @@ void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
 
     U16 packetSize = buffer.getSize();
 
-    //DEBUG_PRINT("Tx buffer size %u\n", packetSize);
+    DEBUG_PRINT("Tx buffer size %u\n", packetSize);
 
     if(packetSize > FW_COM_BUFFER_MAX_SIZE) {
         Fw::Logger::logMsg("Too big packet to downlink %u\n", packetSize);
