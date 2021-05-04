@@ -14,6 +14,7 @@
 
 #include "Fw/Logger/Logger.hpp"
 #include "Fw/Types/BasicTypes.hpp"
+#include "Fw/Types/EightyCharString.hpp"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -69,7 +70,12 @@ void FlexTrakComponentImpl ::init(const NATIVE_INT_TYPE queueDepth,
 //        system runs at steady-state. This allows for initialization code that
 //        invokes working ports.
 void FlexTrakComponentImpl::preamble(void) {
-    loRaIsFree = true;
+    // LoRa is considered as free on init
+    this->loRaIsFree = true;
+    // Create queue to store packets to downlink
+    Fw::EightyCharString queueName("downlink");
+    this->downlinkQueue.create(queueName, 10, sizeof(Fw::Buffer));
+
     for (NATIVE_INT_TYPE buffer = 0; buffer < DR_MAX_NUM_BUFFERS; buffer++) {
         // Assign the raw data to the buffer. Make sure to include the side of
         // the region assigned.
@@ -150,10 +156,8 @@ void FlexTrakComponentImpl ::serialRecv_handler(const NATIVE_INT_TYPE portNum,
 bool FlexTrakComponentImpl ::detectCommand(const char* command, const char* line) {
     
     bool found = true;
-    //printf("%u: \n", strlen(command));
     for (int i = 0; i < strlen(command); i++) {
         found &= (command[i] == line[i]);
-        //printf("\t%u: %c - %c = %u \n", i, command[i], line[i], (command[i] == line[i]));
     }
     return found;
 }
@@ -172,8 +176,19 @@ void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
         // @todo Implement event (?)
     }
 
-    // Add packet to downlink queue
     this->downlinkQueue_internalInterfaceInvoke(0,buffer);
+    /*/ @todo Add packet to downlink queue instead of internal interface
+    Os::Queue::QueueStatus stat = this->downlinkQueue.send(buffer, 1, Os::Queue::QUEUE_NONBLOCKING);
+    if(stat != Os::Queue::QUEUE_OK) {
+        printf("Error sending in queue %u\n", stat);
+    } else {
+        printf("Send in queue\n");
+    }
+    //*/
+}
+
+void FlexTrakComponentImpl::Run_handler(NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE context) {
+
 }
 
 void FlexTrakComponentImpl::downlinkQueue_internalInterfaceHandler(U8 packetType, Fw::Buffer &buffer) {

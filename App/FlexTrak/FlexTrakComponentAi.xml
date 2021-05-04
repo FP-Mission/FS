@@ -4,6 +4,7 @@
     <comment>Component handling the FlexTrak board</comment>
 
     <import_port_type>Svc/Ping/PingPortAi.xml</import_port_type>   
+    <import_port_type>Svc/Sched/SchedPortAi.xml</import_port_type>
     <import_port_type>Drv/SerialDriverPorts/SerialReadPortAi.xml</import_port_type>
     <import_port_type>Drv/SerialDriverPorts/SerialWritePortAi.xml</import_port_type>
     <import_port_type>App/FlexTrak/TemperaturePort/TemperaturePortAi.xml</import_port_type>
@@ -27,6 +28,11 @@
     </internal_interfaces>    
 
     <ports>
+        <port name="Run" data_type="Svc::Sched" kind="async_input" >
+            <comment>
+                Run port for downlink
+            </comment>
+        </port>
         <port name="PingIn" data_type="Svc::Ping" kind="async_input" max_number="1">
             <comment>
                 Ping request port

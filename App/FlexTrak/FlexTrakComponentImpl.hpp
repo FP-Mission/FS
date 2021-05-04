@@ -16,6 +16,7 @@
 #include "App/FlexTrak/FlexTrakComponentAc.hpp"
 #include "fprime/config/LinuxSerialDriverComponentImplCfg.hpp"
 #include <Os/Mutex.hpp>
+#include <Os/Queue.hpp>
 
 #include <string>
 #include <sstream>
@@ -77,7 +78,7 @@ class FlexTrakComponentImpl : public FlexTrakComponentBase {
     void sendData_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
                           Fw::Buffer &buffer);
     void downlinkQueue_internalInterfaceHandler(U8 packetType, Fw::Buffer &packet);
-
+    void Run_handler(NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE context);
 
     void sendFlexTrak(Fw::Buffer &buffer);
     void sendFlexTrakCommand(std::string command);
@@ -112,8 +113,13 @@ class FlexTrakComponentImpl : public FlexTrakComponentBase {
     LoRaConfig modes[2];
     U8 mode;
     F32 frequency;
+
     bool loRaIsFree;
     Os::Mutex loRaMutex;
+
+    Os::Queue downlinkQueue;      //!< queue to store packets to downlink
+    Os::Mutex downlinkQueueMutex;
+
 };
 
 }  // end namespace App
