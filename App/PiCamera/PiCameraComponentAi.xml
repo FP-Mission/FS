@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../../Autocoders/Python/schema/ISF/component_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<component name="PiCamera" kind="active" namespace="App">
+    <comment>Component handling the Pi Camera</comment>
+
+    <import_port_type>Svc/Ping/PingPortAi.xml</import_port_type>
+    <import_port_type>App/FlexTrak/Position/PositionPortAi.xml</import_port_type>
+    <import_port_type>App/PiCamera/PiCameraPort/PiCameraBarometerPortAi.xml</import_port_type>
+
+    <ports>
+        <port name="PingIn" data_type="Svc::Ping" kind="async_input" max_number="1">
+            <comment>
+                Ping request port
+            </comment>
+        </port>
+        <port name="PingOut" data_type="Svc::Ping" kind="output" max_number="1">
+            <comment>
+                Ping response port
+            </comment>
+        </port>
+        <!--
+        <port name="pictureTaken" data_type="U8" kind="output" max_number="1">
+            <comment>
+                Invoked when a picture has been taken
+            </comment>
+        </port>
+        -->
+        <port name="position" data_type="App::Position" kind="sync_input" max_number="1">
+            <comment>
+                Current balloon position
+            </comment>
+        </port>
+         <port name="barometerDataIn" data_type="App::PiCameraBarometerPort" kind="sync_input" max_number="1">
+            <comment>
+                Current barometer data
+            </comment>
+        </port>
+    </ports>
+
+    <commands>
+        <command kind="async" opcode="0" mnemonic="PiCam_TakePicture">
+            <comment>
+            Take picture
+            </comment>
+        </command>
+    </commands>
+
+    <telemetry>
+        <channel id="0" name="PiCam_PictureCnt" data_type="U32">
+            <comment>
+                Number of pictures taken
+            </comment>
+        </channel>
+    </telemetry>
+
+    <events>
+        <event id="0" name="PiCam_PictureTaken" severity="ACTIVITY_LO" format_string = "Picture was taken" >
+            <comment>
+                Picture was taken
+            </comment>
+        </event>
+        <event id="1" name="PiCam_PositionUpdate" severity="ACTIVITY_LO" format_string = "Position update" >
+            <comment>
+                Position update
+            </comment>
+        </event>
+        <event id="2" name="PiCam_BarometerDataUpdate" severity="ACTIVITY_LO" format_string = "Data Update : temperature: %.2f C°, pressure:  %.2f hPa, Altitude: %d m" >
+            <comment>
+                Temperature update
+            </comment>
+            <args>
+                <arg name="temp" type="F32">
+                    <comment>temp</comment>
+                </arg>
+                <arg name="pressure" type="F32">
+                    <comment>temp</comment>
+                </arg> 
+                <arg name="altitude" type="U16">
+                    <comment>temp</comment>
+                </arg> 
+            </args> 
+        </event>
+        <event id="3" name="PiCam_PictureError" severity="WARNING_LO" format_string = "Unable to take picture, error code %u" >
+            <comment>
+                Error when taking picture
+            </comment>
+            <args>
+                <arg name="code" type="U32">
+                    <comment>Error code</comment>
+                </arg>          
+            </args>
+        </event>
+     </events>
+</component>
+

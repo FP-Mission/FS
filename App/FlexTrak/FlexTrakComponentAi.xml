@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../../Autocoders/Python/schema/ISF/component_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<component name="FlexTrak" kind="active" namespace="App" modeler="true">
+    <comment>Component handling the FlexTrak board</comment>
+
+    <import_port_type>Svc/Ping/PingPortAi.xml</import_port_type>   
+    <import_port_type>Drv/SerialDriverPorts/SerialReadPortAi.xml</import_port_type>
+    <import_port_type>Drv/SerialDriverPorts/SerialWritePortAi.xml</import_port_type>
+    <import_port_type>App/FlexTrak/TemperaturePort/TemperaturePortAi.xml</import_port_type>
+    <import_port_type>App/FlexTrak/BatteryLevelPort/BatteryLevelPortAi.xml</import_port_type>
+    <import_port_type>Fw/Buffer/BufferSendPortAi.xml</import_port_type>
+
+    <ports>
+        <port name="PingIn" data_type="Svc::Ping" kind="async_input" max_number="1">
+            <comment>
+                Ping request port
+            </comment>
+        </port>
+        <port name="PingOut" data_type="Svc::Ping" kind="output" max_number="1">
+            <comment>
+                Ping response port
+            </comment>
+        </port>
+        <port name="serialSend" data_type="Drv::SerialWrite" kind="output" max_number="1">
+        </port>
+        <port name="serialRecv" data_type="Drv::SerialRead" kind="sync_input"  max_number="1">
+        </port>
+        <port name="sendData" data_type="Fw::BufferSend" kind="sync_input" max_number="1">
+        </port>
+        <!-- Used at startup to supply buffers to the serial driver -->
+        <port name="serialBufferOut" data_type="Fw::BufferSend"  kind="output"  max_number="1">
+        </port>
+
+        <!--
+        <port name="pictureTaken" data_type="U8" kind="async_input" max_number="1">
+            <comment>
+                Picture taken by the Pi Camera
+            </comment>
+        </port>
+        -->
+        
+        <port name="batteryVoltage" data_type="App::BatteryLevel" kind="output" max_number="1">
+            <comment>
+                Battery votlage level in mV
+            </comment>
+        </port>
+        <port name="internalTemp" data_type="App::Temperature" kind="output" max_number="1">
+            <comment>
+                Internal temperature in °C
+            </comment>
+        </port>
+        <port name="externalTemp" data_type="App::Temperature" kind="output" max_number="1">
+            <comment>
+                External temperature in °C
+            </comment>
+        </port>
+    </ports>
+
+    <commands>
+        <command kind="async" opcode="0" mnemonic="FT_CHANGE_MODE">
+            <comment>
+                Change FlexTrak LoRa mode
+            </comment>
+            <args>
+                <arg name="mode" type="U8">
+                    <comment>Mode (0 or 1)</comment>
+                </arg>          
+            </args>
+        </command>
+    </commands>
+
+    <telemetry>
+        <channel id="0" name="FT_SSDVBufferLength" data_type="U16">
+            <comment>
+                Used length of SSDV buffer
+            </comment>
+        </channel>
+    </telemetry>
+
+    <events>
+        <event id="0" name="FT_Mode" severity="ACTIVITY_HI" format_string = "Current FlexTrak mode : %u" >
+            <comment>
+                FlexTrak LoRa mode changed
+            </comment>
+            <args>
+                <arg name="mode" type="U8">
+                    <comment>Mode (0 or 1)</comment>
+                </arg>          
+            </args>
+        </event>
+     </events>
+</component>
