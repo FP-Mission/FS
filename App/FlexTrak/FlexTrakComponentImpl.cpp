@@ -102,15 +102,21 @@ void FlexTrakComponentImpl ::serialRecv_handler(const NATIVE_INT_TYPE portNum,
     // Check for invalid read status, log an error, return buffer and abort if
     // there is a problem
     if (status != Drv::SER_OK) {
-        Fw::Logger::logMsg("[WARNING] Received buffer with bad packet: %d\n",
+        Fw::Logger::logMsg("[WARNING] Serial received error: %d\n",
                            status);
 
         serBuffer.setSize(UART_READ_BUFF_SIZE);
         this->serialBufferOut_out(0, serBuffer);
         return;
     }
+    // Make sure end of char is '\0'
     *(pointer + buffsize) = '\0';
     printf("[FlexTrak] Rx (%u): %s\n", buffsize, pointer);
+
+    char command[] = "LoRaIsFree=";
+    if (strcmp (command, pointer) != 0) {
+        printf("LORAISFREE ==== %u", *(pointer+11));
+    }
 
     // Return buffer (see above note)
     serBuffer.setSize(UART_READ_BUFF_SIZE);
@@ -118,10 +124,10 @@ void FlexTrakComponentImpl ::serialRecv_handler(const NATIVE_INT_TYPE portNum,
 }
 
 void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
-                                              Fw::Buffer &fwBuffer) {
-    char *pointer = reinterpret_cast<char *>(fwBuffer.getData());
+                                              Fw::Buffer &buffer) {
+    char *pointer = reinterpret_cast<char *>(buffer.getData());
 
-    U16 packetSize = fwBuffer.getSize();
+    U16 packetSize = buffer.getSize();
 
     DEBUG_PRINT("Tx buffer size %u\n", packetSize);
 
@@ -130,6 +136,15 @@ void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
         return;
         // @todo Implement event (?)
     }
+
+    // Add packet to downlink queue
+    this->downlinkQueue_internalInterfaceInvoke(0,buffer);
+}
+
+void FlexTrakComponentImpl::downlinkQueue_internalInterfaceHandler(U8 packetType, Fw::Buffer &buffer) {
+    char *pointer = reinterpret_cast<char *>(buffer.getData());
+
+    U16 packetSize = buffer.getSize();
 
     sendFlexTrakCommand("CH1");
 
@@ -155,11 +170,12 @@ void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
     data[2] = 'D';
     data[3] = packetSize;
     U8 i = 0;
-    //printf("Downlink data");
+    //printf("Downlink data : ");
     for (i; i < packetSize; i++) {
         data[4 + i] = *(pointer + i);
-        // printf("%X", data[4 + i]);
+        //printf("%c", data[4 + i]);
     }
+    //printf("END\n");
     data[packetSize + 4] = '\r';
     U8 commandSize = packetSize + 5;
     //*/
@@ -182,7 +198,6 @@ void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
 
     //char data[] = "~CV\r";  // 4
     sendFlexTrakCommand("CH0");
-
 }
 
 void FlexTrakComponentImpl:: sendFlexTrak(Fw::Buffer &buffer) {

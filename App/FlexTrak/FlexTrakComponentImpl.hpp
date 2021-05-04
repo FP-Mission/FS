@@ -74,7 +74,9 @@ class FlexTrakComponentImpl : public FlexTrakComponentBase {
     //! Handler implementation for sendData
     //!
     void sendData_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
-                          Fw::Buffer &fwBuffer);
+                          Fw::Buffer &buffer);
+    void downlinkQueue_internalInterfaceHandler(U8 packetType, Fw::Buffer &packet);
+
 
     void sendFlexTrak(Fw::Buffer &buffer);
     void sendFlexTrakCommand(std::string command);
