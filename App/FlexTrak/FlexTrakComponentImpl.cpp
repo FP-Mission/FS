@@ -15,6 +15,10 @@
 #include "Fw/Logger/Logger.hpp"
 #include "Fw/Types/BasicTypes.hpp"
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #define DEBUG_PRINT(x, ...)  printf(x, ##__VA_ARGS__); fflush(stdout)
 //#define DEBUG_PRINT(x,...)
 
@@ -65,6 +69,7 @@ void FlexTrakComponentImpl ::init(const NATIVE_INT_TYPE queueDepth,
 //        system runs at steady-state. This allows for initialization code that
 //        invokes working ports.
 void FlexTrakComponentImpl::preamble(void) {
+    loRaIsFree = true;
     for (NATIVE_INT_TYPE buffer = 0; buffer < DR_MAX_NUM_BUFFERS; buffer++) {
         // Assign the raw data to the buffer. Make sure to include the side of
         // the region assigned.
@@ -111,16 +116,46 @@ void FlexTrakComponentImpl ::serialRecv_handler(const NATIVE_INT_TYPE portNum,
     }
     // Make sure end of char is '\0'
     *(pointer + buffsize) = '\0';
-    printf("[FlexTrak] Rx (%u): %s\n", buffsize, pointer);
 
-    char command[] = "LoRaIsFree=";
-    if (strcmp (command, pointer) != 0) {
-        printf("LORAISFREE ==== %u", *(pointer+11));
+    if(detectCommand("*", pointer)) {               // Command ack by the AVR
+        printf("[FlexTrak] Ack %s", pointer + 1);
+    } else if(detectCommand("?", pointer)) {        // Command error response AVR
+        printf("[FlexTrak] Command error %s", pointer + 1);
+    } else if (detectCommand("GPS=", pointer)) {
+        //printf("gps received\n");
+    } else if(detectCommand("Batt=", pointer)) {
+        //printf("Bat found\n");
+    }  else if(detectCommand("Temp0=", pointer)) {
+        //printf("Bat found\n");
+    }  else if(detectCommand("Temp1=", pointer)) {
+        //printf("Bat found\n");
+    } else if(detectCommand("LoRaIsFree=", pointer)) {
+        loRaMutex.lock();
+        loRaIsFree = atoi(pointer + 11) == 1 ? true : false;
+        loRaMutex.unLock();
+        if(loRaIsFree) {
+            printf("[FlexTrak] LoRa freed\n");
+        } else {
+            printf("[FlexTrak] LoRa not free\n");
+        }
+    } else {    
+        printf("[FlexTrak] Rx (%u): %s", buffsize, pointer);
     }
 
     // Return buffer (see above note)
     serBuffer.setSize(UART_READ_BUFF_SIZE);
     this->serialBufferOut_out(0, serBuffer);
+}
+
+bool FlexTrakComponentImpl ::detectCommand(const char* command, const char* line) {
+    
+    bool found = true;
+    //printf("%u: \n", strlen(command));
+    for (int i = 0; i < strlen(command); i++) {
+        found &= (command[i] == line[i]);
+        //printf("\t%u: %c - %c = %u \n", i, command[i], line[i], (command[i] == line[i]));
+    }
+    return found;
 }
 
 void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
@@ -129,7 +164,7 @@ void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
 
     U16 packetSize = buffer.getSize();
 
-    DEBUG_PRINT("Tx buffer size %u\n", packetSize);
+    //DEBUG_PRINT("Tx buffer size %u\n", packetSize);
 
     if(packetSize > FW_COM_BUFFER_MAX_SIZE) {
         Fw::Logger::logMsg("Too big packet to downlink %u\n", packetSize);
@@ -143,61 +178,41 @@ void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
 
 void FlexTrakComponentImpl::downlinkQueue_internalInterfaceHandler(U8 packetType, Fw::Buffer &buffer) {
     char *pointer = reinterpret_cast<char *>(buffer.getData());
-
     U16 packetSize = buffer.getSize();
 
-    sendFlexTrakCommand("CH1");
+    loRaMutex.lock();
+    if(loRaIsFree) {
+        sendFlexTrakCommand("CH1");
 
-    /*/ Hex test
-    char data[31];
-    data[0] = '~';
-    data[1] = 'L';
-    data[2] = 'D';
+        char data[FW_COM_BUFFER_MAX_SIZE + 5]; // 
+        data[0] = '~';
+        data[1] = 'L';
+        data[2] = 'D';
+        data[3] = packetSize;
+        U8 i = 0;
+        //printf("Downlink data : ");
+        for (i; i < packetSize; i++) {
+            data[4 + i] = *(pointer + i);
+            //printf("%c", data[4 + i]);
+        }
+        //printf("END\n");
+        data[packetSize + 4] = '\r';
+        U8 commandSize = packetSize + 5;
+        //*/
 
-    data[3] = 3;
-    data[4] = 0xAB;
-    data[5] = 0xCD;
-    data[6] = 0xEF;
-    data[7] = '\r';
 
-    U8 commandSize = 8;
-    //*/
+        Fw::Buffer buf; 
+        buf.setData((U8*)data);
+        buf.setSize(commandSize);
 
-    // 
-    char data[FW_COM_BUFFER_MAX_SIZE + 5]; // 
-    data[0] = '~';
-    data[1] = 'L';
-    data[2] = 'D';
-    data[3] = packetSize;
-    U8 i = 0;
-    //printf("Downlink data : ");
-    for (i; i < packetSize; i++) {
-        data[4 + i] = *(pointer + i);
-        //printf("%c", data[4 + i]);
+        sendFlexTrak(buf);
+
+        sendFlexTrakCommand("CH0");
+    } else {
+        printf("LoRa is not free - Abord downlink\n");
     }
-    //printf("END\n");
-    data[packetSize + 4] = '\r';
-    U8 commandSize = packetSize + 5;
-    //*/
 
-
-    Fw::Buffer buf; 
-    buf.setData((U8*)data);
-    buf.setSize(commandSize);
-    
-    sendFlexTrak(buf);
-    //*/
-
-    /*/ Coucou test
-    static U8 cnt = 0;
-    char data[100];
-    sprintf(data, "LMCoucou%u", cnt);
-    cnt++;
-    sendFlexTrakCommand(data);
-    //*/
-
-    //char data[] = "~CV\r";  // 4
-    sendFlexTrakCommand("CH0");
+    loRaMutex.unLock();
 }
 
 void FlexTrakComponentImpl:: sendFlexTrak(Fw::Buffer &buffer) {

@@ -15,6 +15,7 @@
 
 #include "App/FlexTrak/FlexTrakComponentAc.hpp"
 #include "fprime/config/LinuxSerialDriverComponentImplCfg.hpp"
+#include <Os/Mutex.hpp>
 
 #include <string>
 #include <sstream>
@@ -81,6 +82,7 @@ class FlexTrakComponentImpl : public FlexTrakComponentBase {
     void sendFlexTrak(Fw::Buffer &buffer);
     void sendFlexTrakCommand(std::string command);
 
+    bool detectCommand(const char* command, const char* line);
 
     PRIVATE :
 
@@ -110,6 +112,8 @@ class FlexTrakComponentImpl : public FlexTrakComponentBase {
     LoRaConfig modes[2];
     U8 mode;
     F32 frequency;
+    bool loRaIsFree;
+    Os::Mutex loRaMutex;
 };
 
 }  // end namespace App
