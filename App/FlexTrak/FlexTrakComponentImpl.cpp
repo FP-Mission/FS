@@ -124,9 +124,9 @@ void FlexTrakComponentImpl ::serialRecv_handler(const NATIVE_INT_TYPE portNum,
     *(pointer + buffsize) = '\0';
 
     if(detectCommand("*", pointer)) {               // Command ack by the AVR
-        printf("[FlexTrak] Ack %s", pointer + 1);
+        DEBUG_PRINT("[FlexAvr] Ack %s", pointer + 1);
     } else if(detectCommand("?", pointer)) {        // Command error response AVR
-        printf("[FlexTrak] Command error %s", pointer + 1);
+        DEBUG_PRINT("[FlexAvr] Command error %s", pointer + 1);
     } else if (detectCommand("GPS=", pointer)) {
         //printf("gps received\n");
     } else if(detectCommand("Batt=", pointer)) {
@@ -140,12 +140,14 @@ void FlexTrakComponentImpl ::serialRecv_handler(const NATIVE_INT_TYPE portNum,
         loRaIsFree = atoi(pointer + 11) == 1 ? true : false;
         loRaMutex.unLock();
         if(loRaIsFree) {
-            printf("[FlexTrak] LoRa freed\n");
+            DEBUG_PRINT("[FlexAvr] LoRa freed\n");
         } else {
-            printf("[FlexTrak] LoRa not free\n");
+            DEBUG_PRINT("[FlexAvr] LoRa not free\n");
         }
+    } else if(detectCommand("DataDownlinked=", pointer)) {
+        DEBUG_PRINT("[FlexAvr] Data downlinked (%u)\n", atoi(pointer + 15));
     } else {    
-        printf("[FlexTrak] Rx (%u): %s", buffsize, pointer);
+        DEBUG_PRINT("[FlexAvr] Rx (%u): %s", buffsize, pointer);
     }
 
     // Return buffer (see above note)
