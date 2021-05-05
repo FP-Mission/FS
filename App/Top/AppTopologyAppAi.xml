@@ -881,7 +881,7 @@
    </connection>
 
      <connection name = "PiCameraPingSend">
-          <source component = "health" port = "PingSend" type = "Ping" num = "16"/>
+          <source component = "health" port = "PingSend" type = "Ping" num = "17"/>
           <target component = "picamera" port = "PingIn" type = "Ping" num = "0"/>
      </connection>
      <connection name = "PiCameraPingRecv">
