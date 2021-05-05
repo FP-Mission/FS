@@ -63,9 +63,6 @@ void Shtc3::readData(){
     if(!checkCrc(buf,2,checksum))
         RH_DATA=(buf[0]<<8|buf[1]);
     
-    printf("TH data %d, ",TH_DATA);
-    printf("RH data %d\n",RH_DATA);
-
     temperatureValue = 175 * (float)TH_DATA / 65536.0f - 45.0f;       //Calculate temperature value
     humidityValue =100 * (float)RH_DATA / 65536.0f;              //Calculate humidity value  
     
