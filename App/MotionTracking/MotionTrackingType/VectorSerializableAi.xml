@@ -1,0 +1,10 @@
+<serializable namespace="App" name="VectorTlm">
+    <comment>
+    This value holds the values of ICM sensor
+    </comment>
+    <members>
+        <member name="x" type="I16"/>
+        <member name="y" type="I16"/>
+        <member name="z" type="I16"/>
+    </members>
+</serializable>

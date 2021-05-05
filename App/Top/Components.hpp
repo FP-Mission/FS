@@ -28,6 +28,11 @@
 #include <Svc/RateGroupDriver/RateGroupDriverImpl.hpp>
 #include <Svc/TlmChan/TlmChanImpl.hpp>
 
+#include <App/SenseHat/SenseHatComponentImpl.hpp>
+#include <App/Thermometer/ThermometerComponentImpl.hpp>
+#include <App/MotionTracking/MotionTrackingComponentImpl.hpp>
+#include <App/Barometer/BarometerComponentImpl.hpp>
+
 void constructAppArchitecture(void);
 bool constructApp(bool dump, U32 port_number, char* hostname);
 void exitTasks(void);
@@ -58,5 +63,10 @@ extern App::PiCameraComponentImpl piCamera;
 extern App::PredictorComponentImpl predictor;
 extern App::RockBlockComponentImpl rockBlock;
 extern App::TemperatureProbesComponentImpl temperatureProbes;
+
+extern App::SenseHatComponentImpl senseHat;
+extern App::ThermometerComponentImpl thermometer;
+extern App::MotionTrackingComponentImpl motionTracking;
+extern App::BarometerComponentImpl barometer;
 
 #endif

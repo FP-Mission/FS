@@ -1,4 +1,4 @@
-name: Application Build and UT
+name: Application Build and static analyse (github)
 
 # Builds project on every push and PR
 on:  [push, pull_request]
@@ -46,7 +46,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: Build
-          path: ${{ env.path }}/build-fprime-automatic-native
+          path: ${{ env.path }}/build-*
 
   static_code_analysis:
     needs: build
@@ -75,82 +75,3 @@ jobs:
         with:
           name: cppCheck coverage report
           path: ./check-html
-
-  app_unit_test:
-    runs-on: ubuntu-latest
-    name: Local unit tests
-
-    steps:
-      # checkout the repository with submodules
-      - uses: actions/checkout@v2
-        with:
-          submodules: true
-
-      - name: prepare python pre-built environnement
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.8'
-
-      - name: test python is functionnal
-        run: python -c "import sys; print(sys.version)"
-      
-      - name: Pepare dependencies python, cmake
-        run: |
-          python -m pip install --upgrade pip
-          sudo apt install cmake -y 
-        
-      # Init the virtual environnement (project script)
-      - name: Prepare venv
-        run: |
-          chmod +x ./scripts-ci/init-venv.sh
-          ./scripts-ci/init-venv.sh
-
-      # Build the unit tests and check them one by one in the app
-      - name: Build and run the unit test
-        run: |
-          chmod +x ./scripts-ci/local-unit-test.sh
-          ./scripts-ci/local-unit-test.sh ${{env.path}}
-
-  global_unit_test:
-    runs-on: ubuntu-latest
-    name: Global unit tests
-    steps:
-      # checkout the repository with submodules
-      - uses: actions/checkout@v2
-        with:
-          submodules: true
-
-      # checkout PUSopen into fprime
-
-      - name: prepare python pre-built environnement
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.8'
-
-      - name: test python is functionnal
-        run: python -c "import sys; print(sys.version)"
-      
-      - name: Pepare dependencies python, cmake
-        run: |
-          python -m pip install --upgrade pip
-          sudo apt install cmake -y
-        
-      # Init the virtual environnement (project script)
-      - name: Prepare venv
-        run: |
-          chmod +x ./scripts-ci/init-venv.sh
-          ./scripts-ci/init-venv.sh
-
-
-      # Build the project (project script)
-      - name: Build the project
-        run: | 
-          chmod +x ./scripts-ci/build.sh
-          ./scripts-ci/build.sh ${{env.path}}
-
-
-      # Build the unit tests and check them one by one in the app using fprime check --all
-      - name: Build and run all the unit tests
-        run: |
-          chmod +x ./scripts-ci/global-unit-test.sh
-          ./scripts-ci/global-unit-test.sh ${{env.path}}

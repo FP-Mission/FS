@@ -1,0 +1,61 @@
+<component name="SenseHat" kind="active" namespace="App">
+    <comment>Component that manage SenseHat</comment>
+    <import_port_type>App/SenseHat/SenseHatPort/SHTPortAi.xml</import_port_type>
+    <import_port_type>App/SenseHat/SenseHatPort/LPSPortAi.xml</import_port_type>
+    <import_port_type>App/SenseHat/SenseHatPort/ICMPortAi.xml</import_port_type>
+    <import_port_type>Svc/Sched/SchedPortAi.xml</import_port_type>
+    <import_port_type>Svc/Ping/PingPortAi.xml</import_port_type>
+    <ports>
+        <port name="SHT" data_type="App::SHTPort" kind="output">
+            <comment>
+            Port for sending SHT data
+            </comment>
+        </port>
+        <port name="LPS" data_type="App::LPSPort" kind="output">
+            <comment>
+            Port for sending LPS data
+            </comment>
+        </port>
+        <port name="ICM" data_type="App::ICMPort" kind="output">
+            <comment>
+            Port for sending ICM data
+            </comment>
+        </port>
+        <port name="Schedin" data_type="Sched" kind="async_input">
+            <comment>
+            The rate groupe scheduler input
+            </comment>
+        </port>
+                <!-- Output ping port -->
+        <port name="PingIn" data_type="Svc::Ping" kind="async_input" max_number="1">
+            <comment>
+            The ping input port
+            </comment>
+        </port>
+        <!-- Output ping port -->
+        <port name="PingOut" data_type="Svc::Ping" kind="output" max_number="1">
+            <comment>
+            The ping input port
+            </comment>
+        </port>
+    </ports>
+    <commands>
+        <command kind="async" opcode="0" mnemonic="MS_GET_TM">
+            <comment>
+            Ask telemetry
+            </comment>
+        </command>
+    </commands>
+    <events>
+        <event id="0" name="MS_DATA" severity="ACTIVITY_LO" format_string="Sense hat data update"  >
+            <comment>
+            Sense hat data update
+            </comment>        
+        </event>
+        <event id="1" name="MS_ERROR" severity="WARNING_HI" format_string = "Sense update data error" >
+            <comment>
+            Sense Hat error
+            </comment>
+        </event>
+    </events>
+</component>
