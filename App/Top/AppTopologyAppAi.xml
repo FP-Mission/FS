@@ -32,6 +32,7 @@
     <import_component_type>App/Thermometer/ThermometerComponentAi.xml</import_component_type>
     <import_component_type>App/MotionTracking/MotionTrackingComponentAi.xml</import_component_type>
     <import_component_type>App/Barometer/BarometerComponentAi.xml</import_component_type>
+    <import_component_type>App/PiCamera/PiCameraComponentAi.xml</import_component_type>
 
 
 
@@ -74,6 +75,8 @@
     <instance namespace="App" name="thermometer" type ="Thermometer" base_id="1150" base_id_window="10" />
     <instance namespace="App" name="motionTracking" type ="MotionTracking" base_id="1200" base_id_window="10" />
     <instance namespace="App" name="barometer" type ="Barometer" base_id="1250" base_id_window="10" />
+    <instance namespace="App" name="picamera" type ="PiCamera" base_id="1300" base_id_window="10" />
+
 
 
 

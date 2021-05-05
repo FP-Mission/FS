@@ -93,6 +93,8 @@ App::MotionTrackingComponentImpl motionTracking(FW_OPTIONAL_NAME("motionTracking
 
 App::BarometerComponentImpl barometer(FW_OPTIONAL_NAME("barometer"));
 
+App::PiCameraComponentImpl picamera(FW_OPTIONAL_NAME("picamera"));
+
 
 const char* getHealthName(Fw::ObjBase& comp) {
    #if FW_OBJECT_NAMES == 1
@@ -157,6 +159,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     thermometer.init(30,0);
     motionTracking.init(30,0);
     barometer.init(30,0);
+    picamera.init(30,0);
     // Connect rate groups to rate group driver
     constructAppArchitecture();
 
@@ -202,6 +205,8 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
         {3,5,getHealthName(thermometer)}, //14
         {3,5,getHealthName(motionTracking)}, //15
         {3,5,getHealthName(barometer)}, //16
+        {3,5,getHealthName(picamera)}, //17
+
     };
 
     // register ping table
@@ -237,6 +242,8 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
 
     barometer.start(0, 100, 10*1024);
 
+    picamera.start(0,100, 10*1024);
+
     // Initialize socket server if and only if there is a valid specification
     if (hostname != NULL && port_number != 0) {
         socketIpDriver.startSocketTask(100, 10 * 1024, hostname, port_number);
@@ -263,6 +270,7 @@ void exitTasks(void) {
     thermometer.exit();
     motionTracking.exit();
     barometer.exit();
+    picamera.exit();
     // join the component threads with NULL pointers to free them
     (void) rateGroup1Comp.ActiveComponentBase::join(NULL);
     (void) rateGroup2Comp.ActiveComponentBase::join(NULL);
@@ -281,6 +289,7 @@ void exitTasks(void) {
     (void) thermometer.ActiveComponentBase::join(NULL);
     (void) motionTracking.ActiveComponentBase::join(NULL);
     (void) barometer.ActiveComponentBase::join(NULL);
+    (void) picamera.ActiveComponentBase::join(NULL);
     socketIpDriver.exitSocketTask();
     (void) socketIpDriver.joinSocketTask(NULL);
     cmdSeq.deallocateBuffer(seqMallocator);

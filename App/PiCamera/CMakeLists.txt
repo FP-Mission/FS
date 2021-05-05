@@ -16,7 +16,8 @@ set(SOURCE_FILES
 )
 register_fprime_module()
 
+find_library(RASPICAM raspicam /usr/local/lib)
 #find_library(wiringPi_LIB wiringPi)
 #find_library(LibRt rt)
 #find_library(Crypt crypt)
-#target_link_libraries(App_PiCamera ${wiringPi_LIB} ${LibRt} ${Crypt})
+target_link_libraries(App_PiCamera ${RASPICAM})

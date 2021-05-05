@@ -28,6 +28,7 @@
 #include <App/Thermometer/ThermometerComponentImpl.hpp>
 #include <App/MotionTracking/MotionTrackingComponentImpl.hpp>
 #include <App/Barometer/BarometerComponentImpl.hpp>
+#include <App/PiCamera/PiCameraComponentImpl.hpp>
 
 void constructAppArchitecture(void);
 bool constructApp(bool dump, U32 port_number, char* hostname);
@@ -60,5 +61,6 @@ extern App::SenseHatComponentImpl senseHat;
 extern App::ThermometerComponentImpl thermometer;
 extern App::MotionTrackingComponentImpl motionTracking;
 extern App::BarometerComponentImpl barometer;
+extern App::PiCameraComponentImpl picamera;
 
 #endif
