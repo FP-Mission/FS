@@ -181,6 +181,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     health.regCommands();
     pingRcvr.regCommands();
     senseHat.regCommands();
+    picamera.regCommands();
 
     // read parameters
     prmDb.readParamFile();

@@ -842,13 +842,13 @@
 
     <connection name = "PiCameraReg">
         <source component = "picamera" port = "CmdReg" type = "CmdReg" num = "0"/>
-        <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "26"/>
+        <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "20"/>
    </connection>
    
     <!-- Command Dispatch Ports - Dispatch port number must match registration port for each component -->
 
    <connection name = "PiCameraDisp">
-        <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "26"/>
+        <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "20"/>
         <target component = "picamera" port = "CmdDisp" type = "Cmd" num = "0"/>
    </connection>
   
