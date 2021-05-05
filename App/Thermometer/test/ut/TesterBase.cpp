@@ -794,7 +794,7 @@ namespace App {
 
   void ThermometerTesterBase ::
     textLogIn(
-        const U32 id,
+        const FwEventIdType id,
         Fw::Time &timeTag,
         const Fw::TextLogSeverity severity,
         const Fw::TextLogString &text
