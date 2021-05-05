@@ -19,6 +19,7 @@
 #include <raspicam/raspicam.h>
 #include <unistd.h>
 
+
 namespace App {
 
   // ----------------------------------------------------------------------
@@ -103,10 +104,10 @@ namespace App {
   {
     raspicam::RaspiCam Camera; //Camera object
     //Open camera
-    cout<<"Opening Camera..."<<endl;
-    if ( !Camera.open()) {cerr<<"Error opening camera"<<endl;return -1;}
+    std::cout<<"Opening Camera..."<<std::endl;
+    if ( !Camera.open()) {std::cerr<<"Error opening camera"<<std::endl;return -1;}
     //wait a while until camera stabilizes
-    cout<<"Sleeping for 3 secs"<<endl;
+    std::cout<<"Sleeping for 3 secs"<<std::endl;
     sleep(3);
     //capture
     Camera.grab();
@@ -119,7 +120,7 @@ namespace App {
     std::ofstream outFile ( "raspicam_image.ppm",std::ios::binary );
     outFile<<"P6\n"<<Camera.getWidth() <<" "<<Camera.getHeight() <<" 255\n";
     outFile.write ( ( char* ) data, Camera.getImageTypeSize ( raspicam::RASPICAM_FORMAT_RGB ) );
-    cout<<"Image saved at raspicam_image.ppm"<<endl;
+    std::cout<<"Image saved at raspicam_image.ppm"<<std::endl;
     //free resrources
     delete data;
     this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
