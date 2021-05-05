@@ -838,4 +838,55 @@
           <target component = "barometer" port = "DataIn" type = "App::LPSPort" num = "0"/>
      </connection>
 
+     <!-- PiCamera -->
+
+    <connection name = "PiCameraReg">
+        <source component = "picamera" port = "CmdReg" type = "CmdReg" num = "0"/>
+        <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "26"/>
+   </connection>
+   
+    <!-- Command Dispatch Ports - Dispatch port number must match registration port for each component -->
+
+   <connection name = "PiCameraDisp">
+        <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "26"/>
+        <target component = "picamera" port = "CmdDisp" type = "Cmd" num = "0"/>
+   </connection>
+  
+    <!-- Command Reply Ports - Go to the same response port on the dispatcher -->
+
+   <connection name = "PiCameraReply">
+      <source component = "picamera" port = "CmdStatus" type = "CmdResponse" num = "0"/>
+      <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
+   </connection>
+
+    <connection name = "PiCameraLog">
+       <source component = "picamera" port = "Log" type = "Log" num = "0"/>
+        <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+   </connection>
+    
+       
+   <connection name = "PiCameraTextLog">
+       <source component = "picamera" port = "LogText" type = "LogText" num = "0"/>
+        <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
+   </connection>
+
+<connection name = "PiCameraTextTlm">
+       <source component = "picamera" port = "Tlm" type = "Tlm" num = "0"/>
+        <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
+   </connection>
+
+   <connection name = "PiCameraTime">
+       <source component = "picamera" port = "Time" type = "Time" num = "0"/>
+        <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+   </connection>
+
+     <connection name = "PiCameraPingSend">
+          <source component = "health" port = "PingSend" type = "Ping" num = "16"/>
+          <target component = "picamera" port = "PingIn" type = "Ping" num = "0"/>
+     </connection>
+     <connection name = "PiCameraPingRecv">
+          <source component = "picamera" port = "PingOut" type = "Ping" num = "0"/>
+          <target component = "health" port = "PingReturn" type = "Ping" num = "17"/>
+     </connection>
+
 </assembly>
