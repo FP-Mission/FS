@@ -105,7 +105,10 @@ namespace App {
     raspicam::RaspiCam Camera; //Camera object
     //Open camera
     std::cout<<"Opening Camera..."<<std::endl;
-    if ( !Camera.open()) {std::cerr<<"Error opening camera"<<std::endl;return -1;}
+    if ( !Camera.open()) {
+      std::cerr<<"Error opening camera"<<std::endl;
+      return;
+    }
     //wait a while until camera stabilizes
     std::cout<<"Sleeping for 3 secs"<<std::endl;
     sleep(3);
