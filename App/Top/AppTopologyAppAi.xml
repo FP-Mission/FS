@@ -11,14 +11,10 @@
     <import_component_type>Ref/PingReceiver/PingReceiverComponentAi.xml</import_component_type>
     <import_component_type>Svc/TlmChan/TlmChanComponentAi.xml</import_component_type>
     <import_component_type>Svc/CmdDispatcher/CommandDispatcherComponentAi.xml</import_component_type>
-    <import_component_type>Svc/PrmDb/PrmDbComponentAi.xml</import_component_type>
     <import_component_type>Svc/ActiveRateGroup/ActiveRateGroupComponentAi.xml</import_component_type>
-    <import_component_type>Svc/CmdSequencer/CmdSequencerComponentAi.xml</import_component_type>
     <import_component_type>Svc/ActiveRateGroup/ActiveRateGroupComponentAi.xml</import_component_type>
-    <import_component_type>Svc/BufferManager/BufferManagerComponentAi.xml</import_component_type>
     <import_component_type>Svc/AssertFatalAdapter/AssertFatalAdapterComponentAi.xml</import_component_type>
     <import_component_type>Svc/Health/HealthComponentAi.xml</import_component_type>
-    <import_component_type>Svc/BufferManager/BufferManagerComponentAi.xml</import_component_type>
     <import_component_type>Svc/ActiveLogger/ActiveLoggerComponentAi.xml</import_component_type>
     <import_component_type>Svc/Time/TimeComponentAi.xml</import_component_type>
     <import_component_type>Svc/RateGroupDriver/RateGroupDriverComponentAi.xml</import_component_type>
@@ -26,16 +22,6 @@
     <import_component_type>Svc/PassiveConsoleTextLogger/PassiveTextLoggerComponentAi.xml</import_component_type>
     <import_component_type>Svc/GroundInterface/GroundInterfaceComponentAi.xml</import_component_type>
     <import_component_type>Svc/LinuxTimer/LinuxTimerComponentAi.xml</import_component_type>
-    <import_component_type>Drv/SocketIpDriver/SocketIpDriverComponentAi.xml</import_component_type>
-    <import_component_type>Drv/LinuxSerialDriver/LinuxSerialDriverComponentAi.xml</import_component_type>
-
-    <import_component_type>App/Eps/EpsComponentAi.xml</import_component_type>
-    <import_component_type>App/FlexTrak/FlexTrakComponentAi.xml</import_component_type>
-    <import_component_type>App/Gps/GpsComponentAi.xml</import_component_type>
-    <import_component_type>App/PiCamera/PiCameraComponentAi.xml</import_component_type>
-    <import_component_type>App/Predictor/PredictorComponentAi.xml</import_component_type>
-    <import_component_type>App/RockBlock/RockBlockComponentAi.xml</import_component_type>
-    <import_component_type>App/TemperatureProbes/TemperatureProbesComponentAi.xml</import_component_type>
 
     <!-- ################################################################ -->
     <!-- Declare component instances - must match names in Components.hpp -->
@@ -45,61 +31,25 @@
     <instance namespace="Svc" name="fatalHandler"   type="FatalHandler"         base_id="1"     base_id_window="0" />
     <instance namespace="Svc" name="chanTlm"        type="TlmChan"              base_id="1"    base_id_window="0" />
     <instance namespace="Svc" name="cmdDisp"        type="CommandDispatcher"    base_id="1"    base_id_window="10" />
-    <instance namespace="Svc" name="prmDb"          type="PrmDb"                base_id="11"    base_id_window="8" />
     <instance namespace="Svc" name="fatalAdapter"   type="AssertFatalAdapter"   base_id="19"    base_id_window="8" />
     <instance namespace="Svc" name="health"         type="Health"               base_id="27"   base_id_window="8" />
     <instance namespace="Svc" name="groundIf"       type="GroundInterface"      base_id="35"   base_id_window="1" />
     <instance namespace="Svc" name="eventLogger"    type="ActiveLogger"         base_id="36"   base_id_window="5" />
     <instance namespace="Svc" name="linuxTime"      type="Time"                 base_id="41"   base_id_window="0" />
     <instance namespace="Svc" name="textLogger"     type="PassiveTextLogger"    base_id="41"   base_id_window="0" />
-    <instance namespace="Svc" name="cmdSeq"         type="CmdSequencer"         base_id="41"   base_id_window="23" />
 
     <!-- Rate Group Components -->
     <instance namespace="Svc" name="rateGroupDrv"   type="RateGroupDriver"      base_id="64"   base_id_window="0" />
     <instance namespace="Svc" name="rateGroup1"     type="ActiveRateGroup"      base_id="64"   base_id_window="2" />
-    <instance namespace="Svc" name="rateGroup2"     type="ActiveRateGroup"      base_id="66"   base_id_window="2" />
     <instance namespace="Svc" name="rateGroup3"     type="ActiveRateGroup"      base_id="68"   base_id_window="2" />
-
-    <!-- Socket IP Communications driver -->
-    <instance namespace="Drv" name="socketIpDriver" type="SocketIpDriver"       base_id="70"   base_id_window="0" />
 
     <!-- Reference Example Components -->
     <instance namespace="Ref" name="pingRcvr"       type="PingReceiver"         base_id="70"   base_id_window="2" />
     <instance namespace="Drv" name="blockDrv"       type="BlockDriver"          base_id="72"   base_id_window="1" />
-    <instance namespace="Drv" name="serialDriver1"  type="LinuxSerialDriver"    base_id="73"   base_id_window="7" />
-
-    <instance namespace="App" name="eps"                type="Eps"                  base_id="80"   base_id_window="10" />
-    <instance namespace="App" name="flexTrak"           type="FlexTrak"             base_id="90"   base_id_window="10" />
-    <instance namespace="App" name="gps"                type="Gps"                  base_id="100"   base_id_window="10" />
-    <instance namespace="App" name="piCamera"           type="PiCamera"             base_id="110"   base_id_window="10" />
-    <instance namespace="App" name="predictor"          type="Predictor"            base_id="120"   base_id_window="10" />
-    <instance namespace="App" name="rockBlock"          type="RockBlock"            base_id="130"   base_id_window="10" />
-    <instance namespace="App" name="temperatureProbes"  type="TemperatureProbes"    base_id="140"   base_id_window="10" />
 
     <!-- ########### -->
     <!-- Connections -->
     <!-- ########### -->
-
-    <!-- Communications driver connections -->
-    <connection name="CommunicationRecv">
-        <source component="socketIpDriver" port="recv" type="Fw::BufferSend" num="0"/>
-        <target component="groundIf" port="readCallback" type="Fw::BufferSend" num="0"/>
-    </connection>
-    
-
-    <!-- GROUND INTERFACE DOWNLINK - CHOSE BETWEEN IP OR FLEXTRAK -->
-    <!-- Send data to Ip 
-    <connection name="CommunicationSend">
-        <source component="groundIf" port="write" type="Fw::BufferSend" num="0"/>
-        <target component="socketIpDriver" port="send" type="Fw::BufferSend" num="0"/>
-     </connection>
-     -->
-     <!-- Send data to FlexTrak -->
-     <connection name="CommunicationSend">
-        <source component="groundIf" port="write" type="Fw::BufferSend" num="0"/>
-        <target component="flexTrak" port="sendData" type="Fw::BufferSend" num="0"/>
-     </connection>
-     <!-- -->
 
     <!-- Command Registration/Dispatch/Reply Connections -->
    
@@ -116,41 +66,9 @@
          <source component="health" port="CmdReg" type="CmdReg" num="0"/>
          <target component="cmdDisp" port="compCmdReg" type="CmdReg" num="2"/>
     </connection>
-    <connection name="PrmDbReg">
-         <source component="prmDb" port="CmdReg" type="CmdReg" num="0"/>
-         <target component="cmdDisp" port="compCmdReg" type="CmdReg" num="3"/>
-    </connection>
-    <connection name="CmdSeqReg">
-         <source component="cmdSeq" port="cmdRegOut" type="CmdReg" num="0"/>
-         <target component="cmdDisp" port="compCmdReg" type="CmdReg" num="4"/>
-    </connection>
     <connection name="PingRcvReg">
          <source component="pingRcvr" port="CmdReg" type="CmdReg" num="0"/>
          <target component="cmdDisp" port="compCmdReg" type="CmdReg" num="5"/>
-    </connection>
-    <connection name="EpsReg">
-         <source component="eps" port="CmdReg" type="CmdReg" num="0"/>
-         <target component="cmdDisp" port="compCmdReg" type="CmdReg" num="10"/>
-    </connection>
-    <connection name="FlexTrakReg">
-         <source component="flexTrak" port="CmdReg" type="CmdReg" num="0"/>
-         <target component="cmdDisp" port="compCmdReg" type="CmdReg" num="11"/>
-    </connection>
-    <connection name="GpsReg">
-         <source component="gps" port="CmdReg" type="CmdReg" num="0"/>
-         <target component="cmdDisp" port="compCmdReg" type="CmdReg" num="12"/>
-    </connection>
-    <connection name="PiCameraReg">
-         <source component="piCamera" port="CmdReg" type="CmdReg" num="0"/>
-         <target component="cmdDisp" port="compCmdReg" type="CmdReg" num="13"/>
-    </connection>
-    <connection name="PredictorReg">
-         <source component="predictor" port="CmdReg" type="CmdReg" num="0"/>
-         <target component="cmdDisp" port="compCmdReg" type="CmdReg" num="14"/>
-    </connection>
-    <connection name="TemperatureProbesReg">
-         <source component="temperatureProbes" port="CmdReg" type="CmdReg" num="0"/>
-         <target component="cmdDisp" port="compCmdReg" type="CmdReg" num="15"/>
     </connection>
 
         <!-- Command Dispatch Ports - Dispatch port number must match registration port for each component -->
@@ -166,51 +84,14 @@
          <source component="cmdDisp" port="compCmdSend" type="Cmd" num="2"/>
          <target component="health" port="CmdDisp" type="Cmd" num="0"/>
     </connection>
-    <connection name="PrmDbDisp">
-         <source component="cmdDisp" port="compCmdSend" type="Cmd" num="3"/>
-         <target component="prmDb" port="CmdDisp" type="Cmd" num="0"/>
-    </connection>
-    <connection name="CmdSeqDisp">
-         <source component="cmdDisp" port="compCmdSend" type="Cmd" num="4"/>
-         <target component="cmdSeq"  port="cmdIn" type="Cmd" num="0"/>
-    </connection>
     <connection name="PingRcvDisp">
          <source component="cmdDisp" port="compCmdSend" type="Cmd" num="5"/>
          <target component="pingRcvr" port="CmdDisp" type="Cmd" num="0"/>
-    </connection>
-    <connection name="EpsDisp">
-         <source component="cmdDisp" port="compCmdSend" type="Cmd" num="10"/>
-         <target component="eps" port="CmdDisp" type="Cmd" num="0"/>
-    </connection>
-    <connection name="FlexTrakDisp">
-         <source component="cmdDisp" port="compCmdSend" type="Cmd" num="11"/>
-         <target component="flexTrak" port="CmdDisp" type="Cmd" num="0"/>
-    </connection>
-    <connection name="GpsDisp">
-         <source component="cmdDisp" port="compCmdSend" type="Cmd" num="12"/>
-         <target component="gps" port="CmdDisp" type="Cmd" num="0"/>
-    </connection>
-    <connection name="PiCameraDisp">
-         <source component="cmdDisp" port="compCmdSend" type="Cmd" num="13"/>
-         <target component="piCamera" port="CmdDisp" type="Cmd" num="0"/>
-    </connection>
-    <connection name="PredictorDisp">
-         <source component="cmdDisp" port="compCmdSend" type="Cmd" num="14"/>
-         <target component="predictor" port="CmdDisp" type="Cmd" num="0"/>
-    </connection>
-    <connection name="TemperatureProbesDisp">
-         <source component="cmdDisp" port="compCmdSend" type="Cmd" num="15"/>
-         <target component="temperatureProbes" port="CmdDisp" type="Cmd" num="0"/>
-    </connection>
-    
+    </connection>    
    
         <!-- Command Reply Ports - Go to the same response port on the dispatcher -->
     <connection name="EventLoggerReply">
         <source component="eventLogger" port="CmdStatus" type="CmdResponse" num="0"/>
-        <target component="cmdDisp" port="compCmdStat" type="CmdResponse" num="0"/>
-    </connection>
-    <connection name="CmdSeqReply">
-        <source component="cmdSeq" port="cmdResponseOut" type="CmdResponse" num="0"/>
         <target component="cmdDisp" port="compCmdStat" type="CmdResponse" num="0"/>
     </connection>
     <connection name="PrmDbReply">
@@ -229,51 +110,10 @@
          <source component="pingRcvr" port="CmdStatus" type="CmdResponse" num="0"/>
          <target component="cmdDisp" port="compCmdStat" type="CmdResponse" num="0"/>
     </connection>
-
-    <connection name="EpsStat">
-         <source component="eps" port="CmdStatus" type="CmdResponse" num="0"/>
-         <target component="cmdDisp" port="compCmdStat" type="CmdResponse" num="0"/>
-    </connection>
-    <connection name="FlexTrakStat">
-         <source component="flexTrak" port="CmdStatus" type="CmdResponse" num="0"/>
-         <target component="cmdDisp" port="compCmdStat" type="CmdResponse" num="0"/>
-    </connection>
-    <connection name="GpsStat">
-         <source component="gps" port="CmdStatus" type="CmdResponse" num="0"/>
-         <target component="cmdDisp" port="compCmdStat" type="CmdResponse" num="0"/>
-    </connection>
-    <connection name="PiCameraStat">
-         <source component="piCamera" port="CmdStatus" type="CmdResponse" num="0"/>
-         <target component="cmdDisp" port="compCmdStat" type="CmdResponse" num="0"/>
-    </connection>
-    <connection name="PredictorStat">
-         <source component="predictor" port="CmdStatus" type="CmdResponse" num="0"/>
-         <target component="cmdDisp" port="compCmdStat" type="CmdResponse" num="0"/>
-    </connection>
-    <connection name="TemperatureProbesStat">
-         <source component="temperatureProbes" port="CmdStatus" type="CmdResponse" num="0"/>
-         <target component="cmdDisp" port="compCmdStat" type="CmdResponse" num="0"/>
-    </connection>
-
-    <!-- Sequencer Connections - should not conflict with uplink port -->
-    <connection name="SeqCompStatus">
-        <source component="cmdDisp" port="seqCmdStatus" type="CmdResponse" num="1"/>
-        <target component="cmdSeq" port="cmdResponseIn" type="CmdResponse" num="0"/>
-    </connection>
-    
-    <!-- Input port number needs to be the same as previous dispatch -->
-    <connection name="SeqCmdSend">
-        <source component="cmdSeq" port="comCmdOut" type="Com" num="0"/>
-        <target component="cmdDisp" port="seqCmdBuff" type="Com" num="1"/>
-    </connection>
    
     <!-- Event Logger Binary Connections -->
     <connection name="groundIfLog">
         <source component="groundIf" port="Log" type="Log" num="0"/>
-        <target component="eventLogger" port="LogRecv" type="Log" num="0"/>
-    </connection>
-    <connection name="PrmDbLog">
-        <source component="prmDb" port="Log" type="Log" num="0"/>
         <target component="eventLogger" port="LogRecv" type="Log" num="0"/>
     </connection>
     <connection name="EventLoggerLog">
@@ -282,10 +122,6 @@
     </connection>
     <connection name="CmdDispLog">
         <source component="cmdDisp" port="Log" type="Log" num="0"/>
-        <target component="eventLogger" port="LogRecv" type="Log" num="0"/>
-    </connection>
-    <connection name="CmdSeqLog">
-        <source component="cmdSeq" port="logOut" type="Log" num="0"/>
         <target component="eventLogger" port="LogRecv" type="Log" num="0"/>
     </connection>
     <connection name="FatalAdapterLog">
@@ -300,10 +136,6 @@
          <source component="rateGroup1" port="Log" type="Log" num="0"/>
          <target component="eventLogger" port="LogRecv" type="Log" num="0"/>
     </connection>
-    <connection name="RG2Ev">
-         <source component="rateGroup2" port="Log" type="Log" num="0"/>
-         <target component="eventLogger" port="LogRecv" type="Log" num="0"/>
-    </connection>
     <connection name="RG3Ev">
          <source component="rateGroup3" port="Log" type="Log" num="0"/>
          <target component="eventLogger" port="LogRecv" type="Log" num="0"/>
@@ -312,46 +144,8 @@
          <source component="pingRcvr" port="Log" type="Log" num="0"/>
          <target component="eventLogger" port="LogRecv" type="Log" num="0"/>
     </connection>
-    <connection name="serialDriver1Evt">
-         <source component="serialDriver1" port="Log" type="Log" num="0"/>
-         <target component="eventLogger" port="LogRecv" type="Log" num="0"/>
-    </connection>
-    <connection name="epsEvt">
-         <source component="eps" port="Log" type="Log" num="0"/>
-         <target component="eventLogger" port="LogRecv" type="Log" num="0"/>
-    </connection>
-    <connection name="flexTrakEvt">
-         <source component="flexTrak" port="Log" type="Log" num="0"/>
-         <target component="eventLogger" port="LogRecv" type="Log" num="0"/>
-    </connection>
-    <connection name="gpsEvt">
-         <source component="gps" port="Log" type="Log" num="0"/>
-         <target component="eventLogger" port="LogRecv" type="Log" num="0"/>
-    </connection>
-    <connection name="piCameraEvt">
-         <source component="piCamera" port="Log" type="Log" num="0"/>
-         <target component="eventLogger" port="LogRecv" type="Log" num="0"/>
-    </connection>
-    <connection name="predictorEvt">
-         <source component="predictor" port="Log" type="Log" num="0"/>
-         <target component="eventLogger" port="LogRecv" type="Log" num="0"/>
-    </connection>
-    <!-- @todo Uncomment for RockBlock events report
-    <connection name="rockBlockEvt">
-         <source component="rockBlock" port="Log" type="Log" num="0"/>
-         <target component="eventLogger" port="LogRecv" type="Log" num="0"/>
-    </connection>
-    -->
-    <connection name="temperatureProbesEvt">
-         <source component="temperatureProbes" port="Log" type="Log" num="0"/>
-         <target component="eventLogger" port="LogRecv" type="Log" num="0"/>
-    </connection>
    
     <!-- Event Logger Text Connections -->
-    <connection name="CmdSeqTextLog">
-        <source component="cmdSeq" port="LogText" type="LogText" num="0"/>
-        <target component="textLogger" port="TextLogger" type="LogText" num="0"/>
-    </connection>
     <connection name="EventLoggerTextLog">
         <source component="eventLogger" port="LogText" type="LogText" num="0"/>
         <target component="textLogger" port="TextLogger" type="LogText" num="0"/>
@@ -368,20 +162,12 @@
         <source component="fatalAdapter" port="LogText" type="LogText" num="0"/>
         <target component="textLogger" port="TextLogger" type="LogText" num="0"/>
     </connection>
-    <connection name="PrmDbTextLogger">
-        <source component="prmDb" port="LogText" type="LogText" num="0"/>
-        <target component="textLogger" port="TextLogger" type="LogText" num="0"/>
-    </connection>
     <connection name="CmdDispTextLogger">
         <source component="cmdDisp" port="LogText" type="LogText" num="0"/>
         <target component="textLogger" port="TextLogger" type="LogText" num="0"/>
     </connection>
     <connection name="Rg1Text">
          <source component="rateGroup1" port="LogText" type="LogText" num="0"/>
-         <target component="textLogger" port="TextLogger" type="LogText" num="0"/>
-    </connection>
-    <connection name="Rg2Text">
-         <source component="rateGroup2" port="LogText" type="LogText" num="0"/>
          <target component="textLogger" port="TextLogger" type="LogText" num="0"/>
     </connection>
     <connection name="Rg3Text">
@@ -392,56 +178,14 @@
         <source component="pingRcvr" port="LogText" type="LogText" num="0"/>
         <target component="textLogger" port="TextLogger" type="LogText" num="0"/>
     </connection>
-    <connection name="serialDriver1Text">
-         <source component="serialDriver1" port="LogText" type="LogText" num="0"/>
-         <target component="textLogger" port="TextLogger" type="LogText" num="0"/>
-    </connection>
-    <connection name="epsText">
-         <source component="eps" port="LogText" type="LogText" num="0"/>
-         <target component="textLogger" port="TextLogger" type="LogText" num="0"/>
-    </connection>
-    <connection name="flexTrakText">
-         <source component="flexTrak" port="LogText" type="LogText" num="0"/>
-         <target component="textLogger" port="TextLogger" type="LogText" num="0"/>
-    </connection>
-    <connection name="gpsText">
-         <source component="gps" port="LogText" type="LogText" num="0"/>
-         <target component="textLogger" port="TextLogger" type="LogText" num="0"/>
-    </connection>
-    <connection name="piCameraText">
-         <source component="piCamera" port="LogText" type="LogText" num="0"/>
-         <target component="textLogger" port="TextLogger" type="LogText" num="0"/>
-    </connection>
-    <connection name="predictorText">
-         <source component="predictor" port="LogText" type="LogText" num="0"/>
-         <target component="textLogger" port="TextLogger" type="LogText" num="0"/>
-    </connection>
-    <!-- @todo Uncomment for RockBlock text events report
-    <connection name="rockBlockText">
-         <source component="rockBlock" port="LogText" type="LogText" num="0"/>
-         <target component="textLogger" port="TextLogger" type="LogText" num="0"/>
-    </connection>
-    -->
-    <connection name="temperatureProbesText">
-         <source component="temperatureProbes" port="LogText" type="LogText" num="0"/>
-         <target component="textLogger" port="TextLogger" type="LogText" num="0"/>
-    </connection>
 
     <!-- Telemetry Connections -->
-    <connection name="cmdSeqTlm">
-        <source component="cmdSeq" port="tlmOut" type="Tlm" num="0"/>
-        <target component="chanTlm" port="TlmRecv" type="Tlm" num="0"/>
-    </connection>
     <connection name="cmdDispTlm">
         <source component="cmdDisp" port="Tlm" type="Tlm" num="0"/>
         <target component="chanTlm" port="TlmRecv" type="Tlm" num="0"/>
     </connection>
     <connection name="Rg1Tlm">
          <source component="rateGroup1" port="Tlm" type="Tlm" num="0"/>
-         <target component="chanTlm" port="TlmRecv" type="Tlm" num="0"/>
-    </connection>
-    <connection name="Rg2Tlm">
-         <source component="rateGroup2" port="Tlm" type="Tlm" num="0"/>
          <target component="chanTlm" port="TlmRecv" type="Tlm" num="0"/>
     </connection>
     <connection name="Rg3Tlm">
@@ -460,40 +204,6 @@
          <source component="blockDrv" port="Tlm" type="Tlm" num="0"/>
          <target component="chanTlm" port="TlmRecv" type="Tlm" num="0"/>
     </connection>
-    <connection name="serialDriver1Tlm">
-         <source component="serialDriver1" port="Tlm" type="Tlm" num="0"/>
-         <target component="chanTlm" port="TlmRecv" type="Tlm" num="0"/>
-    </connection>
-    <connection name="epsTlm">
-         <source component="eps" port="Tlm" type="Tlm" num="0"/>
-         <target component="chanTlm" port="TlmRecv" type="Tlm" num="0"/>
-    </connection>
-    <connection name="flexTrakTlm">
-         <source component="flexTrak" port="Tlm" type="Tlm" num="0"/>
-         <target component="chanTlm" port="TlmRecv" type="Tlm" num="0"/>
-    </connection>
-    <connection name="gpsTlm">
-         <source component="gps" port="Tlm" type="Tlm" num="0"/>
-         <target component="chanTlm" port="TlmRecv" type="Tlm" num="0"/>
-    </connection>
-    <connection name="piCameraTlm">
-         <source component="piCamera" port="Tlm" type="Tlm" num="0"/>
-         <target component="chanTlm" port="TlmRecv" type="Tlm" num="0"/>
-    </connection>
-    <connection name="predictorTlm">
-         <source component="predictor" port="Tlm" type="Tlm" num="0"/>
-         <target component="chanTlm" port="TlmRecv" type="Tlm" num="0"/>
-    </connection>
-    <!-- @todo Uncomment for RockBlock telemetry report
-    <connection name="rockBlockTlm">
-         <source component="rockBlock" port="Tlm" type="Tlm" num="0"/>
-         <target component="chanTlm" port="TlmRecv" type="Tlm" num="0"/>
-    </connection>
-    -->
-    <connection name="temperatureProbesTlm">
-         <source component="temperatureProbes" port="Tlm" type="Tlm" num="0"/>
-         <target component="chanTlm" port="TlmRecv" type="Tlm" num="0"/>
-    </connection>
 
     <!-- Time Connections -->
     <connection name="prmDbTime">
@@ -508,17 +218,9 @@
          <source component="rateGroup1" port="Time" type="Time" num="0"/>
          <target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
     </connection>
-    <connection name="rg2Time">
-         <source component="rateGroup2" port="Time" type="Time" num="0"/>
-         <target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
-    </connection>
     <connection name="rg3Time">
          <source component="rateGroup3" port="Time" type="Time" num="0"/>
          <target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
-    </connection>
-    <connection name="cmdSeqTime">
-        <source component="cmdSeq" port="timeCaller" type="Time" num="0"/>
-        <target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
     </connection>
     <connection name="healthTime">
         <source component="health" port="Time" type="Time" num="0"/>
@@ -544,40 +246,6 @@
          <source component="blockDrv" port="Time" type="Time" num="0"/>
          <target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
     </connection>
-    <connection name="serialDriver1Time">
-         <source component="serialDriver1" port="Time" type="Time" num="0"/>
-         <target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
-    </connection>    
-    <connection name="epsTime">
-         <source component="eps" port="Time" type="Time" num="0"/>
-         <target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
-    </connection>
-    <connection name="flexTrakTime">
-         <source component="flexTrak" port="Time" type="Time" num="0"/>
-         <target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
-    </connection>
-    <connection name="gpsTime">
-         <source component="gps" port="Time" type="Time" num="0"/>
-         <target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
-    </connection>
-    <connection name="piCameraTime">
-         <source component="piCamera" port="Time" type="Time" num="0"/>
-         <target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
-    </connection>
-    <connection name="predictorTime">
-         <source component="predictor" port="Time" type="Time" num="0"/>
-         <target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
-    </connection>
-    <!-- @todo Uncomment for RockBlock time requests
-    <connection name="rockBlockTime">
-         <source component="rockBlock" port="Time" type="Time" num="0"/>
-         <target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
-    </connection>
-    -->
-    <connection name="temperatureProbesTime">
-         <source component="temperatureProbes" port="Time" type="Time" num="0"/>
-         <target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
-    </connection>
 
     <!-- Rate Group Connections -->
    
@@ -595,17 +263,6 @@
     <connection name="Rg1ChTlm">
          <source component="rateGroup1" port="RateGroupMemberOut" type="Sched" num="2"/>
          <target component="chanTlm" port="Run" type="Sched" num="0"/>
-    </connection>
-
-
-        <!-- Rate Group 2 -->
-    <connection name="Rg2Drv">
-        <source component="rateGroupDrv" port="CycleOut" type="Cycle" num="1"/>
-        <target component="rateGroup2" port="CycleIn" type="Cycle" num="0"/>
-    </connection>      
-    <connection name="Rg2Seq">
-         <source component="rateGroup2" port="RateGroupMemberOut" type="Sched" num="0"/>
-         <target component="cmdSeq"  port="schedIn" type="Sched" num="0"/>
     </connection>
    
         <!-- Rate Group 3 -->
@@ -638,102 +295,53 @@
          <source component="health" port="PingSend" type="Ping" num="0"/>
          <target component="rateGroup1" port="PingIn" type="Ping" num="0"/>
     </connection>
-    <connection name="Rg2PingSend">
-         <source component="health" port="PingSend" type="Ping" num="1"/>
-         <target component="rateGroup2" port="PingIn" type="Ping" num="0"/>
-    </connection>
-    <connection name="Rg2PingRecv">
-         <source component="rateGroup2" port="PingOut" type="Ping" num="0"/>
-         <target component="health" port="PingReturn" type="Ping" num="1"/>
-    </connection>
     <connection name="Rg3PingSend">
-         <source component="health" port="PingSend" type="Ping" num="2"/>
+         <source component="health" port="PingSend" type="Ping" num="1"/>
          <target component="rateGroup3" port="PingIn" type="Ping" num="0"/>
     </connection>
     <connection name="Rg3PingRecv">
          <source component="rateGroup3" port="PingOut" type="Ping" num="0"/>
-         <target component="health" port="PingReturn" type="Ping" num="2"/>
+         <target component="health" port="PingReturn" type="Ping" num="1"/>
     </connection>
     <connection name="cmdDispPingIn">
-        <source component="health" port="PingSend" type="Ping" num="3"/>
+        <source component="health" port="PingSend" type="Ping" num="2"/>
         <target component="cmdDisp" port="pingIn" type="Ping" num="0"/>
     </connection>
     <connection name="cmdDispPingRecv">
         <source component="cmdDisp" port="pingOut" type="Ping" num="0"/>
-        <target component="health" port="PingReturn" type="Ping" num="3"/>
+        <target component="health" port="PingReturn" type="Ping" num="2"/>
     </connection>
     <connection name="eventLoggerPingSend">
-        <source component="health" port="PingSend" type="Ping" num="4"/>
+        <source component="health" port="PingSend" type="Ping" num="3"/>
         <target component="eventLogger" port="pingIn" type="Ping" num="0"/>
     </connection>
     <connection name="eventLoggerPingRecv">
         <source component="eventLogger" port="pingOut" type="Ping" num="0"/>
-        <target component="health" port="PingReturn" type="Ping" num="4"/>
-    </connection>
-    <connection name="cmdSeqPingSend">
-        <source component="health" port="PingSend" type="Ping" num="5"/>
-        <target component="cmdSeq" port="pingIn" type="Ping" num="0"/>
-    </connection>
-    <connection name="cmdSeqPingRecv">
-        <source component="cmdSeq" port="pingOut" type="Ping" num="0"/>
-        <target component="health" port="PingReturn" type="Ping" num="5"/>
+        <target component="health" port="PingReturn" type="Ping" num="3"/>
     </connection>
     <connection name="chanTlmPingSend">
-        <source component="health" port="PingSend" type="Ping" num="6"/>
+        <source component="health" port="PingSend" type="Ping" num="4"/>
         <target component="chanTlm" port="pingIn" type="Ping" num="0"/>
     </connection>
     <connection name="chanTlmPingRecv">
         <source component="chanTlm" port="pingOut" type="Ping" num="0"/>
-        <target component="health" port="PingReturn" type="Ping" num="6"/>
-    </connection>
-    <connection name="prmDbPingSend">
-        <source component="health" port="PingSend" type="Ping" num="7"/>
-        <target component="prmDb" port="pingIn" type="Ping" num="0"/>
-    </connection>
-    <connection name="prmDbPingRecv">
-        <source component="prmDb" port="pingOut" type="Ping" num="0"/>
-        <target component="health" port="PingReturn" type="Ping" num="7"/>
+        <target component="health" port="PingReturn" type="Ping" num="4"/>
     </connection>
     <connection name="PingRcvPingRecv">
-         <source component="health" port="PingSend" type="Ping" num="8"/>
+         <source component="health" port="PingSend" type="Ping" num="5"/>
          <target component="pingRcvr" port="PingIn" type="Ping" num="0"/>
     </connection>
     <connection name="PingRcvPingSend">
          <source component="pingRcvr" port="PingOut" type="Ping" num="0"/>
-         <target component="health" port="PingReturn" type="Ping" num="8"/>
+         <target component="health" port="PingReturn" type="Ping" num="5"/>
     </connection>
     <connection name="blockDrvPingSend">
-         <source component="health" port="PingSend" type="Ping" num="9"/>
+         <source component="health" port="PingSend" type="Ping" num="6"/>
          <target component="blockDrv" port="PingIn" type="Ping" num="0"/>
     </connection>
     <connection name="blockDrvPingRecv">
          <source component="blockDrv" port="PingOut" type="Ping" num="0"/>
-         <target component="health" port="PingReturn" type="Ping" num="9"/>
-    </connection>
-
-    <connection name="flexTrakPingSend">
-         <source component="health" port="PingSend" type="Ping" num="10"/>
-         <target component="flexTrak" port="PingIn" type="Ping" num="0"/>
-    </connection>
-    <connection name="flexTrakPingRecv">
-         <source component="flexTrak" port="PingOut" type="Ping" num="0"/>
-         <target component="health" port="PingReturn" type="Ping" num="10"/>
-    </connection>
-    <connection name="piCameraPingSend">
-         <source component="health" port="PingSend" type="Ping" num="11"/>
-         <target component="piCamera" port="PingIn" type="Ping" num="0"/>
-    </connection>
-    <connection name="piCameraPingRecv">
-         <source component="piCamera" port="PingOut" type="Ping" num="0"/>
-         <target component="health" port="PingReturn" type="Ping" num="11"/>
-    </connection>
-    <connection name="rockBlockPingSend">
-         <source component="health" port="PingSend" type="Ping" num="12"/>
-         <target component="rockBlock" port="PingIn" type="Ping" num="0"/>
-    </connection>
-    <connection name="rockBlockingRecv">
-         <source component="rockBlock" port="PingOut" type="Ping" num="0"/>
-         <target component="health" port="PingReturn" type="Ping" num="12"/>
+         <target component="health" port="PingReturn" type="Ping" num="6"/>
     </connection>
 
     <!-- Socket Ground System Connections -->
@@ -759,45 +367,5 @@
     <connection name="eventLoggerFatalOut">
         <source component="eventLogger" port="FatalAnnounce" type="FatalEvent" num="0"/>
         <target component="fatalHandler" port="FatalReceive" type="FatalEvent" num="0"/>
-    </connection>
-    
-     <!-- App Connections -->
-          <!-- Serial Driver 1 - FlexTrak -->
-     <connection name="serialDriverRecv">
-        <source component="serialDriver1" port="serialRecv" type="SerialRead" num="0"/>
-        <target component="flexTrak" port="serialRecv" type="SerialRead" num="0"/>
-     </connection>
-     <connection name = "serialDriverBuff">
-        <source component = "flexTrak" port = "serialBufferOut" type = "BufferSend" num = "0"/>
-        <target component = "serialDriver1" port = "readBufferSend" type = "BufferSend" num = "0"/>
-    </connection>
-     <connection name="serialDriverSend">
-          <source component="flexTrak" port="serialSend" type="SerialWrite" num="0"/>
-          <target component="serialDriver1" port="serialSend" type="SerialWrite" num="0"/>
-     </connection>
-          <!-- FlexTrak - Sensors -->
-    <connection name="flexTrakInternalTemp">
-        <source component="flexTrak" port="internalTemp" type="Temperature" num="0"/>
-        <target component="temperatureProbes" port="internal" type="Temperature" num="0"/>
-    </connection>
-    <connection name="flexTrakExternalTemp">
-        <source component="flexTrak" port="externalTemp" type="Temperature" num="0"/>
-        <target component="temperatureProbes" port="external" type="Temperature" num="0"/>
-    </connection>
-    <connection name="flexTrakBattery">
-        <source component="flexTrak" port="batteryVoltage" type="BatteryLevel" num="0"/>
-        <target component="eps" port="batteryVoltage" type="BatteryLevel" num="0"/>
-    </connection>
-        <!-- GPS -->
-    <!--
-    <connection name="gpsPredictor">
-        <source component="gps" port="position" type="Position" num="0"/>
-        <target component="predictor" port="position" type="Position" num="0"/>
-    </connection>
-    <connection name="gpsPiCamera">
-        <source component="gps" port="position" type="Position" num="1"/>
-        <target component="piCamera" port="position" type="Position" num="0"/>
-    </connection> 
-    -->
-    
+    </connection>    
 </assembly>

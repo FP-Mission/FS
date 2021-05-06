@@ -5,7 +5,7 @@
 #include <App/Top/Components.hpp>
 
 void print_usage(const char* app) {
-    (void) printf("Usage: ./%s [options]\n-p\tport_number\n-a\thostname/IP address\n",app);
+    (void) printf("Usage: ./%s",app);
 }
 
 #include <signal.h>
@@ -37,11 +37,8 @@ void runcycles(NATIVE_INT_TYPE cycles) {
 }
 
 int main(int argc, char* argv[]) {
-    U32 port_number = 0; // Invalid port number forced
     I32 option;
-    char *hostname;
     option = 0;
-    hostname = NULL;
     bool dump = false;
 
     while ((option = getopt(argc, argv, "hdp:a:")) != -1){
@@ -49,12 +46,6 @@ int main(int argc, char* argv[]) {
             case 'h':
                 print_usage(argv[0]);
                 return 0;
-                break;
-            case 'p':
-                port_number = atoi(optarg);
-                break;
-            case 'a':
-                hostname = optarg;
                 break;
             case '?':
                 return 1;
@@ -69,7 +60,7 @@ int main(int argc, char* argv[]) {
 
     (void) printf("Hit Ctrl-C to quit\n");
 
-    bool quit = constructApp(dump, port_number, hostname);
+    bool quit = constructApp(dump);
     if (quit) {
         return 0;
     }
