@@ -277,6 +277,7 @@ void FlexTrakComponentImpl:: configureHardware() {
     char temp[20]; 
     // ensure array is big enough to contain command, parameters and additional 
     // '\r' added by sendFlexTrakCommand()
+    loRaMutex.lock();
     sendFlexTrakCommand("CH0"); // Low priority mode
     sendFlexTrakCommand("CV");  // Ask version
     sendFlexTrakCommand("CPFP1");   // Set payload name to FP1
@@ -294,6 +295,7 @@ void FlexTrakComponentImpl:: configureHardware() {
     sprintf(temp, "LF%.3f", frequency);
     sendFlexTrakCommand(temp);
     sendFlexTrakCommand("CS");  // Save settings
+    loRaMutex.unLock();
 }
 
 // ----------------------------------------------------------------------
