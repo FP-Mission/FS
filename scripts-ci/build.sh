@@ -21,7 +21,7 @@ sudo ./build
 cd ..
 
 #Install raspicam
-git clone https://github.com/cedricve/raspicam.git
+git clone https://github.com/rmsalinas/raspicam.git
 cd raspicam
 mkdir build
 cd build
