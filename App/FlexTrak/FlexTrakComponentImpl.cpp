@@ -11,6 +11,8 @@
 // ======================================================================
 
 #include <App/FlexTrak/FlexTrakComponentImpl.hpp>
+#include <Fw/Com/ComPacket.hpp>
+#include <Svc/GroundInterface/GroundInterface.hpp>
 
 #include "Fw/Logger/Logger.hpp"
 #include "Fw/Types/BasicTypes.hpp"
@@ -166,6 +168,9 @@ bool FlexTrakComponentImpl ::detectCommand(const char* command, const char* line
 
 void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
                                               Fw::Buffer &buffer) {
+    TOKEN_TYPE token;
+    TOKEN_TYPE dataSize;
+    FwPacketDescriptorType packetType;
     char *pointer = reinterpret_cast<char *>(buffer.getData());
 
     U16 packetSize = buffer.getSize();
@@ -178,15 +183,33 @@ void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
         // @todo Implement event (?)
     }
 
-    this->downlinkQueue_internalInterfaceInvoke(0,buffer);
-    /*/ @todo Add packet to downlink queue instead of internal interface
-    Os::Queue::QueueStatus stat = this->downlinkQueue.send(buffer, 1, Os::Queue::QUEUE_NONBLOCKING);
-    if(stat != Os::Queue::QUEUE_OK) {
-        printf("Error sending in queue %u\n", stat);
-    } else {
-        printf("Send in queue\n");
+
+    // Deserialize packet to know if it is events/telemetry/camera
+    Fw::SerializeBufferBase& deserBufferWrapper = buffer.getSerializeRepr();
+    deserBufferWrapper.resetDeser();
+    deserBufferWrapper.setBuffLen(buffer.getSize());
+
+    Fw::SerializeStatus stat = deserBufferWrapper.deserialize(token);
+    FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
+    FW_ASSERT(token == Svc::GroundInterfaceComponentImpl::START_WORD);
+
+    stat = deserBufferWrapper.deserialize(dataSize);
+    FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
+
+    stat = deserBufferWrapper.deserialize(packetType);
+    FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
+
+    if(packetType == Fw::ComPacket::FW_PACKET_LOG) {
+        this->downlinkQueue_internalInterfaceInvoke(0,buffer);
+        /*/ @todo Add packet to downlink queue instead of internal interface
+        Os::Queue::QueueStatus stat = this->downlinkQueue.send(buffer, 1, Os::Queue::QUEUE_NONBLOCKING);
+        if(stat != Os::Queue::QUEUE_OK) {
+            printf("Error sending in queue %u\n", stat);
+        } else {
+            printf("Send in queue\n");
+        }
+        //*/
     }
-    //*/
 }
 
 void FlexTrakComponentImpl::Run_handler(NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE context) {
