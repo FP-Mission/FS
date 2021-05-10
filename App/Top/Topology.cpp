@@ -90,7 +90,6 @@ App::MotionTrackingComponentImpl motionTracking(FW_OPTIONAL_NAME("motionTracking
 
 App::BarometerComponentImpl barometer(FW_OPTIONAL_NAME("barometer"));
 
-App::PiCameraComponentImpl picamera(FW_OPTIONAL_NAME("picamera"));
 
 
 const char* getHealthName(Fw::ObjBase& comp) {
@@ -179,7 +178,6 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     health.regCommands();
     pingRcvr.regCommands();
     senseHat.regCommands();
-    picamera.regCommands();
 
     eps.regCommands();
     flexTrak.regCommands();
@@ -268,7 +266,6 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
 
     barometer.start(0, 100, 10*1024);
 
-    picamera.start(0,100, 10*1024);
 
     // Initialize socket server if and only if there is a valid specification
     if (hostname != NULL && port_number != 0) {
