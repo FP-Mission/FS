@@ -9,6 +9,7 @@ App/build-fprime-automatic-raspberrypi/
 App/build-fprime-automatic-raspberrypi-ut/
 
 App/logs/
+logs/
 
 ## venv
 fprime-venv
