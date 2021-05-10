@@ -1,14 +1,14 @@
 #include <Components.hpp>
-#include <Fw/Types/Assert.hpp>
-#include <Os/Task.hpp>
 #include <Fw/Logger/Logger.hpp>
-#include <Os/Log.hpp>
+#include <Fw/Types/Assert.hpp>
 #include <Fw/Types/MallocAllocator.hpp>
+#include <Os/Log.hpp>
+#include <Os/Task.hpp>
 
 #if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+#include <ctype.h>
 #include <getopt.h>
 #include <stdlib.h>
-#include <ctype.h>
 #endif
 
 // List of context IDs
@@ -21,6 +21,7 @@ enum {
 };
 
 Os::Log osLogger;
+
 const char SHTC3= 0x70;
 
 // Registry
@@ -28,62 +29,58 @@ const char SHTC3= 0x70;
 static Fw::SimpleObjRegistry simpleReg;
 #endif
 
+Fw::MallocAllocator seqMallocator;
+
 // Component instance pointers
-static NATIVE_INT_TYPE rgDivs[Svc::RateGroupDriverImpl::DIVIDER_SIZE] = {1,2,4};
-Svc::RateGroupDriverImpl rateGroupDriverComp(FW_OPTIONAL_NAME("RGDvr"),rgDivs,FW_NUM_ARRAY_ELEMENTS(rgDivs));
+Svc::LinuxTimeImpl linuxTime(FW_OPTIONAL_NAME("LTIME"));
 
-static NATIVE_UINT_TYPE rg1Context[] = {0,0,0,0,0,0,0,0,0,0};
-Svc::ActiveRateGroupImpl rateGroup1Comp(FW_OPTIONAL_NAME("RG1"),rg1Context,FW_NUM_ARRAY_ELEMENTS(rg1Context));
+static NATIVE_INT_TYPE rgDivs[Svc::RateGroupDriverImpl::DIVIDER_SIZE] = {1, 2,
+                                                                         4};
+Svc::RateGroupDriverImpl rateGroupDrv(FW_OPTIONAL_NAME("RGDvr"), rgDivs,
+                                      FW_NUM_ARRAY_ELEMENTS(rgDivs));
 
-static NATIVE_UINT_TYPE rg2Context[] = {0,0,0,0,0,0,0,0,0,0};
-Svc::ActiveRateGroupImpl rateGroup2Comp(FW_OPTIONAL_NAME("RG2"),rg2Context,FW_NUM_ARRAY_ELEMENTS(rg2Context));
+static NATIVE_UINT_TYPE rg1Context[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+Svc::ActiveRateGroupImpl rateGroup1(FW_OPTIONAL_NAME("RG1"), rg1Context,
+                                    FW_NUM_ARRAY_ELEMENTS(rg1Context));
 
-static NATIVE_UINT_TYPE rg3Context[] = {0,0,0,0,0,0,0,0,0,0};
-Svc::ActiveRateGroupImpl rateGroup3Comp(FW_OPTIONAL_NAME("RG3"),rg3Context,FW_NUM_ARRAY_ELEMENTS(rg3Context));
+static NATIVE_UINT_TYPE rg2Context[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+Svc::ActiveRateGroupImpl rateGroup2(FW_OPTIONAL_NAME("RG2"), rg2Context,
+                                    FW_NUM_ARRAY_ELEMENTS(rg2Context));
 
-// Command Components
+static NATIVE_UINT_TYPE rg3Context[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+Svc::ActiveRateGroupImpl rateGroup3(FW_OPTIONAL_NAME("RG3"), rg3Context,
+                                    FW_NUM_ARRAY_ELEMENTS(rg3Context));
+
+Svc::FatalHandlerComponentImpl fatalHandler(FW_OPTIONAL_NAME("fatalHandler"));
+Svc::AssertFatalAdapterComponentImpl fatalAdapter(
+    FW_OPTIONAL_NAME("fatalAdapter"));
+Svc::CommandDispatcherImpl cmdDisp(FW_OPTIONAL_NAME("CMDDISP"));
+Svc::CmdSequencerComponentImpl cmdSeq(FW_OPTIONAL_NAME("CMDSEQ"));
+Svc::ActiveLoggerImpl eventLogger(FW_OPTIONAL_NAME("ELOG"));
+Svc::TlmChanImpl chanTlm(FW_OPTIONAL_NAME("TLM"));
+Svc::HealthImpl health(FW_OPTIONAL_NAME("health"));
+Svc::PrmDbImpl prmDb(FW_OPTIONAL_NAME("PRM"), "PrmDb.dat");
 Svc::GroundInterfaceComponentImpl groundIf(FW_OPTIONAL_NAME("GNDIF"));
-
-// Driver Component
-Drv::BlockDriverImpl blockDrv(FW_OPTIONAL_NAME("BDRV"));
-
-// Reference Implementation Components
-
 
 #if FW_ENABLE_TEXT_LOGGING
 Svc::ConsoleTextLoggerImpl textLogger(FW_OPTIONAL_NAME("TLOG"));
 #endif
 
-Svc::ActiveLoggerImpl eventLogger(FW_OPTIONAL_NAME("ELOG"));
-
-Svc::LinuxTimeImpl linuxTime(FW_OPTIONAL_NAME("LTIME"));
-
-Svc::TlmChanImpl chanTlm(FW_OPTIONAL_NAME("TLM"));
-
-Svc::CommandDispatcherImpl cmdDisp(FW_OPTIONAL_NAME("CMDDISP"));
-
-Fw::MallocAllocator seqMallocator;
-Svc::CmdSequencerComponentImpl cmdSeq(FW_OPTIONAL_NAME("CMDSEQ"));
-
-Svc::PrmDbImpl prmDb(FW_OPTIONAL_NAME("PRM"),"PrmDb.dat");
-
 Ref::PingReceiverComponentImpl pingRcvr(FW_OPTIONAL_NAME("PngRecv"));
+Drv::BlockDriverImpl blockDrv(FW_OPTIONAL_NAME("BDRV"));
+Drv::SocketIpDriverComponentImpl socketIpDriver(
+    FW_OPTIONAL_NAME("SocketIpDriver"));
+Drv::LinuxSerialDriverComponentImpl serialDriver1(
+    FW_OPTIONAL_NAME("serialDriver1"));
 
-Drv::SocketIpDriverComponentImpl socketIpDriver(FW_OPTIONAL_NAME("SocketIpDriver"));
-
-Svc::FileUplink fileUplink(FW_OPTIONAL_NAME("fileUplink"));
-
-Svc::FileDownlink fileDownlink(FW_OPTIONAL_NAME("fileDownlink"));
-
-Svc::FileManager fileManager(FW_OPTIONAL_NAME("fileManager"));
-
-Svc::BufferManager fileUplinkBufferManager(FW_OPTIONAL_NAME("fileUplinkBufferManager"), UPLINK_BUFFER_STORE_SIZE, UPLINK_BUFFER_QUEUE_SIZE);
-
-Svc::HealthImpl health(FW_OPTIONAL_NAME("health"));
-
-Svc::AssertFatalAdapterComponentImpl fatalAdapter(FW_OPTIONAL_NAME("fatalAdapter"));
-
-Svc::FatalHandlerComponentImpl fatalHandler(FW_OPTIONAL_NAME("fatalHandler"));
+App::EpsComponentImpl eps(FW_OPTIONAL_NAME("Eps"));
+App::FlexTrakComponentImpl flexTrak(FW_OPTIONAL_NAME("FlexTrak"));
+App::GpsComponentImpl gps(FW_OPTIONAL_NAME("Gps"));
+App::PiCameraComponentImpl piCamera(FW_OPTIONAL_NAME("PiCamera"));
+App::PredictorComponentImpl predictor(FW_OPTIONAL_NAME("Predictor"));
+App::RockBlockComponentImpl rockBlock(FW_OPTIONAL_NAME("RockBlock"));
+App::TemperatureProbesComponentImpl temperatureProbes(
+    FW_OPTIONAL_NAME("TemperatureProbes"));
 
 App::SenseHatComponentImpl senseHat(FW_OPTIONAL_NAME("senseHat"));
 
@@ -97,28 +94,28 @@ App::PiCameraComponentImpl picamera(FW_OPTIONAL_NAME("picamera"));
 
 
 const char* getHealthName(Fw::ObjBase& comp) {
-   #if FW_OBJECT_NAMES == 1
-       return comp.getObjName();
-   #else
-      return "[no object name]"
-   #endif
+#if FW_OBJECT_NAMES == 1
+    return comp.getObjName();
+#else
+    return "[no object name]"
+#endif
 }
 
 bool constructApp(bool dump, U32 port_number, char* hostname) {
-
+    bool flextrak_connected = false;
 #if FW_PORT_TRACING
     Fw::PortBase::setTrace(false);
-#endif    
+#endif
 
     // Initialize rate group driver
-    rateGroupDriverComp.init();
+    rateGroupDrv.init();
 
     // Initialize the rate groups
-    rateGroup1Comp.init(10,0);
-    
-    rateGroup2Comp.init(10,1);
-    
-    rateGroup3Comp.init(10,2);
+    rateGroup1.init(10, 0);
+
+    rateGroup2.init(10, 1);
+
+    rateGroup3.init(10, 2);
 
     // Initialize block driver
     blockDrv.init(10);
@@ -129,37 +126,40 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     textLogger.init();
 #endif
 
-    eventLogger.init(10,0);
-    
+    eventLogger.init(10, 0);
+
     linuxTime.init(0);
 
-    chanTlm.init(10,0);
+    chanTlm.init(10, 0);
 
-    cmdDisp.init(20,0);
+    cmdDisp.init(20, 0);
 
-    cmdSeq.init(10,0);
-    cmdSeq.allocateBuffer(0,seqMallocator,5*1024);
+    cmdSeq.init(10, 0);
+    cmdSeq.allocateBuffer(0, seqMallocator, 5 * 1024);
 
-    prmDb.init(10,0);
+    prmDb.init(10, 0);
 
     groundIf.init(0);
     socketIpDriver.init(0);
+    serialDriver1.init(0);
 
-    fileUplink.init(30, 0);
-    fileDownlink.init(30, 0);
-    fileDownlink.configure(1000, 1000, 1000, 10);
-    fileManager.init(30, 0);
-    fileUplinkBufferManager.init(0);
     fatalAdapter.init(0);
     fatalHandler.init(0);
-    health.init(25,0);
+    health.init(25, 0);
     pingRcvr.init(10);
 
-    senseHat.init(30,0);
-    thermometer.init(30,0);
-    motionTracking.init(30,0);
-    barometer.init(30,0);
-    picamera.init(30,0);
+    eps.init(10, 0);
+    flexTrak.init(10, 0);
+    gps.init(0);
+    piCamera.init(10, 0);
+    predictor.init(10, 0);
+    rockBlock.init(10, 0);
+    temperatureProbes.init(10, 0);
+    senseHat.init(30, 0);
+    thermometer.init(30, 0);
+    motionTracking.init(30, 0);
+    barometer.init(30, 0);
+
     // Connect rate groups to rate group driver
     constructAppArchitecture();
 
@@ -176,64 +176,89 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     cmdDisp.regCommands();
     eventLogger.regCommands();
     prmDb.regCommands();
-    fileDownlink.regCommands();
-    fileManager.regCommands();
     health.regCommands();
     pingRcvr.regCommands();
     senseHat.regCommands();
     picamera.regCommands();
 
+    eps.regCommands();
+    flexTrak.regCommands();
+    gps.regCommands();
+    piCamera.regCommands();
+    predictor.regCommands();
+    // rockBlock.regCommands();
+    temperatureProbes.regCommands();
+
     // read parameters
-    prmDb.readParamFile();
+    // prmDb.readParamFile();
 
-    // set health ping entries
-
+    // Set health ping entries
     Svc::HealthImpl::PingEntry pingEntries[] = {
-        {3,5,getHealthName(rateGroup1Comp)}, // 0
-        {3,5,getHealthName(rateGroup2Comp)}, // 1
-        {3,5,getHealthName(rateGroup3Comp)}, // 2
-        {3,5,getHealthName(cmdDisp)}, // 3
-        {3,5,getHealthName(eventLogger)}, // 4
-        {3,5,getHealthName(cmdSeq)}, // 5
-        {3,5,getHealthName(chanTlm)}, // 6
-        {3,5,getHealthName(prmDb)}, // 7
-        {3,5,getHealthName(fileUplink)}, // 8
-        {3,5,getHealthName(fileDownlink)}, // 9
-        {3,5,getHealthName(pingRcvr)}, // 10
-        {3,5,getHealthName(blockDrv)}, // 11
-        {3,5,getHealthName(fileManager)}, // 12
-        {3,5,getHealthName(senseHat)}, // 13
-        {3,5,getHealthName(thermometer)}, //14
-        {3,5,getHealthName(motionTracking)}, //15
-        {3,5,getHealthName(barometer)}, //16
-        {3,5,getHealthName(picamera)}, //17
-
+        {3, 5, getHealthName(rateGroup1)},      // 0
+        {3, 5, getHealthName(rateGroup2)},      // 1
+        {3, 5, getHealthName(rateGroup3)},      // 2
+        {3, 5, getHealthName(cmdDisp)},         // 3
+        {3, 5, getHealthName(eventLogger)},     // 4
+        {3, 5, getHealthName(cmdSeq)},          // 5
+        {3, 5, getHealthName(chanTlm)},         // 6
+        {3, 5, getHealthName(prmDb)},           // 7
+        {3, 5, getHealthName(pingRcvr)},        // 8
+        {3, 5, getHealthName(blockDrv)},        // 9
+        {3, 5, getHealthName(flexTrak)},        // 10
+        {3, 5, getHealthName(piCamera)},        // 11
+        {3, 5, getHealthName(rockBlock)},       // 12
+        {3, 5, getHealthName(senseHat)},        // 13
+        {3, 5, getHealthName(thermometer)},     // 14
+        {3, 5, getHealthName(motionTracking)},  // 15
+        {3, 5, getHealthName(barometer)},       // 16
     };
 
     // register ping table
-    health.setPingEntries(pingEntries,FW_NUM_ARRAY_ELEMENTS(pingEntries),0x123);
+    health.setPingEntries(pingEntries, FW_NUM_ARRAY_ELEMENTS(pingEntries),
+                          0x123);
+
+    if (!serialDriver1.open("/dev/ttyAMA0",
+                   Drv::LinuxSerialDriverComponentImpl::BAUD_38400,
+                   Drv::LinuxSerialDriverComponentImpl::NO_FLOW, 
+                   Drv::LinuxSerialDriverComponentImpl::PARITY_NONE,
+                   true))
+    {
+        Fw::Logger::logMsg("[ERROR] Failed to open FlexTrak UART\n");
+    } else {
+        Fw::Logger::logMsg("[INFO] Opened FlexTrak UART\n");
+        flextrak_connected = true;
+    }
 
     // Active component startup
     // start rate groups
-    rateGroup1Comp.start(0, 120,10 * 1024);
-    rateGroup2Comp.start(0, 119,10 * 1024);
-    rateGroup3Comp.start(0, 118,10 * 1024);
+    rateGroup1.start(0, 120, 10 * 1024);
+    rateGroup2.start(0, 119, 10 * 1024);
+    rateGroup3.start(0, 118, 10 * 1024);
     // start driver
-    blockDrv.start(0,140,10*1024);
+    blockDrv.start(0, 140, 10 * 1024);
     // start dispatcher
-    cmdDisp.start(0,101,10*1024);
+    cmdDisp.start(0, 101, 10 * 1024);
     // start sequencer
-    cmdSeq.start(0,100,10*1024);
+    cmdSeq.start(0, 100, 10 * 1024);
     // start telemetry
-    eventLogger.start(0,98,10*1024);
-    chanTlm.start(0,97,10*1024);
-    prmDb.start(0,96,10*1024);
+    eventLogger.start(0, 98, 10 * 1024);
+    chanTlm.start(0, 97, 10 * 1024);
+    prmDb.start(0, 96, 10 * 1024);
 
-    fileDownlink.start(0, 100, 10*1024);
-    fileUplink.start(0, 100, 10*1024);
-    fileManager.start(0, 100, 10*1024);
+    pingRcvr.start(0, 100, 10 * 1024);
 
-    pingRcvr.start(0, 100, 10*1024);
+    // App
+    flexTrak.start(0, 100, 10 * 1024);
+    if (flextrak_connected) {
+        serialDriver1.startReadThread(90, 20 * 1024);
+        flexTrak.configureHardware();
+    }
+
+    eps.start(0, 100, 10 * 1024);
+    piCamera.start(0, 100, 10 * 1024);
+    predictor.start(0, 100, 10 * 1024);
+    rockBlock.start(0, 100, 10 * 1024);
+    temperatureProbes.start(0, 100, 10 * 1024);
 
     senseHat.start(0, 100, 10*1024);
 
@@ -249,50 +274,56 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     if (hostname != NULL && port_number != 0) {
         socketIpDriver.startSocketTask(100, 10 * 1024, hostname, port_number);
     }
-
+    
     return false;
 }
 
 void exitTasks(void) {
-    rateGroup1Comp.exit();
-    rateGroup2Comp.exit();
-    rateGroup3Comp.exit();
+    rateGroup1.exit();
+    rateGroup2.exit();
+    rateGroup3.exit();
     blockDrv.exit();
     cmdDisp.exit();
     eventLogger.exit();
     chanTlm.exit();
     prmDb.exit();
-    fileUplink.exit();
-    fileDownlink.exit();
-    fileManager.exit();
     cmdSeq.exit();
     pingRcvr.exit();
+    // App
+    eps.exit();
+    flexTrak.exit();
+    piCamera.exit();
+    predictor.exit();
+    rockBlock.exit();
+    temperatureProbes.exit();
     senseHat.exit();
     thermometer.exit();
     motionTracking.exit();
     barometer.exit();
-    picamera.exit();
-    // join the component threads with NULL pointers to free them
-    (void) rateGroup1Comp.ActiveComponentBase::join(NULL);
-    (void) rateGroup2Comp.ActiveComponentBase::join(NULL);
-    (void) rateGroup3Comp.ActiveComponentBase::join(NULL);
-    (void) blockDrv.ActiveComponentBase::join(NULL);
-    (void) cmdDisp.ActiveComponentBase::join(NULL);
-    (void) eventLogger.ActiveComponentBase::join(NULL);
-    (void) chanTlm.ActiveComponentBase::join(NULL);
-    (void) prmDb.ActiveComponentBase::join(NULL);
-    (void) fileUplink.ActiveComponentBase::join(NULL);
-    (void) fileDownlink.ActiveComponentBase::join(NULL);
-    (void) fileManager.ActiveComponentBase::join(NULL);
-    (void) cmdSeq.ActiveComponentBase::join(NULL);
-    (void) pingRcvr.ActiveComponentBase::join(NULL);
-    (void) senseHat.ActiveComponentBase::join(NULL);
-    (void) thermometer.ActiveComponentBase::join(NULL);
-    (void) motionTracking.ActiveComponentBase::join(NULL);
-    (void) barometer.ActiveComponentBase::join(NULL);
-    (void) picamera.ActiveComponentBase::join(NULL);
+
+    // Join the component threads with NULL pointers to free them
+    (void)rateGroup1.ActiveComponentBase::join(NULL);
+    (void)rateGroup2.ActiveComponentBase::join(NULL);
+    (void)rateGroup3.ActiveComponentBase::join(NULL);
+    (void)blockDrv.ActiveComponentBase::join(NULL);
+    (void)cmdDisp.ActiveComponentBase::join(NULL);
+    (void)eventLogger.ActiveComponentBase::join(NULL);
+    (void)chanTlm.ActiveComponentBase::join(NULL);
+    (void)prmDb.ActiveComponentBase::join(NULL);
+    (void)cmdSeq.ActiveComponentBase::join(NULL);
+    (void)pingRcvr.ActiveComponentBase::join(NULL);
+    // App
+    (void)eps.ActiveComponentBase::join(NULL);
+    (void)flexTrak.ActiveComponentBase::join(NULL);
+    (void)piCamera.ActiveComponentBase::join(NULL);
+    (void)predictor.ActiveComponentBase::join(NULL);
+    (void)rockBlock.ActiveComponentBase::join(NULL);
+    (void)temperatureProbes.ActiveComponentBase::join(NULL);
+    (void)senseHat.ActiveComponentBase::join(NULL);
+    (void)thermometer.ActiveComponentBase::join(NULL);
+    (void)motionTracking.ActiveComponentBase::join(NULL);
+    (void)barometer.ActiveComponentBase::join(NULL);
     socketIpDriver.exitSocketTask();
-    (void) socketIpDriver.joinSocketTask(NULL);
+    (void)socketIpDriver.joinSocketTask(NULL);
     cmdSeq.deallocateBuffer(seqMallocator);
 }
-

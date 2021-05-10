@@ -40,10 +40,20 @@ include("${FPRIME_FRAMEWORK_PATH}/cmake/FPrime-Code.cmake")
 # core components in the topology, which is also added here.
 ##
 
+# Add ports subdirectories
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FlexTrak/Position/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FlexTrak/BatteryLevelPort/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FlexTrak/TemperaturePort/")
+
 # Add component subdirectories
 add_fprime_subdirectory("${FPRIME_FRAMEWORK_PATH}/Ref/PingReceiver/")
-
-
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FlexTrak/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Eps/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Gps/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/PiCamera/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Predictor/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/RockBlock/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/TemperatureProbes/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SenseHat/SenseHatPort/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FlexTrak/Position/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/PiCamera/PiCameraPort/")
@@ -55,11 +65,6 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/MotionTracking/MotionTracking
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Barometer/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/PiCamera/")
 
-
-
-
-
-
-# Add Topology subdirectory
+# Add topology subdirectory
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Top/")
 

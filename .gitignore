@@ -9,6 +9,7 @@ App/build-fprime-automatic-raspberrypi/
 App/build-fprime-automatic-raspberrypi-ut/
 
 App/logs/
+logs/
 
 ## venv
 fprime-venv
@@ -29,7 +30,5 @@ App/Top/events/
 App/Top/AppTopologyAppID.csv
 
 App/Top/AppTopologyAppAi_IDTableLog.txt
-
-App/Top/AppTopologyAppDictionary.xml
 
 App/Top/ISFApp.pdf

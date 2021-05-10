@@ -1,0 +1,821 @@
+<dictionary topology="App">
+  <enums>
+    <enum type="CommandDispatcher::error::ErrorResponse">
+      <item name="ERR_INVALID_OPCODE" value="0" description="Invalid opcode dispatched"/>
+      <item name="ERR_VALIDATION_ERROR" value="1" description="Command failed validation"/>
+      <item name="ERR_FORMAT_ERROR" value="2" description="Command failed to deserialize"/>
+      <item name="ERR_EXECUTION_ERROR" value="3" description="Command had execution error"/>
+      <item name="ERR_BUSY" value="4" description="Component busy"/>
+      <item name="ERR_UNEXP" value="5" description="Unexpected response"/>
+    </enum>
+    <enum type="CommandDispatcher::Status::CmdSerError">
+      <item name="ERR_BUFFER_TOO_SMALL" value="0" description="Buffer too small"/>
+      <item name="ERR_BUFFER_FORMAT" value="1" description="Buffer wrong format"/>
+      <item name="ERR_SIZE_MISMATCH" value="2" description="Buffer size mismatch"/>
+      <item name="ERR_TYPE_MISMATCH" value="3" description="Buffer type mismatch"/>
+      <item name="ERR_UNEXP_STAT" value="4" description="Unexpected status"/>
+    </enum>
+    <enum type="PrmDb::stage::PrmWriteError">
+      <item name="PRM_WRITE_OPEN" value="0"/>
+      <item name="PRM_WRITE_DELIMITER" value="1"/>
+      <item name="PRM_WRITE_DELIMITER_SIZE" value="2"/>
+      <item name="PRM_WRITE_RECORD_SIZE" value="3"/>
+      <item name="PRM_WRITE_RECORD_SIZE_SIZE" value="4"/>
+      <item name="PRM_WRITE_PARAMETER_ID" value="5"/>
+      <item name="PRM_WRITE_PARAMETER_ID_SIZE" value="6"/>
+      <item name="PRM_WRITE_PARAMETER_VALUE" value="7"/>
+      <item name="PRM_WRITE_PARAMETER_VALUE_SIZE" value="8"/>
+    </enum>
+    <enum type="PrmDb::stage::PrmReadError">
+      <item name="PRM_READ_OPEN" value="0"/>
+      <item name="PRM_READ_DELIMITER" value="1"/>
+      <item name="PRM_READ_DELIMITER_SIZE" value="2"/>
+      <item name="PRM_READ_DELIMITER_VALUE" value="3"/>
+      <item name="PRM_READ_RECORD_SIZE" value="4"/>
+      <item name="PRM_READ_RECORD_SIZE_SIZE" value="5"/>
+      <item name="PRM_READ_RECORD_SIZE_VALUE" value="6"/>
+      <item name="PRM_READ_PARAMETER_ID" value="7"/>
+      <item name="PRM_READ_PARAMETER_ID_SIZE" value="8"/>
+      <item name="PRM_READ_PARAMETER_VALUE" value="9"/>
+      <item name="PRM_READ_PARAMETER_VALUE_SIZE" value="10"/>
+    </enum>
+    <enum type="Health::enable::HealthEnabled">
+      <item name="HLTH_CHK_DISABLED" value="0"/>
+      <item name="HLTH_CHK_ENABLED" value="1"/>
+    </enum>
+    <enum type="Health::enable::PingEnabled">
+      <item name="HLTH_PING_DISABLED" value="0"/>
+      <item name="HLTH_PING_ENABLED" value="1"/>
+    </enum>
+    <enum type="Health::enabled::HealthIsEnabled">
+      <item name="HEALTH_CHECK_DISABLED" value="0"/>
+      <item name="HEALTH_CHECK_ENABLED" value="1"/>
+    </enum>
+    <enum type="Health::enabled::HealthPingIsEnabled">
+      <item name="HEALTH_PING_DISABLED" value="0"/>
+      <item name="HEALTH_PING_ENABLED" value="1"/>
+    </enum>
+    <enum type="ActiveLogger::FilterLevel::EventLevel">
+      <item name="FILTER_WARNING_HI" value="0"/>
+      <item name="FILTER_WARNING_LO" value="1"/>
+      <item name="FILTER_COMMAND" value="2"/>
+      <item name="FILTER_ACTIVITY_HI" value="3"/>
+      <item name="FILTER_ACTIVITY_LO" value="4"/>
+      <item name="FILTER_DIAGNOSTIC" value="5"/>
+    </enum>
+    <enum type="ActiveLogger::FilterEnable::FilterEnabled">
+      <item name="FILTER_ENABLED" value="0"/>
+      <item name="FILTER_DISABLED" value="1"/>
+    </enum>
+    <enum type="ActiveLogger::IdFilterEnable::IdFilterEnabled">
+      <item name="ID_ENABLED" value="0"/>
+      <item name="ID_DISABLED" value="1"/>
+    </enum>
+    <enum type="ActiveLogger::severity::EventFilterState">
+      <item name="FILT_WARNING_HI" value="0"/>
+      <item name="FILT_WARNING_LO" value="1"/>
+      <item name="FILT_COMMAND" value="2"/>
+      <item name="FILT_ACTIVITY_HI" value="3"/>
+      <item name="FILT_ACTIVITY_LO" value="4"/>
+      <item name="FILT_DIAGNOSTIC" value="5"/>
+    </enum>
+    <enum type="CmdSequencer::stage::FileReadStage">
+      <item name="SEQ_READ_HEADER" value="0"/>
+      <item name="SEQ_READ_HEADER_SIZE" value="1"/>
+      <item name="SEQ_DESER_SIZE" value="2"/>
+      <item name="SEQ_DESER_NUM_RECORDS" value="3"/>
+      <item name="SEQ_DESER_TIME_BASE" value="4"/>
+      <item name="SEQ_DESER_TIME_CONTEXT" value="5"/>
+      <item name="SEQ_READ_SEQ_CRC" value="6"/>
+      <item name="SEQ_READ_SEQ_DATA" value="7"/>
+      <item name="SEQ_READ_SEQ_DATA_SIZE" value="8"/>
+    </enum>
+    <enum type="CmdSequencer::mode::SeqMode">
+      <item name="SEQ_STEP_MODE" value="0"/>
+      <item name="SEQ_AUTO_MODE" value="1"/>
+    </enum>
+    <enum type="App::FlightMode">
+      <item name="FM_IDLE" value="1" description=""/>
+      <item name="FM_LAUNCHED" value="2" description=""/>
+      <item name="FM_DESCENDING" value="3" description=""/>
+      <item name="FM_LANDED" value="4" description=""/>
+    </enum>
+  </enums>
+  <serializables>
+    <serializable type="App::PositionSer">
+      <members>
+        <member name="latitude" format_specifier="%lf" type="F64"/>
+        <member name="longitude" format_specifier="%lf" type="F64"/>
+        <member name="altitude" format_specifier="%u" type="U16"/>
+        <member name="satellite" format_specifier="%u" type="U8"/>
+      </members>
+    </serializable>
+    <serializable type="App::PositionSer">
+      <members>
+        <member name="latitude" format_specifier="%lf" type="F64"/>
+        <member name="longitude" format_specifier="%lf" type="F64"/>
+        <member name="altitude" format_specifier="%u" type="U16"/>
+        <member name="satellite" format_specifier="%u" type="U8"/>
+      </members>
+    </serializable>
+    <serializable type="App::AnglesTlm">
+      <members>
+        <member name="roll" format_specifier="%g" type="F32"/>
+        <member name="pitch" format_specifier="%g" type="F32"/>
+        <member name="yaw" format_specifier="%g" type="F32"/>
+      </members>
+    </serializable>
+    <serializable type="App::VectorTlm">
+      <members>
+        <member name="x" format_specifier="%d" type="I16"/>
+        <member name="y" format_specifier="%d" type="I16"/>
+        <member name="z" format_specifier="%d" type="I16"/>
+      </members>
+    </serializable>
+  </serializables>
+  <arrays/>
+  <commands>
+    <command component="cmdDisp" mnemonic="CMD_NO_OP" opcode="0x3">
+      <args/>
+    </command>
+    <command component="cmdDisp" mnemonic="CMD_NO_OP_STRING" opcode="0x4">
+      <args>
+        <arg name="arg1" len="40" type="string"/>
+      </args>
+    </command>
+    <command component="cmdDisp" mnemonic="CMD_TEST_CMD_1" opcode="0x5">
+      <args>
+        <arg name="arg1" type="I32"/>
+        <arg name="arg2" type="F32"/>
+        <arg name="arg3" type="U8"/>
+      </args>
+    </command>
+    <command component="cmdDisp" mnemonic="CMD_CLEAR_TRACKING" opcode="0x6">
+      <args/>
+    </command>
+    <command component="prmDb" mnemonic="PRM_SAVE_FILE" opcode="0xd">
+      <args/>
+    </command>
+    <command component="health" mnemonic="HLTH_ENABLE" opcode="0x1d">
+      <args>
+        <arg name="enable" type="Health::enable::HealthEnabled"/>
+      </args>
+    </command>
+    <command component="health" mnemonic="HLTH_PING_ENABLE" opcode="0x1e">
+      <args>
+        <arg name="entry" len="40" type="string"/>
+        <arg name="enable" type="Health::enable::PingEnabled"/>
+      </args>
+    </command>
+    <command component="health" mnemonic="HLTH_CHNG_PING" opcode="0x1f">
+      <args>
+        <arg name="entry" len="40" type="string"/>
+        <arg name="warningValue" type="U32"/>
+        <arg name="fatalValue" type="U32"/>
+      </args>
+    </command>
+    <command component="eventLogger" mnemonic="SET_EVENT_FILTER" opcode="0x26">
+      <args>
+        <arg name="FilterLevel" type="ActiveLogger::FilterLevel::EventLevel"/>
+        <arg name="FilterEnable" type="ActiveLogger::FilterEnable::FilterEnabled"/>
+      </args>
+    </command>
+    <command component="eventLogger" mnemonic="SET_ID_FILTER" opcode="0x27">
+      <args>
+        <arg name="ID" type="U32"/>
+        <arg name="IdFilterEnable" type="ActiveLogger::IdFilterEnable::IdFilterEnabled"/>
+      </args>
+    </command>
+    <command component="eventLogger" mnemonic="DUMP_FILTER_STATE" opcode="0x28">
+      <args/>
+    </command>
+    <command component="cmdSeq" mnemonic="CS_RUN" opcode="0x2d">
+      <args>
+        <arg name="fileName" len="240" type="string"/>
+      </args>
+    </command>
+    <command component="cmdSeq" mnemonic="CS_VALIDATE" opcode="0x2e">
+      <args>
+        <arg name="fileName" len="240" type="string"/>
+      </args>
+    </command>
+    <command component="cmdSeq" mnemonic="CS_CANCEL" opcode="0x2f">
+      <args/>
+    </command>
+    <command component="cmdSeq" mnemonic="CS_START" opcode="0x30">
+      <args/>
+    </command>
+    <command component="cmdSeq" mnemonic="CS_STEP" opcode="0x31">
+      <args/>
+    </command>
+    <command component="cmdSeq" mnemonic="CS_AUTO" opcode="0x32">
+      <args/>
+    </command>
+    <command component="cmdSeq" mnemonic="CS_MANUAL" opcode="0x33">
+      <args/>
+    </command>
+    <command component="pingRcvr" mnemonic="PR_StopPings" opcode="0x4c">
+      <args/>
+    </command>
+    <command component="eps" mnemonic="Eps_SetWarningLevel" opcode="0x56">
+      <args>
+        <arg name="voltage" type="U16"/>
+      </args>
+    </command>
+    <command component="eps" mnemonic="Eps_SetCriticalLevel" opcode="0x57">
+      <args>
+        <arg name="voltage" type="U16"/>
+      </args>
+    </command>
+    <command component="flexTrak" mnemonic="FT_CHANGE_MODE" opcode="0x60">
+      <args>
+        <arg name="mode" type="U8"/>
+      </args>
+    </command>
+    <command component="gps" mnemonic="Gps_SetFlightModeAltitude" opcode="0x6a">
+      <args>
+        <arg name="altitude" type="U16"/>
+      </args>
+    </command>
+    <command component="piCamera" mnemonic="PiCam_TakePicture" opcode="0x74">
+      <args/>
+    </command>
+    <command component="predictor" mnemonic="Predi_SetPredictionRate" opcode="0x7e">
+      <args>
+        <arg name="rate" type="U8"/>
+      </args>
+    </command>
+    <command component="temperatureProbes" mnemonic="TempProb_SetInternalLevel" opcode="0x92">
+      <args>
+        <arg name="temperature" type="F32"/>
+      </args>
+    </command>
+    <command component="temperatureProbes" mnemonic="TempProb_SetExternalLevel" opcode="0x93">
+      <args>
+        <arg name="temperature" type="F32"/>
+      </args>
+    </command>
+    <command component="senseHat" mnemonic="MS_GET_TM" opcode="0x9c">
+      <args/>
+    </command>
+  </commands>
+  <events>
+    <event component="cmdDisp" name="OpCodeRegistered" id="0x3" severity="DIAGNOSTIC" format_string="Opcode 0x%04X registered to port %d slot %d">
+      <args>
+        <arg name="Opcode" type="U8"/>
+        <arg name="port" type="I32"/>
+        <arg name="slot" type="I32"/>
+      </args>
+    </event>
+    <event component="cmdDisp" name="OpCodeDispatched" id="0x4" severity="COMMAND" format_string="Opcode 0x%04X dispatched to port %d">
+      <args>
+        <arg name="Opcode" type="U8"/>
+        <arg name="port" type="I32"/>
+      </args>
+    </event>
+    <event component="cmdDisp" name="OpCodeCompleted" id="0x5" severity="COMMAND" format_string="Opcode 0x%04X completed">
+      <args>
+        <arg name="Opcode" type="U8"/>
+      </args>
+    </event>
+    <event component="cmdDisp" name="OpCodeError" id="0x6" severity="WARNING_HI" format_string="Opcode 0x%04X completed with error %s ">
+      <args>
+        <arg name="Opcode" type="U8"/>
+        <arg name="error" type="CommandDispatcher::error::ErrorResponse"/>
+      </args>
+    </event>
+    <event component="cmdDisp" name="MalformedCommand" id="0x7" severity="WARNING_HI" format_string="Received malformed command packet. Status: %s">
+      <args>
+        <arg name="Status" type="CommandDispatcher::Status::CmdSerError"/>
+      </args>
+    </event>
+    <event component="cmdDisp" name="InvalidCommand" id="0x8" severity="WARNING_HI" format_string="Invalid opcode 0x%04X received.">
+      <args>
+        <arg name="Opcode" type="U8"/>
+      </args>
+    </event>
+    <event component="cmdDisp" name="TooManyCommands" id="0x9" severity="WARNING_HI" format_string="Too many outstanding commands. opcode=0x%04X">
+      <args>
+        <arg name="Opcode" type="U8"/>
+      </args>
+    </event>
+    <event component="cmdDisp" name="NoOpReceived" id="0xa" severity="ACTIVITY_HI" format_string="Received a NO-OP command">
+      <args/>
+    </event>
+    <event component="cmdDisp" name="NoOpStringReceived" id="0xb" severity="ACTIVITY_HI" format_string="Received a NO-OP string=%s">
+      <args>
+        <arg name="message" len="40" type="string"/>
+      </args>
+    </event>
+    <event component="cmdDisp" name="TestCmd1Args" id="0xc" severity="ACTIVITY_HI" format_string="TEST_CMD_1 args: I32: %d, F32: %f, U8: %d">
+      <args>
+        <arg name="arg1" type="I32"/>
+        <arg name="arg2" type="F32"/>
+        <arg name="arg3" type="U8"/>
+      </args>
+    </event>
+    <event component="prmDb" name="PrmIdNotFound" id="0xd" severity="WARNING_LO" format_string="Parameter ID 0x%08X not found">
+      <args>
+        <arg name="Id" type="U32"/>
+      </args>
+    </event>
+    <event component="prmDb" name="PrmIdUpdated" id="0xe" severity="ACTIVITY_HI" format_string="Parameter ID 0x%08X updated">
+      <args>
+        <arg name="Id" type="U32"/>
+      </args>
+    </event>
+    <event component="prmDb" name="PrmDbFull" id="0xf" severity="FATAL" format_string="Parameter DB full when adding ID 0x%08X">
+      <args>
+        <arg name="Id" type="U32"/>
+      </args>
+    </event>
+    <event component="prmDb" name="PrmIdAdded" id="0x10" severity="ACTIVITY_HI" format_string="Parameter ID 0x%08X added">
+      <args>
+        <arg name="Id" type="U32"/>
+      </args>
+    </event>
+    <event component="prmDb" name="PrmFileWriteError" id="0x11" severity="WARNING_HI" format_string="Parameter write failed in stage %s with record %d and error %d">
+      <args>
+        <arg name="stage" type="PrmDb::stage::PrmWriteError"/>
+        <arg name="record" type="I32"/>
+        <arg name="error" type="I32"/>
+      </args>
+    </event>
+    <event component="prmDb" name="PrmFileSaveComplete" id="0x12" severity="ACTIVITY_HI" format_string="Parameter file save completed. Wrote %d records.">
+      <args>
+        <arg name="records" type="U32"/>
+      </args>
+    </event>
+    <event component="prmDb" name="PrmFileReadError" id="0x13" severity="WARNING_HI" format_string="Parameter file read failed in stage %s with record %d and error %d">
+      <args>
+        <arg name="stage" type="PrmDb::stage::PrmReadError"/>
+        <arg name="record" type="I32"/>
+        <arg name="error" type="I32"/>
+      </args>
+    </event>
+    <event component="prmDb" name="PrmFileLoadComplete" id="0x14" severity="ACTIVITY_HI" format_string="Parameter file load completed. Read %d records.">
+      <args>
+        <arg name="records" type="U32"/>
+      </args>
+    </event>
+    <event component="fatalAdapter" name="AF_ASSERT_0" id="0x15" severity="FATAL" format_string="Assert in file %s, line %d">
+      <args>
+        <arg name="file" len="80" type="string"/>
+        <arg name="line" type="U32"/>
+      </args>
+    </event>
+    <event component="fatalAdapter" name="AF_ASSERT_1" id="0x16" severity="FATAL" format_string="Assert in file %s, line %d: %d">
+      <args>
+        <arg name="file" len="80" type="string"/>
+        <arg name="line" type="U32"/>
+        <arg name="arg1" type="U32"/>
+      </args>
+    </event>
+    <event component="fatalAdapter" name="AF_ASSERT_2" id="0x17" severity="FATAL" format_string="Assert in file %s, line %d: %d %d">
+      <args>
+        <arg name="file" len="80" type="string"/>
+        <arg name="line" type="U32"/>
+        <arg name="arg1" type="U32"/>
+        <arg name="arg2" type="U32"/>
+      </args>
+    </event>
+    <event component="fatalAdapter" name="AF_ASSERT_3" id="0x18" severity="FATAL" format_string="Assert in file %s, line %d: %d %d %d">
+      <args>
+        <arg name="file" len="80" type="string"/>
+        <arg name="line" type="U32"/>
+        <arg name="arg1" type="U32"/>
+        <arg name="arg2" type="U32"/>
+        <arg name="arg3" type="U32"/>
+      </args>
+    </event>
+    <event component="fatalAdapter" name="AF_ASSERT_4" id="0x19" severity="FATAL" format_string="Assert in file %s, line %d: %d %d %d %d">
+      <args>
+        <arg name="file" len="80" type="string"/>
+        <arg name="line" type="U32"/>
+        <arg name="arg1" type="U32"/>
+        <arg name="arg2" type="U32"/>
+        <arg name="arg3" type="U32"/>
+        <arg name="arg4" type="U32"/>
+      </args>
+    </event>
+    <event component="fatalAdapter" name="AF_ASSERT_5" id="0x1a" severity="FATAL" format_string="Assert in file %s, line %d: %d %d %d %d %d">
+      <args>
+        <arg name="file" len="80" type="string"/>
+        <arg name="line" type="U32"/>
+        <arg name="arg1" type="U32"/>
+        <arg name="arg2" type="U32"/>
+        <arg name="arg3" type="U32"/>
+        <arg name="arg4" type="U32"/>
+        <arg name="arg5" type="U32"/>
+      </args>
+    </event>
+    <event component="fatalAdapter" name="AF_ASSERT_6" id="0x1b" severity="FATAL" format_string="Assert in file %s, line %d: %d %d %d %d %d %d">
+      <args>
+        <arg name="file" len="80" type="string"/>
+        <arg name="line" type="U32"/>
+        <arg name="arg1" type="U32"/>
+        <arg name="arg2" type="U32"/>
+        <arg name="arg3" type="U32"/>
+        <arg name="arg4" type="U32"/>
+        <arg name="arg5" type="U32"/>
+        <arg name="arg6" type="U32"/>
+      </args>
+    </event>
+    <event component="fatalAdapter" name="AF_UNEXPECTED_ASSERT" id="0x1c" severity="FATAL" format_string="Unexpected assert in file %s, line %d, args %d">
+      <args>
+        <arg name="file" len="80" type="string"/>
+        <arg name="line" type="U32"/>
+        <arg name="numArgs" type="U32"/>
+      </args>
+    </event>
+    <event component="health" name="HLTH_PING_WARN" id="0x1d" severity="WARNING_HI" format_string="Ping entry %s late warning">
+      <args>
+        <arg name="entry" len="40" type="string"/>
+      </args>
+    </event>
+    <event component="health" name="HLTH_PING_LATE" id="0x1e" severity="FATAL" format_string="Ping entry %s did not respond">
+      <args>
+        <arg name="entry" len="40" type="string"/>
+      </args>
+    </event>
+    <event component="health" name="HLTH_PING_WRONG_KEY" id="0x1f" severity="FATAL" format_string="Ping entry %s responded with wrong key 0x%08X">
+      <args>
+        <arg name="entry" len="40" type="string"/>
+        <arg name="badKey" type="U32"/>
+      </args>
+    </event>
+    <event component="health" name="HLTH_CHECK_ENABLE" id="0x20" severity="ACTIVITY_HI" format_string="Health checking set to %s">
+      <args>
+        <arg name="enabled" type="Health::enabled::HealthIsEnabled"/>
+      </args>
+    </event>
+    <event component="health" name="HLTH_CHECK_PING" id="0x21" severity="ACTIVITY_HI" format_string="Health checking set to %s for %s">
+      <args>
+        <arg name="enabled" type="Health::enabled::HealthPingIsEnabled"/>
+        <arg name="entry" len="40" type="string"/>
+      </args>
+    </event>
+    <event component="health" name="HLTH_CHECK_LOOKUP_ERROR" id="0x22" severity="WARNING_LO" format_string="Couldn't find entry %s">
+      <args>
+        <arg name="entry" len="40" type="string"/>
+      </args>
+    </event>
+    <event component="health" name="HLTH_PING_UPDATED" id="0x23" severity="ACTIVITY_HI" format_string="Health ping for %s changed to WARN %d FATAL %d">
+      <args>
+        <arg name="entry" len="40" type="string"/>
+        <arg name="warn" type="U32"/>
+        <arg name="fatal" type="U32"/>
+      </args>
+    </event>
+    <event component="health" name="HLTH_PING_INVALID_VALUES" id="0x24" severity="WARNING_HI" format_string="Health ping for %s invalid values: WARN %d FATAL %d">
+      <args>
+        <arg name="entry" len="40" type="string"/>
+        <arg name="warn" type="U32"/>
+        <arg name="fatal" type="U32"/>
+      </args>
+    </event>
+    <event component="groundIf" name="GroundInterfaceError" id="0x25" severity="WARNING_HI" format_string="Ground interface encountered an error">
+      <args/>
+    </event>
+    <event component="eventLogger" name="SEVERITY_FILTER_STATE" id="0x26" severity="ACTIVITY_LO" format_string="%s filter state. %d">
+      <args>
+        <arg name="severity" type="ActiveLogger::severity::EventFilterState"/>
+        <arg name="enabled" type="bool"/>
+      </args>
+    </event>
+    <event component="eventLogger" name="ID_FILTER_ENABLED" id="0x27" severity="ACTIVITY_HI" format_string="ID %d is filtered.">
+      <args>
+        <arg name="ID" type="U32"/>
+      </args>
+    </event>
+    <event component="eventLogger" name="ID_FILTER_LIST_FULL" id="0x28" severity="WARNING_LO" format_string="ID filter list is full. Cannot filter %d .">
+      <args>
+        <arg name="ID" type="U32"/>
+      </args>
+    </event>
+    <event component="eventLogger" name="ID_FILTER_REMOVED" id="0x29" severity="ACTIVITY_HI" format_string="ID filter ID %d removed.">
+      <args>
+        <arg name="ID" type="U32"/>
+      </args>
+    </event>
+    <event component="eventLogger" name="ID_FILTER_NOT_FOUND" id="0x2a" severity="WARNING_LO" format_string="ID filter ID %d not found.">
+      <args>
+        <arg name="ID" type="U32"/>
+      </args>
+    </event>
+    <event component="cmdSeq" name="CS_SequenceLoaded" id="0x2d" severity="ACTIVITY_LO" format_string="Loaded sequence %s">
+      <args>
+        <arg name="fileName" len="60" type="string"/>
+      </args>
+    </event>
+    <event component="cmdSeq" name="CS_SequenceCanceled" id="0x2e" severity="ACTIVITY_HI" format_string="Sequence file %s canceled">
+      <args>
+        <arg name="fileName" len="60" type="string"/>
+      </args>
+    </event>
+    <event component="cmdSeq" name="CS_FileReadError" id="0x2f" severity="WARNING_HI" format_string="Error reading sequence file %s">
+      <args>
+        <arg name="fileName" len="60" type="string"/>
+      </args>
+    </event>
+    <event component="cmdSeq" name="CS_FileInvalid" id="0x30" severity="WARNING_HI" format_string="Sequence file %s invalid. Stage: %s Error: %d">
+      <args>
+        <arg name="fileName" len="60" type="string"/>
+        <arg name="stage" type="CmdSequencer::stage::FileReadStage"/>
+        <arg name="error" type="I32"/>
+      </args>
+    </event>
+    <event component="cmdSeq" name="CS_RecordInvalid" id="0x31" severity="WARNING_HI" format_string="Sequence file %s: Record %d invalid. Err: %d">
+      <args>
+        <arg name="fileName" len="60" type="string"/>
+        <arg name="recordNumber" type="U32"/>
+        <arg name="error" type="I32"/>
+      </args>
+    </event>
+    <event component="cmdSeq" name="CS_FileSizeError" id="0x32" severity="WARNING_HI" format_string="Sequence file %s too large. Size: %d">
+      <args>
+        <arg name="fileName" len="60" type="string"/>
+        <arg name="size" type="U32"/>
+      </args>
+    </event>
+    <event component="cmdSeq" name="CS_FileNotFound" id="0x33" severity="WARNING_HI" format_string="Sequence file %s not found.">
+      <args>
+        <arg name="fileName" len="60" type="string"/>
+      </args>
+    </event>
+    <event component="cmdSeq" name="CS_FileCrcFailure" id="0x34" severity="WARNING_HI" format_string="Sequence file %s had invalid CRC. Stored 0x%08X, Computed 0x%08X.">
+      <args>
+        <arg name="fileName" len="60" type="string"/>
+        <arg name="storedCRC" type="U32"/>
+        <arg name="computedCRC" type="U32"/>
+      </args>
+    </event>
+    <event component="cmdSeq" name="CS_CommandComplete" id="0x35" severity="ACTIVITY_LO" format_string="Sequence file %s: Command %d (opcode %d) complete">
+      <args>
+        <arg name="fileName" len="60" type="string"/>
+        <arg name="recordNumber" type="U32"/>
+        <arg name="opCode" type="U32"/>
+      </args>
+    </event>
+    <event component="cmdSeq" name="CS_SequenceComplete" id="0x36" severity="ACTIVITY_HI" format_string="Sequence file %s complete">
+      <args>
+        <arg name="fileName" len="60" type="string"/>
+      </args>
+    </event>
+    <event component="cmdSeq" name="CS_CommandError" id="0x37" severity="WARNING_HI" format_string="Sequence file %s: Command %d (opcode %d) completed with error %d">
+      <args>
+        <arg name="fileName" len="60" type="string"/>
+        <arg name="recordNumber" type="U32"/>
+        <arg name="opCode" type="U32"/>
+        <arg name="errorStatus" type="U32"/>
+      </args>
+    </event>
+    <event component="cmdSeq" name="CS_InvalidMode" id="0x38" severity="WARNING_HI" format_string="Invalid mode">
+      <args/>
+    </event>
+    <event component="cmdSeq" name="CS_RecordMismatch" id="0x39" severity="WARNING_HI" format_string="Sequence file %s header records mismatch: %d in header, found %d extra bytes.">
+      <args>
+        <arg name="fileName" len="60" type="string"/>
+        <arg name="header_records" type="U32"/>
+        <arg name="extra_bytes" type="U32"/>
+      </args>
+    </event>
+    <event component="cmdSeq" name="CS_TimeBaseMismatch" id="0x3a" severity="WARNING_HI" format_string="Sequence file %s: Current time base doesn't match sequence time: base: %d seq: %d">
+      <args>
+        <arg name="fileName" len="60" type="string"/>
+        <arg name="time_base" type="U16"/>
+        <arg name="seq_time_base" type="U16"/>
+      </args>
+    </event>
+    <event component="cmdSeq" name="CS_TimeContextMismatch" id="0x3b" severity="WARNING_HI" format_string="Sequence file %s: Current time context doesn't match sequence context: base: %d seq: %d">
+      <args>
+        <arg name="fileName" len="60" type="string"/>
+        <arg name="currTimeBase" type="U8"/>
+        <arg name="seqTimeBase" type="U8"/>
+      </args>
+    </event>
+    <event component="cmdSeq" name="CS_PortSequenceStarted" id="0x3c" severity="ACTIVITY_HI" format_string="Local request for sequence %s started.">
+      <args>
+        <arg name="filename" len="60" type="string"/>
+      </args>
+    </event>
+    <event component="cmdSeq" name="CS_UnexpectedCompletion" id="0x3d" severity="WARNING_HI" format_string="Command complete status received while no sequences active. Opcode: %d">
+      <args>
+        <arg name="opcode" type="U32"/>
+      </args>
+    </event>
+    <event component="cmdSeq" name="CS_ModeSwitched" id="0x3e" severity="ACTIVITY_HI" format_string="Sequencer switched to %s step mode">
+      <args>
+        <arg name="mode" type="CmdSequencer::mode::SeqMode"/>
+      </args>
+    </event>
+    <event component="cmdSeq" name="CS_NoSequenceActive" id="0x3f" severity="WARNING_LO" format_string="No sequence active.">
+      <args/>
+    </event>
+    <event component="cmdSeq" name="CS_SequenceValid" id="0x40" severity="ACTIVITY_HI" format_string="Sequence %s is valid.">
+      <args>
+        <arg name="filename" len="60" type="string"/>
+      </args>
+    </event>
+    <event component="cmdSeq" name="CS_SequenceTimeout" id="0x41" severity="WARNING_HI" format_string="Sequence %s timed out on command %d">
+      <args>
+        <arg name="filename" len="60" type="string"/>
+        <arg name="command" type="U32"/>
+      </args>
+    </event>
+    <event component="cmdSeq" name="CS_CmdStepped" id="0x42" severity="ACTIVITY_HI" format_string="Sequence %s command %d stepped">
+      <args>
+        <arg name="filename" len="60" type="string"/>
+        <arg name="command" type="U32"/>
+      </args>
+    </event>
+    <event component="cmdSeq" name="CS_CmdStarted" id="0x43" severity="ACTIVITY_HI" format_string="Sequence %s started">
+      <args>
+        <arg name="filename" len="60" type="string"/>
+      </args>
+    </event>
+    <event component="rateGroup1" name="RateGroupStarted" id="0x45" severity="DIAGNOSTIC" format_string="Rate group started.">
+      <args/>
+    </event>
+    <event component="rateGroup1" name="RateGroupCycleSlip" id="0x46" severity="WARNING_HI" format_string="Rate group cycle slipped on cycle %d">
+      <args>
+        <arg name="cycle" type="U32"/>
+      </args>
+    </event>
+    <event component="rateGroup2" name="RateGroupStarted" id="0x47" severity="DIAGNOSTIC" format_string="Rate group started.">
+      <args/>
+    </event>
+    <event component="rateGroup2" name="RateGroupCycleSlip" id="0x48" severity="WARNING_HI" format_string="Rate group cycle slipped on cycle %d">
+      <args>
+        <arg name="cycle" type="U32"/>
+      </args>
+    </event>
+    <event component="rateGroup3" name="RateGroupStarted" id="0x49" severity="DIAGNOSTIC" format_string="Rate group started.">
+      <args/>
+    </event>
+    <event component="rateGroup3" name="RateGroupCycleSlip" id="0x4a" severity="WARNING_HI" format_string="Rate group cycle slipped on cycle %d">
+      <args>
+        <arg name="cycle" type="U32"/>
+      </args>
+    </event>
+    <event component="pingRcvr" name="PR_PingsDisabled" id="0x4c" severity="ACTIVITY_HI" format_string="PingReceiver ping responses disabled">
+      <args/>
+    </event>
+    <event component="pingRcvr" name="PR_PingReceived" id="0x4d" severity="DIAGNOSTIC" format_string="PingReceiver pinged with code %d">
+      <args>
+        <arg name="code" type="U32"/>
+      </args>
+    </event>
+    <event component="serialDriver1" name="DR_OpenError" id="0x4f" severity="WARNING_HI" format_string="Error opening UART device %s: %d %s">
+      <args>
+        <arg name="device" len="40" type="string"/>
+        <arg name="error" type="I32"/>
+        <arg name="name" len="40" type="string"/>
+      </args>
+    </event>
+    <event component="serialDriver1" name="DR_ConfigError" id="0x50" severity="WARNING_HI" format_string="Error configuring UART device %s: %d">
+      <args>
+        <arg name="device" len="40" type="string"/>
+        <arg name="error" type="I32"/>
+      </args>
+    </event>
+    <event component="serialDriver1" name="DR_WriteError" id="0x51" severity="WARNING_HI" format_string="Error writing UART device %s: %d">
+      <args>
+        <arg name="device" len="40" type="string"/>
+        <arg name="error" type="I32"/>
+      </args>
+    </event>
+    <event component="serialDriver1" name="DR_ReadError" id="0x52" severity="WARNING_HI" format_string="Error reading UART device %s: %d">
+      <args>
+        <arg name="device" len="40" type="string"/>
+        <arg name="error" type="I32"/>
+      </args>
+    </event>
+    <event component="serialDriver1" name="DR_PortOpened" id="0x53" severity="ACTIVITY_HI" format_string="UART Device %s configured">
+      <args>
+        <arg name="device" len="40" type="string"/>
+      </args>
+    </event>
+    <event component="serialDriver1" name="DR_NoBuffers" id="0x54" severity="WARNING_HI" format_string="UART Device %s ran out of buffers">
+      <args>
+        <arg name="device" len="40" type="string"/>
+      </args>
+    </event>
+    <event component="serialDriver1" name="DR_BufferTooSmall" id="0x55" severity="WARNING_HI" format_string="UART Device %s target buffer too small. Size: %d Needs: %d">
+      <args>
+        <arg name="device" len="40" type="string"/>
+        <arg name="size" type="U32"/>
+        <arg name="needed" type="U32"/>
+      </args>
+    </event>
+    <event component="eps" name="Eps_LowBattery" id="0x56" severity="WARNING_HI" format_string="Low battery level: %u mV">
+      <args>
+        <arg name="voltage" type="U16"/>
+      </args>
+    </event>
+    <event component="eps" name="Eps_CriticallyLowBattery" id="0x57" severity="FATAL" format_string="Critically low battery level: %u mV">
+      <args>
+        <arg name="voltage" type="U16"/>
+      </args>
+    </event>
+    <event component="flexTrak" name="FT_Mode" id="0x60" severity="ACTIVITY_HI" format_string="Current FlexTrak mode : %u">
+      <args>
+        <arg name="mode" type="U8"/>
+      </args>
+    </event>
+    <event component="gps" name="Gps_Error" id="0x6a" severity="ACTIVITY_HI" format_string="Error">
+      <args/>
+    </event>
+    <event component="piCamera" name="PiCam_PictureTaken" id="0x74" severity="ACTIVITY_LO" format_string="Picture was taken">
+      <args/>
+    </event>
+    <event component="piCamera" name="PiCam_PictureError" id="0x75" severity="WARNING_LO" format_string="Unable to take picture, error code %u">
+      <args>
+        <arg name="code" type="U32"/>
+      </args>
+    </event>
+    <event component="predictor" name="Predi_FlightMode" id="0x7e" severity="ACTIVITY_HI" format_string="New flight mode: %s">
+      <args>
+        <arg name="flightMode" type="App::FlightMode"/>
+      </args>
+    </event>
+    <event component="temperatureProbes" name="TempPro_LowInternalWarning" id="0x92" severity="WARNING_HI" format_string="Low internal temperature: %f">
+      <args>
+        <arg name="temperature" type="F32"/>
+      </args>
+    </event>
+    <event component="temperatureProbes" name="TempPro_LowExternalWarning" id="0x93" severity="WARNING_HI" format_string="Low external temperature: %f">
+      <args>
+        <arg name="temperature" type="F32"/>
+      </args>
+    </event>
+    <event component="senseHat" name="MS_DATA" id="0x9c" severity="ACTIVITY_LO" format_string="Sense hat data update">
+      <args/>
+    </event>
+    <event component="senseHat" name="MS_ERROR" id="0x9d" severity="WARNING_HI" format_string="Sense update data error">
+      <args/>
+    </event>
+    <event component="thermometer" name="MS_DATA" id="0xa6" severity="ACTIVITY_LO" format_string="Data Receive from Sense Hat: temperature: %.2f C&#176;, humidity:  %.2f %%">
+      <args>
+        <arg name="temp" type="F32"/>
+        <arg name="humi" type="F32"/>
+      </args>
+    </event>
+    <event component="thermometer" name="MS_ERROR" id="0xa7" severity="WARNING_HI" format_string="Thermometer error">
+      <args/>
+    </event>
+    <event component="motionTracking" name="MS_DATA" id="0xb0" severity="ACTIVITY_LO" format_string="Data Receive from Sense Hat">
+      <args/>
+    </event>
+    <event component="motionTracking" name="MS_ERROR" id="0xb1" severity="WARNING_HI" format_string="Motion Tracking error">
+      <args/>
+    </event>
+    <event component="barometer" name="MS_DATA" id="0xba" severity="ACTIVITY_LO" format_string="Data Receive from Sense Hat: temperature: %.2f C&#176;, pressure:  %.2f hPa, Altitude: %d m">
+      <args>
+        <arg name="temp" type="F32"/>
+        <arg name="pres" type="F32"/>
+        <arg name="alt" type="U16"/>
+      </args>
+    </event>
+    <event component="barometer" name="MS_ERROR" id="0xbb" severity="WARNING_HI" format_string="Barometer error">
+      <args/>
+    </event>
+  </events>
+  <channels>
+    <channel component="cmdDisp" name="CommandsDispatched" id="0x3" description="Number of commands dispatched" type="U32"/>
+    <channel component="cmdDisp" name="CommandErrors" id="0x4" description="Number of command errors" type="U32"/>
+    <channel component="health" name="PingLateWarnings" id="0x1d" description="Number of overrun warnings" type="U32"/>
+    <channel component="cmdSeq" name="CS_LoadCommands" id="0x2d" description="The number of Load commands executed" type="U32"/>
+    <channel component="cmdSeq" name="CS_CancelCommands" id="0x2e" description="The number of Cancel commands executed" type="U32"/>
+    <channel component="cmdSeq" name="CS_Errors" id="0x2f" description="The number of errors that have occurred" type="U32"/>
+    <channel component="cmdSeq" name="CS_CommandsExecuted" id="0x30" description="The number of commands executed across all sequences." type="U32"/>
+    <channel component="cmdSeq" name="CS_SequencesCompleted" id="0x31" description="The number of sequences completed." type="U32"/>
+    <channel component="rateGroup1" name="RgMaxTime" id="0x45" format_string="%u us" description="Max execution time rate group" type="U32"/>
+    <channel component="rateGroup1" name="RgCycleSlips" id="0x46" description="Cycle slips for rate group" type="U32"/>
+    <channel component="rateGroup2" name="RgMaxTime" id="0x47" format_string="%u us" description="Max execution time rate group" type="U32"/>
+    <channel component="rateGroup2" name="RgCycleSlips" id="0x48" description="Cycle slips for rate group" type="U32"/>
+    <channel component="rateGroup3" name="RgMaxTime" id="0x49" format_string="%u us" description="Max execution time rate group" type="U32"/>
+    <channel component="rateGroup3" name="RgCycleSlips" id="0x4a" description="Cycle slips for rate group" type="U32"/>
+    <channel component="pingRcvr" name="PR_NumPings" id="0x4c" description="Number of pings received" type="U32"/>
+    <channel component="blockDrv" name="BD_Cycles" id="0x4e" description="Driver cycle count" type="U32"/>
+    <channel component="serialDriver1" name="DR_BytesSent" id="0x4f" description="Bytes Sent" type="U32"/>
+    <channel component="serialDriver1" name="DR_BytesRecv" id="0x50" description="Bytes Received" type="U32"/>
+    <channel component="eps" name="Eps_BatteryVoltage" id="0x56" description="Battery level in mV" type="U16"/>
+    <channel component="flexTrak" name="FT_SSDVBufferLength" id="0x60" description="Used length of SSDV buffer" type="U16"/>
+    <channel component="gps" name="Gps_Position" id="0x6a" description="GPS position" type="App::PositionSer"/>
+    <channel component="piCamera" name="PiCam_PictureCnt" id="0x74" description="Number of pictures taken" type="U32"/>
+    <channel component="predictor" name="Predi_LandingPosition" id="0x7e" description="Predicted landing position" type="App::PositionSer"/>
+    <channel component="temperatureProbes" name="TempProb_InternalTemperature" id="0x92" description="Internal temperature in &#176;C" type="F32"/>
+    <channel component="temperatureProbes" name="TempProb_ExternalTemperature" id="0x93" description="External temperature in &#176;C" type="F32"/>
+    <channel component="thermometer" name="THERMOMETER_TEMP" id="0xa6" description="Temperature value" type="F32"/>
+    <channel component="thermometer" name="THERMOMETER_HUMI" id="0xa7" description="Humidtiy value" type="F32"/>
+    <channel component="motionTracking" name="MOTIONTRACKING_ANGLES" id="0xb0" description="Angles values" type="App::AnglesTlm"/>
+    <channel component="motionTracking" name="MOTIONTRACKING_GYRO" id="0xb1" description="Gyroscope values" type="App::VectorTlm"/>
+    <channel component="motionTracking" name="MOTIONTRACKING_ACCEL" id="0xb2" description="Acceleration values" type="App::VectorTlm"/>
+    <channel component="motionTracking" name="MOTIONTRACKING_MAGN" id="0xb3" description="Magnetique field values" type="App::VectorTlm"/>
+    <channel component="barometer" name="BAROMETER_TEMP" id="0xba" description="Temperature value" type="F32"/>
+    <channel component="barometer" name="BAROMETER_PRESS" id="0xbb" description="Pressure value" type="F32"/>
+    <channel component="barometer" name="BAROMETER_ALT" id="0xbc" description="Altitude value" type="U16"/>
+  </channels>
+  <parameters/>
+</dictionary>

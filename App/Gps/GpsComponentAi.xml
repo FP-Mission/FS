@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../../Autocoders/Python/schema/ISF/component_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<component name="Gps" kind="passive" namespace="App">
+    <comment>Component handling the FlexTrak GPS</comment>
+    
+    <import_port_type>App/FlexTrak/Position/PositionPortAi.xml</import_port_type>
+    <import_serializable_type>App/FlexTrak/Position/PositionSerializableAi.xml</import_serializable_type>
+    
+    <ports>
+        <port name="position" data_type="App::Position" kind="output" max_number="2">
+            <comment>
+                GPS Position output
+            </comment>
+        </port>
+    </ports>
+
+    <commands>
+        <command kind="sync" opcode="0" mnemonic="Gps_SetFlightModeAltitude">
+            <comment>
+                Set flight mode altitude. This is the altitude at which the GPS will switch from pedestrian mode (for more accuracy on the ground) to flight mode (to work above 18km)
+            </comment>
+            <args>
+                <arg name="altitude" type="U16">
+                    <comment>Altitude in meters</comment>
+                </arg>          
+            </args>
+        </command>
+    </commands>
+
+    <telemetry>
+        <channel id="0" name="Gps_Position" data_type="App::PositionSer">
+            <comment>
+                GPS position
+            </comment>
+        </channel>
+    </telemetry>
+    
+    <events>
+        <event id="0" name="Gps_Error" severity="ACTIVITY_HI" format_string = "Error" >
+            <comment>
+                Random error event for test purpose
+            </comment>
+        </event>
+    </events>
+</component>

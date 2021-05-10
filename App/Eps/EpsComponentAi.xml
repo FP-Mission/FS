@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../../Autocoders/Python/schema/ISF/component_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<component name="Eps" kind="active" namespace="App">
+    <comment>Component handling the FlexTrak battery level indication</comment>
+    
+    <import_port_type>App/FlexTrak/BatteryLevelPort/BatteryLevelPortAi.xml</import_port_type>
+
+    <ports>
+        <port name="batteryVoltage" data_type="App::BatteryLevel" kind="async_input" max_number="1">
+            <comment>
+                Battery voltage level in mV
+            </comment>
+        </port>
+    </ports>
+
+    <commands>
+        <command kind="async" opcode="0" mnemonic="Eps_SetWarningLevel">
+            <comment>
+                Set low battery level
+            </comment>
+            <args>
+                <arg name="voltage" type="U16">
+                    <comment>Voltage in mV</comment>
+                </arg>          
+            </args>
+        </command>
+        <command kind="async" opcode="1" mnemonic="Eps_SetCriticalLevel">
+            <comment>
+                Set critical low battery level 
+            </comment>
+            <args>
+                <arg name="voltage" type="U16">
+                    <comment>Voltage in mV</comment>
+                </arg>          
+            </args>
+        </command>
+    </commands>
+
+    <telemetry>
+        <channel id="0" name="Eps_BatteryVoltage" data_type="U16">
+            <comment>
+                Battery level in mV
+            </comment>
+        </channel>
+    </telemetry>
+    
+    <events>
+        <event id="0" name="Eps_LowBattery" severity="WARNING_HI" format_string = "Low battery level: %u mV" >
+            <comment>
+                Sent when battery voltage reachs low battery level
+            </comment>
+            <args>
+                <arg name="voltage" type="U16">
+                    <comment>Current battery level in mV</comment>
+                </arg>          
+            </args>
+        </event>
+        <event id="1" name="Eps_CriticallyLowBattery" severity="FATAL" format_string = "Critically low battery level: %u mV" >
+            <comment>
+                Sent when battery voltage reachs critically low battery level
+            </comment>
+            <args>
+                <arg name="voltage" type="U16">
+                    <comment>Current battery level in mV</comment>
+                </arg>          
+            </args>
+        </event>
+     </events>
+</component>
+
