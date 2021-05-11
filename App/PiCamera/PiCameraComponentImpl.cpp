@@ -13,6 +13,7 @@
 
 #include <App/PiCamera/PiCameraComponentImpl.hpp>
 #include "Fw/Types/BasicTypes.hpp"
+#include "Os/FileSystem.hpp"
 
 #include <fstream>
 #include <iostream>
@@ -32,7 +33,7 @@ namespace App {
         const char *const compName
     ) : PiCameraComponentBase(compName)
   {
-
+    Os::FileSystem::createDirectory("~/FS_Data");
   }
 
   void PiCameraComponentImpl ::
@@ -133,6 +134,7 @@ namespace App {
     image.write("rgb.png");
     //save
     std::ofstream outFile ( "/home/pi/raspicam_image.ppm",std::ios::binary );
+
     outFile<<"P6\n"<<Camera.getWidth() <<" "<<Camera.getHeight() <<" 255\n";
     outFile.write ( ( char* ) data, Camera.getImageTypeSize ( raspicam::RASPICAM_FORMAT_RGB ) );
     std::cout<<"Image saved at raspicam_image.ppm"<<std::endl;
