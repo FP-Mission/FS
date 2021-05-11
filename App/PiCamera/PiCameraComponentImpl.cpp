@@ -40,15 +40,12 @@ namespace App {
       Os::FileSystem::createDirectory("/home/pi/FS_Data/picture");
       Os::FileSystem::createDirectory("/home/pi/FS_Data/picture/ppm");
       Os::FileSystem::createDirectory("/home/pi/FS_Data/picture/png");
-    }
 
-    if (!std::ifstream("/home/pi/FS_Data/telemetry/telemetry.csv")){
-         std::ofstream outFileTelemetry ("/home/pi/FS_Data/telemetry/telemetry.csv",std::ios::in );
+    std::ofstream outFileTelemetry ("/home/pi/FS_Data/telemetry/telemetry.csv");
     outFileTelemetry << "AltitudeGPS" <<","<< "AltitudeBaro" << 
     ","<<"Temperature"<<","<< "Pressure"<<","<< "Longitude" <<","<< "Latitude" << "\n";
     outFileTelemetry.close();
     }
-
   }
 
   void PiCameraComponentImpl ::
