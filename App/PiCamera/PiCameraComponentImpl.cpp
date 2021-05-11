@@ -20,6 +20,7 @@
 #include <raspicam/raspicam.h>
 #include <png++/png.hpp>
 #include <unistd.h>
+#include <sstream>
 
 
 namespace App {
@@ -40,6 +41,7 @@ namespace App {
       Os::FileSystem::createDirectory("/home/pi/FS_Data/picture/ppm");
       Os::FileSystem::createDirectory("/home/pi/FS_Data/picture/png");
     }
+
   }
 
   void PiCameraComponentImpl ::
@@ -110,42 +112,9 @@ namespace App {
         const U32 cmdSeq
     )
   {
-    raspicam::RaspiCam Camera; //Camera object
-    Camera.setWidth ( 1920 );
-    Camera.setHeight ( 1080 );
-    png::image< png::rgb_pixel > image(1920, 1080);
-    //Open camera
-    std::cout<<"Opening Camera..."<<std::endl;
-    if ( !Camera.open()) {std::cerr<<"Error opening camera"<<std::endl;}
-    //wait a while until camera stabilizes
-    std::cout<<"Sleeping for 3 secs"<<std::endl;
-    sleep(3);
-    //capture
-    Camera.grab();
-    //allocate memory
-    unsigned char *data=new unsigned char[  Camera.getImageTypeSize ( raspicam::RASPICAM_FORMAT_RGB )];
-    printf("size %d \n",(int)Camera.getImageTypeSize ( raspicam::RASPICAM_FORMAT_RGB ));
-    //extract the image in rgb format
-    Camera.retrieve ( data,raspicam::RASPICAM_FORMAT_RGB );//get camera image
-    int index = 0;
-    for (size_t y = 0; y < image.get_height(); ++y)
-    {
-        for (size_t x = 0; x < image.get_width(); ++x)
-        {
-            image[y][x] = png::rgb_pixel(data[index], data[index+1],data[index+2] );
-            // non-checking equivalent of image.set_pixel(x, y, ...);
-            index += 3;
-        }
-    }
-    image.write("rgb.png");
-    //save
-    std::ofstream outFile ( "/home/pi/raspicam_image.ppm",std::ios::binary );
-
-    outFile<<"P6\n"<<Camera.getWidth() <<" "<<Camera.getHeight() <<" 255\n";
-    outFile.write ( ( char* ) data, Camera.getImageTypeSize ( raspicam::RASPICAM_FORMAT_RGB ) );
-    std::cout<<"Image saved at raspicam_image.ppm"<<std::endl;
-    //free resrources
-    delete data;
+    
+    U32 t = this->getTime().getUSeconds();
+    printf("seconde : %d")
   }
 
 } // end namespace App
