@@ -76,7 +76,7 @@ void FlexTrakComponentImpl::preamble(void) {
     this->loRaIsFree = true;
     // Create queue to store packets to downlink
     Fw::EightyCharString queueName("downlink");
-    this->downlinkQueue.create(queueName, 10, sizeof(Fw::Buffer));
+    this->downlinkQueue.create(queueName, 10, Fw::ComBuffer::SERIALIZED_SIZE);
 
     for (NATIVE_INT_TYPE buffer = 0; buffer < DR_MAX_NUM_BUFFERS; buffer++) {
         // Assign the raw data to the buffer. Make sure to include the side of
@@ -182,8 +182,7 @@ void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
         return;
         // @todo Implement event (?)
     }
-
-
+    
     // Deserialize packet to know if it is events/telemetry/camera
     Fw::SerializeBufferBase& deserBufferWrapper = buffer.getSerializeRepr();
     deserBufferWrapper.resetDeser();
@@ -201,14 +200,24 @@ void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
 
     if(packetType == Fw::ComPacket::FW_PACKET_LOG) {
         this->downlinkQueue_internalInterfaceInvoke(0,buffer);
-        /*/ @todo Add packet to downlink queue instead of internal interface
-        Os::Queue::QueueStatus stat = this->downlinkQueue.send(buffer, 1, Os::Queue::QUEUE_NONBLOCKING);
-        if(stat != Os::Queue::QUEUE_OK) {
-            printf("Error sending in queue %u\n", stat);
+        /*/ @todo Add packet to downlink queue 
+        Os::Queue::QueueStatus stat = this->downlinkQueue.send(buffer.getSer, 0, Os::Queue::QUEUE_NONBLOCKING);
+        if(stat == Os::Queue::QUEUE_OK) {
+            printf("Sent in queue\n");
+            Fw::Buffer unqueueBuffer;
+            stat = this->downlinkQueue.receive(, 0, Os::Queue::QUEUE_NONBLOCKING);
+            if(stat == Os::Queue::QUEUE_OK) {
+                printf("Queue read\n");
+            } else {
+                printf("Error reading queue %u\n", stat);
+            }
         } else {
-            printf("Send in queue\n");
+            printf("Error sending in queue %u\n", stat);
         }
         //*/
+    } else if (packetType == Fw::ComPacket::FW_PACKET_TLM_REPORT) {
+        //printf("Downlink TlmReport %u\n", buffer.getSize());
+        //this->downlinkQueue_internalInterfaceInvoke(0,buffer);
     }
 }
 
