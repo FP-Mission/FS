@@ -532,6 +532,10 @@
         <source component="fatalAdapter" port="Time" type="Time" num="0"/>
         <target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
     </connection>
+    <connection name="chanTlmTime">
+        <source component="chanTlm" port="Time" type="Time" num="0"/>
+        <target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
+    </connection>
     <connection name="groundIfTime">
         <source component="groundIf" port="Time" type="Time" num="0"/>
         <target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
