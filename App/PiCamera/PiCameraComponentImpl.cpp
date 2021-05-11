@@ -33,7 +33,13 @@ namespace App {
         const char *const compName
     ) : PiCameraComponentBase(compName)
   {
-    Os::FileSystem::createDirectory("~/FS_Data");
+    Os::FileSystem::Status status = Os::FileSystem::createDirectory("/home/pi/FS_Data");
+    if(status == Os::FileSystem::Status::OP_OK){
+      Os::FileSystem::createDirectory("/home/pi/FS_Data/telemetry");
+      Os::FileSystem::createDirectory("/home/pi/FS_Data/picture");
+      Os::FileSystem::createDirectory("/home/pi/FS_Data/picture/ppm");
+      Os::FileSystem::createDirectory("/home/pi/FS_Data/picture/png");
+    }
   }
 
   void PiCameraComponentImpl ::
