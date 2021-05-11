@@ -47,7 +47,7 @@ void FlexTrakComponentImpl ::init(const NATIVE_INT_TYPE queueDepth,
     {'implicit': 0, 'coding': 8, 'bandwidth': 5, 'spreading': 11, 'lowopt': 0},  # 5
     {'implicit': 1, 'coding': 5, 'bandwidth': 5, 'spreading':  6, 'lowopt': 0}]  # 6
     //*/
-    mode = 0;
+    mode = 1;
     frequency = 434.225;
 
     modes[0].implicit = 0;
@@ -199,7 +199,8 @@ void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
     FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
 
     if(packetType == Fw::ComPacket::FW_PACKET_LOG) {
-        //this->downlinkQueue_internalInterfaceInvoke(0,buffer);
+        printf("Downlink LogPacket %u\n", buffer.getSize());
+        this->downlinkQueue_internalInterfaceInvoke(0,buffer);
         /*/ @todo Add packet to downlink queue 
         Os::Queue::QueueStatus stat = this->downlinkQueue.send(buffer.getSer, 0, Os::Queue::QUEUE_NONBLOCKING);
         if(stat == Os::Queue::QUEUE_OK) {
