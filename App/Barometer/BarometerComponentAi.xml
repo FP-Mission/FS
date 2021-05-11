@@ -1,6 +1,7 @@
 <component name="Barometer" kind="active" namespace="App">
     <comment>Component that manage Barometer</comment>
     <import_port_type>App/SenseHat/SenseHatPort/LPSPortAi.xml</import_port_type>
+    <import_port_type>App/PiCamera/PiCameraPort/PiCameraBarometerPortAi.xml</import_port_type>
     <import_port_type>Svc/Ping/PingPortAi.xml</import_port_type>
     <ports>
         <port name="DataIn" data_type="App::LPSPort" kind="async_input">
@@ -18,6 +19,11 @@
         <port name="PingOut" data_type="Svc::Ping" kind="output" max_number="1">
             <comment>
             The ping input port
+            </comment>
+        </port>
+        <port name="DataOut" data_type="App::PiCameraBarometerPort" kind="output">
+            <comment>
+            The Data out port
             </comment>
         </port>
     </ports>

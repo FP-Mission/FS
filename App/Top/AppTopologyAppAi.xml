@@ -904,4 +904,10 @@
         <source component = "senseHat" port = "LPS" type = "App::LPSPort" num = "0"/>
         <target component = "barometer" port = "DataIn" type = "App::LPSPort" num = "0"/>
     </connection>
+        <!-- PiCamera -->
+    <connection name = "BarometerPiCamera">
+        <source component = "barometer" port = "DataOut" type = "App::PiCameraBarometerPort" num = "0"/>
+        <target component = "piCamera" port = "barometerDataIn" type = "App::PiCameraBarometerPort" num = "0"/>
+    </connection>
+
 </assembly>

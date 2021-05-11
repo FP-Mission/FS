@@ -163,6 +163,7 @@ namespace App {
     outFilePpm.close();
     outFileTelemetry.close();
     delete data;
+    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
   }
 
 } // end namespace App
