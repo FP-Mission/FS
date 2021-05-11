@@ -199,7 +199,7 @@ void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
     FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
 
     if(packetType == Fw::ComPacket::FW_PACKET_LOG) {
-        this->downlinkQueue_internalInterfaceInvoke(0,buffer);
+        //this->downlinkQueue_internalInterfaceInvoke(0,buffer);
         /*/ @todo Add packet to downlink queue 
         Os::Queue::QueueStatus stat = this->downlinkQueue.send(buffer.getSer, 0, Os::Queue::QUEUE_NONBLOCKING);
         if(stat == Os::Queue::QUEUE_OK) {
@@ -216,8 +216,8 @@ void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
         }
         //*/
     } else if (packetType == Fw::ComPacket::FW_PACKET_TLM_REPORT) {
-        //printf("Downlink TlmReport %u\n", buffer.getSize());
-        //this->downlinkQueue_internalInterfaceInvoke(0,buffer);
+        printf("Downlink TlmReport %u\n", buffer.getSize());
+        this->downlinkQueue_internalInterfaceInvoke(0,buffer);
     }
 }
 
