@@ -51,6 +51,8 @@ namespace App {
     // Initialize histories for typed user output ports
     this->fromPortHistory_PingOut =
       new History<FromPortEntry_PingOut>(maxHistorySize);
+    this->fromPortHistory_DataOut =
+      new History<FromPortEntry_DataOut>(maxHistorySize);
     // Clear history
     this->clearHistory();
   }
@@ -69,6 +71,8 @@ namespace App {
     delete this->eventHistory_MS_DATA;
     // Destroy port histories
     delete this->fromPortHistory_PingOut;
+    // Destroy port histories
+    delete this->fromPortHistory_DataOut;
   }
 
   void BarometerTesterBase ::
@@ -106,6 +110,35 @@ namespace App {
           _port
       );
       this->m_from_PingOut[_port].setObjName(_portName);
+#endif
+
+    }
+
+    // Attach input port DataOut
+
+    for (
+        NATIVE_INT_TYPE _port = 0;
+        _port < this->getNum_from_DataOut();
+        ++_port
+    ) {
+
+      this->m_from_DataOut[_port].init();
+      this->m_from_DataOut[_port].addCallComp(
+          this,
+          from_DataOut_static
+      );
+      this->m_from_DataOut[_port].setPortNum(_port);
+
+#if FW_OBJECT_NAMES == 1
+      char _portName[120];
+      (void) snprintf(
+          _portName,
+          sizeof(_portName),
+          "%s_from_DataOut[%d]",
+          this->m_objName,
+          _port
+      );
+      this->m_from_DataOut[_port].setObjName(_portName);
 #endif
 
     }
@@ -299,6 +332,12 @@ namespace App {
   }
 
   NATIVE_INT_TYPE BarometerTesterBase ::
+    getNum_from_DataOut(void) const
+  {
+    return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(this->m_from_DataOut);
+  }
+
+  NATIVE_INT_TYPE BarometerTesterBase ::
     getNum_from_Tlm(void) const
   {
     return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(this->m_from_Tlm);
@@ -409,6 +448,13 @@ namespace App {
     return &this->m_from_PingOut[portNum];
   }
 
+  App::InputPiCameraBarometerPortPort *BarometerTesterBase ::
+    get_from_DataOut(const NATIVE_INT_TYPE portNum)
+  {
+    FW_ASSERT(portNum < this->getNum_from_DataOut(),static_cast<AssertArg>(portNum));
+    return &this->m_from_DataOut[portNum];
+  }
+
   Fw::InputTlmPort *BarometerTesterBase ::
     get_from_Tlm(const NATIVE_INT_TYPE portNum)
   {
@@ -456,6 +502,24 @@ namespace App {
     _testerBase->from_PingOut_handlerBase(
         portNum,
         key
+    );
+  }
+
+  void BarometerTesterBase ::
+    from_DataOut_static(
+        Fw::PassiveComponentBase *const callComp,
+        const NATIVE_INT_TYPE portNum,
+        U16 altitude,
+        F32 pressure,
+        F32 temperature
+    )
+  {
+    FW_ASSERT(callComp);
+    BarometerTesterBase* _testerBase =
+      static_cast<BarometerTesterBase*>(callComp);
+    _testerBase->from_DataOut_handlerBase(
+        portNum,
+        altitude, pressure, temperature
     );
   }
 
@@ -526,6 +590,7 @@ namespace App {
   {
     this->fromPortHistorySize = 0;
     this->fromPortHistory_PingOut->clear();
+    this->fromPortHistory_DataOut->clear();
   }
 
   // ----------------------------------------------------------------------
@@ -545,6 +610,24 @@ namespace App {
   }
 
   // ----------------------------------------------------------------------
+  // From port: DataOut
+  // ----------------------------------------------------------------------
+
+  void BarometerTesterBase ::
+    pushFromPortEntry_DataOut(
+        U16 altitude,
+        F32 pressure,
+        F32 temperature
+    )
+  {
+    FromPortEntry_DataOut _e = {
+      altitude, pressure, temperature
+    };
+    this->fromPortHistory_DataOut->push_back(_e);
+    ++this->fromPortHistorySize;
+  }
+
+  // ----------------------------------------------------------------------
   // Handler base functions for from ports
   // ----------------------------------------------------------------------
 
@@ -558,6 +641,21 @@ namespace App {
     this->from_PingOut_handler(
         portNum,
         key
+    );
+  }
+
+  void BarometerTesterBase ::
+    from_DataOut_handlerBase(
+        const NATIVE_INT_TYPE portNum,
+        U16 altitude,
+        F32 pressure,
+        F32 temperature
+    )
+  {
+    FW_ASSERT(portNum < this->getNum_from_DataOut(),static_cast<AssertArg>(portNum));
+    this->from_DataOut_handler(
+        portNum,
+        altitude, pressure, temperature
     );
   }
 

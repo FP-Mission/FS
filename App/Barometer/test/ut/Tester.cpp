@@ -69,6 +69,11 @@ namespace App {
     ASSERT_TLM_BAROMETER_TEMP(0,temperatureTheoritical);
     ASSERT_TLM_BAROMETER_PRESS(0,pressureTheoritical);
     ASSERT_TLM_BAROMETER_ALT(0,altitudeTheoritical);
+
+    //port
+    ASSERT_FROM_PORT_HISTORY_SIZE(1);
+    ASSERT_from_DataOut_SIZE(1);
+    ASSERT_from_DataOut(0,altitudeTheoritical,pressureTheoritical,temperatureTheoritical);
   }
 
   // ----------------------------------------------------------------------
@@ -82,6 +87,17 @@ namespace App {
     )
   {
     this->pushFromPortEntry_PingOut(key);
+  }
+
+  void Tester ::
+    from_DataOut_handler(
+        const NATIVE_INT_TYPE portNum,
+        U16 altitude,
+        F32 pressure,
+        F32 temperature
+    )
+  {
+    this->pushFromPortEntry_DataOut(altitude, pressure, temperature);
   }
 
   // ----------------------------------------------------------------------
@@ -108,6 +124,12 @@ namespace App {
     this->component.set_PingOut_OutputPort(
         0, 
         this->get_from_PingOut(0)
+    );
+
+    // DataOut
+    this->component.set_DataOut_OutputPort(
+        0, 
+        this->get_from_DataOut(0)
     );
 
     // Tlm

@@ -35,18 +35,18 @@ namespace App {
         const char *const compName
     ) : PiCameraComponentBase(compName), nbPicture(0)
   {
-    Os::FileSystem::Status status = Os::FileSystem::createDirectory(baseDirectory);
+    Os::FileSystem::Status status = Os::FileSystem::createDirectory(BASE_DIRECTORY);
     if(status == Os::FileSystem::Status::OP_OK){
-      Os::FileSystem::createDirectory(telemetryDirectory);
-      Os::FileSystem::createDirectory(pictureDirectory);
-      Os::FileSystem::createDirectory(ppmDirectory);
-      Os::FileSystem::createDirectory(pngDirectory);
+      Os::FileSystem::createDirectory(TELEMETRY_DIRECTORY);
+      Os::FileSystem::createDirectory(PICTURE_DIRECTORY);
+      Os::FileSystem::createDirectory(PPM_DIRECTORY);
+      Os::FileSystem::createDirectory(PNG_DIRECTORY);
 
 
     std::ostringstream osTelemetry;
-    osTelemetry << telemetryDirectory << "telemetry.csv";
+    osTelemetry << TELEMETRY_DIRECTORY << "telemetry.csv";
     std::ofstream outFileTelemetry (osTelemetry.str());
-    outFileTelemetry << "AltitudeGPS" <<","<< "AltitudeBaro" << 
+    outFileTelemetry<< "Timecode" <<","<< "AltitudeGPS" <<","<< "AltitudeBaro" << 
     ","<<"Temperature"<<","<< "Pressure"<<","<< "Longitude" <<","<< "Latitude" << "\n";
     outFileTelemetry.close();
     }
@@ -121,7 +121,7 @@ namespace App {
     )
   {
     std::ostringstream osPicture;
-    std::ostringstream osTelemetry;
+
     raspicam::RaspiCam Camera; //Camera object
     Camera.setWidth ( 1920 );
     Camera.setHeight ( 1080 );
@@ -132,7 +132,7 @@ namespace App {
     //wait a while until camera stabilizes
     std::cout<<"Sleeping for 3 secs"<<std::endl;
     sleep(3);
-    U32 time = getTime().getSeconds();
+    currentTime = getTime().getSeconds();
     //capture
     Camera.grab();
     //allocate memory
@@ -150,27 +150,32 @@ namespace App {
             index += 3;
         }
     }
-
-    osPicture << pngDirectory << time <<".png";
+    osPicture << PNG_DIRECTORY << currentTime <<".png";
     image.write(osPicture.str());
     //save
     osPicture.str("");
     osPicture.clear();
-    osPicture << ppmDirectory << time <<".ppm";
-    
-    osTelemetry << telemetryDirectory << "telemetry.csv";
+    osPicture << PPM_DIRECTORY << currentTime <<".ppm";
     std::ofstream outFilePpm ( osPicture.str() ,std::ios::binary );
-    std::ofstream outFileTelemetry (osTelemetry.str(),std::ios::app );
-
-    outFileTelemetry << altitudeGps <<","<< altitudeBaro << 
-    ","<<temperature<<","<< pressure<<","<< longitude<<","<< latitude << "\n";
+    
     outFilePpm<<"P6\n"<<Camera.getWidth() <<" "<<Camera.getHeight() <<" 255\n";
     outFilePpm.write ( ( char* ) data, Camera.getImageTypeSize ( raspicam::RASPICAM_FORMAT_RGB ) );
     //free resrources
     outFilePpm.close();
-    outFileTelemetry.close();
+
     delete data;
     this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+  }
+
+  void PiCameraComponentImpl::manageTelemetry(){
+    std::ostringstream osTelemetry;
+    osTelemetry << TELEMETRY_DIRECTORY << "telemetry.csv";
+    std::ofstream outFileTelemetry (osTelemetry.str(),std::ios::app );
+
+    outFileTelemetry << currentTime <<"," <<altitudeGps <<","<< altitudeBaro << 
+    ","<<temperature<<","<< pressure<<","<< longitude<<","<< latitude << "\n";
+
+    outFileTelemetry.close();
   }
 
 } // end namespace App

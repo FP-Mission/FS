@@ -90,6 +90,8 @@ namespace App {
           const U32 cmdSeq /*!< The command sequence number*/
       );
 
+      void manageTelemetry();
+
 
       F32 temperature;
       F32 pressure;
@@ -101,6 +103,7 @@ namespace App {
       U8 satellite;
 
       U32 nbPicture;
+      U32 currentTime;
 
     };
 
