@@ -14,6 +14,7 @@
 #include <App/PiCamera/PiCameraComponentImpl.hpp>
 #include "Fw/Types/BasicTypes.hpp"
 #include "Os/FileSystem.hpp"
+#include "App/Config/PiCameraConfig.hpp"
 
 #include <fstream>
 #include <iostream>
@@ -34,14 +35,17 @@ namespace App {
         const char *const compName
     ) : PiCameraComponentBase(compName), nbPicture(0)
   {
-    Os::FileSystem::Status status = Os::FileSystem::createDirectory("/home/pi/FS_Data");
+    Os::FileSystem::Status status = Os::FileSystem::createDirectory(baseDirectory);
     if(status == Os::FileSystem::Status::OP_OK){
-      Os::FileSystem::createDirectory("/home/pi/FS_Data/telemetry");
-      Os::FileSystem::createDirectory("/home/pi/FS_Data/picture");
-      Os::FileSystem::createDirectory("/home/pi/FS_Data/picture/ppm");
-      Os::FileSystem::createDirectory("/home/pi/FS_Data/picture/png");
+      Os::FileSystem::createDirectory(telemetryDirectory);
+      Os::FileSystem::createDirectory(pictureDirectory);
+      Os::FileSystem::createDirectory(ppmDirectory);
+      Os::FileSystem::createDirectory(pngDirectory);
 
-    std::ofstream outFileTelemetry ("/home/pi/FS_Data/telemetry/telemetry.csv");
+
+    std::ostringstream osTelemetry;
+    osTelemetry << telemetryDirectory << "telemetry.csv";
+    std::ofstream outFileTelemetry (osTelemetry.str());
     outFileTelemetry << "AltitudeGPS" <<","<< "AltitudeBaro" << 
     ","<<"Temperature"<<","<< "Pressure"<<","<< "Longitude" <<","<< "Latitude" << "\n";
     outFileTelemetry.close();
@@ -117,6 +121,7 @@ namespace App {
     )
   {
     std::ostringstream osPicture;
+    std::ostringstream osTelemetry;
     raspicam::RaspiCam Camera; //Camera object
     Camera.setWidth ( 1920 );
     Camera.setHeight ( 1080 );
@@ -146,16 +151,18 @@ namespace App {
         }
     }
 
-    osPicture << "/home/pi/FS_Data/picture/png/" << time <<".png";
+    osPicture << pngDirectory << time <<".png";
     image.write(osPicture.str());
     //save
     osPicture.str("");
     osPicture.clear();
-    osPicture << "/home/pi/FS_Data/picture/ppm/" << time <<".ppm";
+    osPicture << ppmDirectory << time <<".ppm";
+    
+    osTelemetry << telemetryDirectory << "telemetry.csv";
     std::ofstream outFilePpm ( osPicture.str() ,std::ios::binary );
-    std::ofstream outFileTelemetry ("/home/pi/FS_Data/telemetry/telemetry.csv",std::ios::app );
+    std::ofstream outFileTelemetry (osTelemetry.str(),std::ios::app );
 
-    outFileTelemetry << altitudeGps <<","<< altitudeGps << 
+    outFileTelemetry << altitudeGps <<","<< altitudeBaro << 
     ","<<temperature<<","<< pressure<<","<< longitude<<","<< latitude << "\n";
     outFilePpm<<"P6\n"<<Camera.getWidth() <<" "<<Camera.getHeight() <<" 255\n";
     outFilePpm.write ( ( char* ) data, Camera.getImageTypeSize ( raspicam::RASPICAM_FORMAT_RGB ) );
