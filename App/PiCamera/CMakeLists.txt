@@ -8,16 +8,15 @@
 # registering the component as an F prime module. This allows autocoding and more!
 ####
 
-#add_definitions(-std=c++0x -L/home/pi/wiringPi/wiringPi -lwiringPi )
-
 set(SOURCE_FILES
 	"${CMAKE_CURRENT_LIST_DIR}/PiCameraComponentAi.xml"
 	"${CMAKE_CURRENT_LIST_DIR}/PiCameraComponentImpl.cpp"
 )
 register_fprime_module()
+include_directories(../lib/include)
+include_directories(../lib/include/libpng16)
 
 find_library(RASPICAM raspicam /usr/local/lib)
-#find_library(wiringPi_LIB wiringPi)
-#find_library(LibRt rt)
-#find_library(Crypt crypt)
-target_link_libraries(App_PiCamera ${RASPICAM})
+find_library(PNG png ..lib/lib)
+
+target_link_libraries(App_PiCamera ${RASPICAM} ${PNG})
