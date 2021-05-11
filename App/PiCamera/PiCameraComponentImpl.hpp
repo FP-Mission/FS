@@ -100,6 +100,8 @@ namespace App {
       U16 altitudeGps;
       U8 satellite;
 
+      U32 nbPicture;
+
     };
 
 } // end namespace App
