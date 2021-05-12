@@ -38,7 +38,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname);
 void exitTasks(void);
 
 extern Svc::RateGroupDriverImpl rateGroupDrv;
-extern Svc::ActiveRateGroupImpl rateGroup1, rateGroup2, rateGroup3;
+extern Svc::ActiveRateGroupImpl rateGroup1, rateGroup2, rateGroup3, rateGroup4;
 extern Svc::CmdSequencerComponentImpl cmdSeq;
 extern Svc::GroundInterfaceComponentImpl groundIf;
 extern Svc::ConsoleTextLoggerImpl textLogger;

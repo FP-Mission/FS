@@ -53,8 +53,6 @@ namespace App {
     }
 
     getNumberOfLine(osTelemetry);
-    tlmWrite_PiCam_PictureCnt(nbPicture);
-
   }
 
   void PiCameraComponentImpl ::
@@ -126,6 +124,14 @@ namespace App {
     this->height=height;
   }
 
+  void PiCameraComponentImpl ::
+    Schedin_handler(
+        const NATIVE_INT_TYPE portNum,
+        NATIVE_UINT_TYPE context
+    )
+  {
+      takePicture();
+  }
 
 
   // ----------------------------------------------------------------------
@@ -138,6 +144,27 @@ namespace App {
         const U32 cmdSeq
     )
   {
+    bool sucessPicture = takePicture();
+    if(sucessPicture){
+      this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+      return;
+    }
+    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
+
+  }
+  void PiCameraComponentImpl ::
+     PiCam_SetSize_cmdHandler(
+          const FwOpcodeType opCode, /*!< The opcode*/
+          const U32 cmdSeq, /*!< The command sequence number*/
+          U32 width,
+          U32 height
+      ){
+        this->width = width;
+        this->height = height;
+        this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+      }
+
+  bool PiCameraComponentImpl::takePicture(){
     raspicam::RaspiCam Camera; //Camera object
     Camera.setWidth(width);
     Camera.setHeight(height);
@@ -145,8 +172,7 @@ namespace App {
     std::cout<<"Opening Camera..."<<std::endl;
     if ( !Camera.open()) {
       std::cerr<<"Error opening camera"<<std::endl;
-      this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
-      return;
+      return false;
       }
       
     //wait a while until camera stabilizes
@@ -172,19 +198,8 @@ namespace App {
     tlmWrite_PiCam_PictureCnt(nbPicture);
 
     delete data;
-    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
-  }
-  void PiCameraComponentImpl ::
-     PiCam_SetSize_cmdHandler(
-          const FwOpcodeType opCode, /*!< The opcode*/
-          const U32 cmdSeq, /*!< The command sequence number*/
-          U32 width,
-          U32 height
-      ){
-        this->width = width;
-        this->height = height;
-        this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
-      }
+    return true;
+  }    
 
   void PiCameraComponentImpl::manageTelemetry(){
     std::ostringstream osTelemetry;

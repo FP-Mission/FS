@@ -664,6 +664,14 @@
         <arg name="cycle" type="U32"/>
       </args>
     </event>
+    <event component="rateGroup4" name="RateGroupStarted" id="0xc4" severity="DIAGNOSTIC" format_string="Rate group started.">
+      <args/>
+    </event>
+    <event component="rateGroup4" name="RateGroupCycleSlip" id="0xc5" severity="WARNING_HI" format_string="Rate group cycle slipped on cycle %d">
+      <args>
+        <arg name="cycle" type="U32"/>
+      </args>
+    </event>
     <event component="pingRcvr" name="PR_PingsDisabled" id="0x4c" severity="ACTIVITY_HI" format_string="PingReceiver ping responses disabled">
       <args/>
     </event>
@@ -812,6 +820,8 @@
     <channel component="rateGroup2" name="RgCycleSlips" id="0x48" description="Cycle slips for rate group" type="U32"/>
     <channel component="rateGroup3" name="RgMaxTime" id="0x49" format_string="%u us" description="Max execution time rate group" type="U32"/>
     <channel component="rateGroup3" name="RgCycleSlips" id="0x4a" description="Cycle slips for rate group" type="U32"/>
+    <channel component="rateGroup4" name="RgMaxTime" id="0xc4" format_string="%u us" description="Max execution time rate group" type="U32"/>
+    <channel component="rateGroup4" name="RgCycleSlips" id="0xc5" description="Cycle slips for rate group" type="U32"/>
     <channel component="pingRcvr" name="PR_NumPings" id="0x4c" description="Number of pings received" type="U32"/>
     <channel component="blockDrv" name="BD_Cycles" id="0x4e" description="Driver cycle count" type="U32"/>
     <channel component="serialDriver1" name="DR_BytesSent" id="0x4f" description="Bytes Sent" type="U32"/>

@@ -35,7 +35,7 @@ Fw::MallocAllocator seqMallocator;
 Svc::LinuxTimeImpl linuxTime(FW_OPTIONAL_NAME("LTIME"));
 
 static NATIVE_INT_TYPE rgDivs[Svc::RateGroupDriverImpl::DIVIDER_SIZE] = {1, 2,
-                                                                         4};
+                                                                         4, 60};
 Svc::RateGroupDriverImpl rateGroupDrv(FW_OPTIONAL_NAME("RGDvr"), rgDivs,
                                       FW_NUM_ARRAY_ELEMENTS(rgDivs));
 
@@ -50,6 +50,10 @@ Svc::ActiveRateGroupImpl rateGroup2(FW_OPTIONAL_NAME("RG2"), rg2Context,
 static NATIVE_UINT_TYPE rg3Context[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 Svc::ActiveRateGroupImpl rateGroup3(FW_OPTIONAL_NAME("RG3"), rg3Context,
                                     FW_NUM_ARRAY_ELEMENTS(rg3Context));
+
+static NATIVE_UINT_TYPE rg4Context[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+Svc::ActiveRateGroupImpl rateGroup4(FW_OPTIONAL_NAME("RG3"), rg4Context,
+                                    FW_NUM_ARRAY_ELEMENTS(rg4Context));
 
 Svc::FatalHandlerComponentImpl fatalHandler(FW_OPTIONAL_NAME("fatalHandler"));
 Svc::AssertFatalAdapterComponentImpl fatalAdapter(
@@ -115,6 +119,8 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     rateGroup2.init(10, 1);
 
     rateGroup3.init(10, 2);
+
+    rateGroup4.init(10, 3);
 
     // Initialize block driver
     blockDrv.init(10);
@@ -209,6 +215,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
         {3, 5, getHealthName(thermometer)},     // 14
         {3, 5, getHealthName(motionTracking)},  // 15
         {3, 5, getHealthName(barometer)},       // 16
+        {3, 5, getHealthName(rateGroup4)},      // 17
     };
 
     // register ping table
@@ -232,6 +239,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     rateGroup1.start(0, 120, 10 * 1024);
     rateGroup2.start(0, 119, 10 * 1024);
     rateGroup3.start(0, 118, 10 * 1024);
+    rateGroup4.start(0, 118, 10 * 1024);
     // start driver
     blockDrv.start(0, 140, 10 * 1024);
     // start dispatcher
@@ -279,6 +287,7 @@ void exitTasks(void) {
     rateGroup1.exit();
     rateGroup2.exit();
     rateGroup3.exit();
+    rateGroup4.exit();
     blockDrv.exit();
     cmdDisp.exit();
     eventLogger.exit();
@@ -302,6 +311,7 @@ void exitTasks(void) {
     (void)rateGroup1.ActiveComponentBase::join(NULL);
     (void)rateGroup2.ActiveComponentBase::join(NULL);
     (void)rateGroup3.ActiveComponentBase::join(NULL);
+    (void)rateGroup4.ActiveComponentBase::join(NULL);
     (void)blockDrv.ActiveComponentBase::join(NULL);
     (void)cmdDisp.ActiveComponentBase::join(NULL);
     (void)eventLogger.ActiveComponentBase::join(NULL);

@@ -87,6 +87,13 @@ namespace App {
           U32 height /*!< height value*/
       );
 
+      //! Handler implementation for Schedin
+      //!
+      void Schedin_handler(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          NATIVE_UINT_TYPE context /*!< The call order*/
+      );
+
     PRIVATE:
 
       // ----------------------------------------------------------------------
@@ -109,6 +116,7 @@ namespace App {
           U32 height
       );
 
+      bool takePicture();
       void manageTelemetry();
       void managePpm(raspicam::RaspiCam &camera ,unsigned char* data);
       void managePng(unsigned char* data);

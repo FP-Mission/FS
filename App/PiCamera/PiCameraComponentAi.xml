@@ -7,6 +7,7 @@
     <import_port_type>App/FlexTrak/Position/PositionPortAi.xml</import_port_type>
     <import_port_type>App/PiCamera/PiCameraPort/PiCameraBarometerPortAi.xml</import_port_type>
     <import_port_type>App/PiCamera/PiCameraPort/PiCameraSizePortAi.xml</import_port_type>
+    <import_port_type>Svc/Sched/SchedPortAi.xml</import_port_type>
 
     <ports>
         <port name="PingIn" data_type="Svc::Ping" kind="async_input" max_number="1">
@@ -39,6 +40,11 @@
         <port name="SizeIn" data_type="App::PiCameraSizePort" kind="async_input">
             <comment>
                 Set the camera size
+            </comment>
+        </port>
+        <port name="Schedin" data_type="Sched" kind="async_input">
+            <comment>
+            The rate groupe scheduler input
             </comment>
         </port>
     </ports>
