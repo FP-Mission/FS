@@ -6,5 +6,5 @@ const char*  PNG_DIRECTORY = "/home/pi/FS_Data/picture/png/";
 const char*  TELEMETRY_DIRECTORY = "/home/pi/FS_Data/telemetry/";
 
 
-U32 BASE_WIDTH = 1920;
-U32 BASE_HEIGHT = 1080;
+U32 BASE_WIDTH = 640;
+U32 BASE_HEIGHT = 480;

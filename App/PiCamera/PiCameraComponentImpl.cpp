@@ -53,6 +53,7 @@ namespace App {
     }
 
     getNumberOfLine(osTelemetry);
+    tlmWrite_PiCam_PictureCnt(nbPicture);
 
   }
 
