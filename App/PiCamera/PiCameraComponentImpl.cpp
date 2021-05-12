@@ -33,9 +33,12 @@ namespace App {
   PiCameraComponentImpl ::
     PiCameraComponentImpl(
         const char *const compName
-    ) : PiCameraComponentBase(compName), nbPicture(0), width(BASE_WIDTH), height(BASE_HEIGHT)
+    ) : PiCameraComponentBase(compName), nbPicture(0) ,width(BASE_WIDTH), height(BASE_HEIGHT)
   {
+    std::ostringstream osTelemetry;
+    osTelemetry << TELEMETRY_DIRECTORY << "telemetry.csv";
     Os::FileSystem::Status status = Os::FileSystem::createDirectory(BASE_DIRECTORY);
+
     if(status == Os::FileSystem::Status::OP_OK){
       Os::FileSystem::createDirectory(TELEMETRY_DIRECTORY);
       Os::FileSystem::createDirectory(PICTURE_DIRECTORY);
@@ -43,13 +46,13 @@ namespace App {
       Os::FileSystem::createDirectory(PNG_DIRECTORY);
 
 
-    std::ostringstream osTelemetry;
-    osTelemetry << TELEMETRY_DIRECTORY << "telemetry.csv";
     std::ofstream outFileTelemetry (osTelemetry.str());
     outFileTelemetry<< "Timecode" <<","<< "AltitudeGPS" <<","<< "AltitudeBaro" << 
     ","<<"Temperature"<<","<< "Pressure"<<","<< "Longitude" <<","<< "Latitude" << "\n";
     outFileTelemetry.close();
     }
+
+    getNumberOfLine(osTelemetry);
 
   }
 
@@ -164,6 +167,8 @@ namespace App {
     managePng(data);
     manageTelemetry();
    
+    ++nbPicture;
+    tlmWrite_PiCam_PictureCnt(nbPicture);
 
     delete data;
     this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
@@ -218,6 +223,13 @@ namespace App {
     }
     osPicture << PNG_DIRECTORY << currentTime <<".png";
     image.write(osPicture.str());
+  }
+
+  void  PiCameraComponentImpl::getNumberOfLine(std::ostringstream& path){
+    std::ifstream f(path.str());
+    std::string line;
+    for (nbPicture = 0; std::getline(f, line); ++nbPicture);
+    --nbPicture;
   }
 
 } // end namespace App

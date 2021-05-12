@@ -113,6 +113,8 @@ namespace App {
       void managePpm(raspicam::RaspiCam &camera ,unsigned char* data);
       void managePng(unsigned char* data);
 
+      void getNumberOfLine(std::ostringstream& path);
+
       F32 temperature;
       F32 pressure;
       U16 altitudeBaro;
