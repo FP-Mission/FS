@@ -110,11 +110,8 @@ namespace App {
       );
 
       void manageTelemetry();
-      void managePpm(unsigned char* data);
+      void managePpm(raspicam::RaspiCam &camera ,unsigned char* data);
       void managePng(unsigned char* data);
-
-      raspicam::RaspiCam Camera; //Camera object
-
 
       F32 temperature;
       F32 pressure;

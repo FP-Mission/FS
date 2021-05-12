@@ -16,6 +16,7 @@
 #include "Os/FileSystem.hpp"
 #include "App/Config/PiCameraConfig.hpp"
 
+
 #include <fstream>
 #include <iostream>
 #include <png++/png.hpp>
@@ -50,8 +51,6 @@ namespace App {
     outFileTelemetry.close();
     }
 
-    Camera.setWidth(BASE_WIDTH);
-    Camera.setHeight(BASE_HEIGHT);
   }
 
   void PiCameraComponentImpl ::
@@ -119,9 +118,6 @@ namespace App {
         U32 height
     )
   {
-    Camera.setWidth(width);
-    Camera.setHeight(height);
-
     this->width=width;
     this->height=height;
   }
@@ -138,7 +134,9 @@ namespace App {
         const U32 cmdSeq
     )
   {
-   
+    raspicam::RaspiCam Camera; //Camera object
+    Camera.setWidth(width);
+    Camera.setHeight(height);
     //Open camera
     std::cout<<"Opening Camera..."<<std::endl;
     if ( !Camera.open()) {
@@ -162,7 +160,7 @@ namespace App {
     //extract the image in rgb format
     Camera.retrieve ( data,raspicam::RASPICAM_FORMAT_RGB );//get camera image
 
-    managePpm(data);
+    managePpm(Camera,data);
     managePng(data);
     manageTelemetry();
    
@@ -177,8 +175,6 @@ namespace App {
           U32 width,
           U32 height
       ){
-        Camera.setWidth(width);
-        Camera.setHeight(height);
         this->width = width;
         this->height = height;
         this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
@@ -195,13 +191,13 @@ namespace App {
     outFileTelemetry.close();
   }
 
-  void PiCameraComponentImpl::managePpm(unsigned char* data){
+  void PiCameraComponentImpl::managePpm(raspicam::RaspiCam &camera ,unsigned char* data){
     std::ostringstream osPicture;
     osPicture << PPM_DIRECTORY << currentTime <<".ppm";
     std::ofstream outFilePpm ( osPicture.str() ,std::ios::binary );
     
-    outFilePpm<<"P6\n"<<Camera.getWidth() <<" "<<Camera.getHeight() <<" 255\n";
-    outFilePpm.write ( ( char* ) data, Camera.getImageTypeSize ( raspicam::RASPICAM_FORMAT_RGB ) );
+    outFilePpm<<"P6\n"<<camera.getWidth() <<" "<<camera.getHeight() <<" 255\n";
+    outFilePpm.write ( ( char* ) data, camera.getImageTypeSize ( raspicam::RASPICAM_FORMAT_RGB ) );
     //free resrources
     outFilePpm.close();
   }
