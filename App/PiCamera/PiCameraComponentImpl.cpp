@@ -252,6 +252,8 @@ namespace App {
 
   void PiCameraComponentImpl::manageJpg(unsigned char* data){
     std::ostringstream osPicture;
+    std::ostringstream osPictureSsdv;
+    osPictureSsdv << "ssdv -e -c TEST01 -i ID " << JPG_DIRECTORY << currentTime <<".jpg " << JPG_DIRECTORY <<currentTime<<".bin";
     osPicture << JPG_DIRECTORY << currentTime <<".jpg";
 
     PiCameraComponentImpl::jpgFile.open(osPicture.str() ,std::ios_base::out | std::ios_base::binary);
@@ -262,6 +264,7 @@ namespace App {
 
     TooJpeg::writeJpeg(myOutput, data, width, height, isRGB, quality, downsample, comment);
     PiCameraComponentImpl::jpgFile.close();
+    system(osPictureSsdv.str().c_str());
   }
 
     
