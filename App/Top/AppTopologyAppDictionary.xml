@@ -240,6 +240,12 @@
     <command component="piCamera" mnemonic="PiCam_TakePicture" opcode="0x74">
       <args/>
     </command>
+    <command component="piCamera" mnemonic="PiCam_SetSize" opcode="0x75">
+      <args>
+        <arg name="width" type="U32"/>
+        <arg name="height" type="U32"/>
+      </args>
+    </command>
     <command component="predictor" mnemonic="Predi_SetPredictionRate" opcode="0x7e">
       <args>
         <arg name="rate" type="U8"/>

@@ -15,6 +15,8 @@
 
 #include "App/PiCamera/PiCameraComponentAc.hpp"
 
+#include <raspicam/raspicam.h>
+
 namespace App {
 
   class PiCameraComponentImpl :
@@ -77,6 +79,14 @@ namespace App {
           F32 temperature /*!< Temperature value*/
       );
 
+      //! Handler implementation for SizeIn
+     //!
+      void SizeIn_handler(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          U32 width, /*!< wisth value*/
+          U32 height /*!< height value*/
+      );
+
     PRIVATE:
 
       // ----------------------------------------------------------------------
@@ -90,7 +100,20 @@ namespace App {
           const U32 cmdSeq /*!< The command sequence number*/
       );
 
+      //! Implementation for PiCam_SetSize command handler
+      //! Take picture
+      void PiCam_SetSize_cmdHandler(
+          const FwOpcodeType opCode, /*!< The opcode*/
+          const U32 cmdSeq, /*!< The command sequence number*/
+          U32 width,
+          U32 height
+      );
+
       void manageTelemetry();
+      void managePpm(unsigned char* data);
+      void managePng(unsigned char* data);
+
+      raspicam::RaspiCam Camera; //Camera object
 
 
       F32 temperature;
@@ -104,6 +127,9 @@ namespace App {
 
       U32 nbPicture;
       U32 currentTime;
+
+      U32 width;
+      U32 height;
 
     };
 

@@ -6,6 +6,7 @@
     <import_port_type>Svc/Ping/PingPortAi.xml</import_port_type>
     <import_port_type>App/FlexTrak/Position/PositionPortAi.xml</import_port_type>
     <import_port_type>App/PiCamera/PiCameraPort/PiCameraBarometerPortAi.xml</import_port_type>
+    <import_port_type>App/PiCamera/PiCameraPort/PiCameraSizePortAi.xml</import_port_type>
 
     <ports>
         <port name="PingIn" data_type="Svc::Ping" kind="async_input" max_number="1">
@@ -35,6 +36,11 @@
                 Current barometer data
             </comment>
         </port>
+        <port name="SizeIn" data_type="App::PiCameraSizePort" kind="async_input">
+            <comment>
+                Set the camera size
+            </comment>
+        </port>
     </ports>
 
     <commands>
@@ -42,6 +48,19 @@
             <comment>
             Take picture
             </comment>
+        </command>
+        <command kind="async" opcode="1" mnemonic="PiCam_SetSize">
+            <comment>
+            Set the size of picture
+            </comment>
+             <args>
+                <arg name="width" type="U32">
+                    <comment>Image Width</comment>
+                </arg>
+                <arg name="height" type="U32">
+                    <comment>Image Height</comment>
+                </arg>                   
+             </args>
         </command>
     </commands>
 
