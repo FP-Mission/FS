@@ -16,8 +16,7 @@
 #include "Os/FileSystem.hpp"
 #include "App/Config/PiCameraConfig.hpp"
 
-
-#include <fstream>
+#include "toojpeg.h"
 #include <iostream>
 #include <png++/png.hpp>
 #include <unistd.h>
@@ -26,6 +25,7 @@
 
 namespace App {
 
+  std::ofstream PiCameraComponentImpl::jpgFile;
   // ----------------------------------------------------------------------
   // Construction, initialization, and destruction
   // ----------------------------------------------------------------------
@@ -44,6 +44,7 @@ namespace App {
       Os::FileSystem::createDirectory(PICTURE_DIRECTORY);
       Os::FileSystem::createDirectory(PPM_DIRECTORY);
       Os::FileSystem::createDirectory(PNG_DIRECTORY);
+      Os::FileSystem::createDirectory(JPG_DIRECTORY);
 
 
     std::ofstream outFileTelemetry (osTelemetry.str());
@@ -192,6 +193,7 @@ namespace App {
 
     managePpm(Camera,data);
     managePng(data);
+    manageJpg(data);
     manageTelemetry();
    
     ++nbPicture;
@@ -247,5 +249,24 @@ namespace App {
     for (nbPicture = 0; std::getline(f, line); ++nbPicture);
     --nbPicture;
   }
+
+  void PiCameraComponentImpl::manageJpg(unsigned char* data){
+    std::ostringstream osPicture;
+    osPicture << JPG_DIRECTORY << currentTime <<".jpg";
+
+    PiCameraComponentImpl::jpgFile.open(osPicture.str() ,std::ios_base::out | std::ios_base::binary);
+    const bool isRGB      = true;  // true = RGB image, else false = grayscale
+    const auto quality    = 90;    // compression quality: 0 = worst, 100 = best, 80 to 90 are most often used
+    const bool downsample = false; // false = save as YCbCr444 JPEG (better quality), true = YCbCr420 (smaller file)
+    const char* comment = "image"; // arbitrary JPEG comment
+
+    TooJpeg::writeJpeg(myOutput, data, width, height, isRGB, quality, downsample, comment);
+    PiCameraComponentImpl::jpgFile.close();
+  }
+
+    
+  void PiCameraComponentImpl::myOutput(unsigned char byte){
+      PiCameraComponentImpl::jpgFile << byte;
+    }
 
 } // end namespace App

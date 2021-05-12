@@ -16,6 +16,7 @@
 #include "App/PiCamera/PiCameraComponentAc.hpp"
 
 #include <raspicam/raspicam.h>
+#include <fstream>
 
 namespace App {
 
@@ -120,6 +121,9 @@ namespace App {
       void manageTelemetry();
       void managePpm(raspicam::RaspiCam &camera ,unsigned char* data);
       void managePng(unsigned char* data);
+      void manageJpg(unsigned char* data);
+
+      static void myOutput(unsigned char byte);
 
       void getNumberOfLine(std::ostringstream& path);
 
@@ -137,6 +141,9 @@ namespace App {
 
       U32 width;
       U32 height;
+
+      static std::ofstream jpgFile;
+
 
     };
 
