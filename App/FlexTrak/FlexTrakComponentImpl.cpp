@@ -11,6 +11,8 @@
 // ======================================================================
 
 #include <App/FlexTrak/FlexTrakComponentImpl.hpp>
+#include <Fw/Com/ComPacket.hpp>
+#include <Svc/GroundInterface/GroundInterface.hpp>
 
 #include "Fw/Logger/Logger.hpp"
 #include "Fw/Types/BasicTypes.hpp"
@@ -45,7 +47,7 @@ void FlexTrakComponentImpl ::init(const NATIVE_INT_TYPE queueDepth,
     {'implicit': 0, 'coding': 8, 'bandwidth': 5, 'spreading': 11, 'lowopt': 0},  # 5
     {'implicit': 1, 'coding': 5, 'bandwidth': 5, 'spreading':  6, 'lowopt': 0}]  # 6
     //*/
-    mode = 0;
+    mode = 1;
     frequency = 434.225;
 
     modes[0].implicit = 0;
@@ -74,7 +76,7 @@ void FlexTrakComponentImpl::preamble(void) {
     this->loRaIsFree = true;
     // Create queue to store packets to downlink
     Fw::EightyCharString queueName("downlink");
-    this->downlinkQueue.create(queueName, 10, sizeof(Fw::Buffer));
+    this->downlinkQueue.create(queueName, 10, Fw::ComBuffer::SERIALIZED_SIZE);
 
     for (NATIVE_INT_TYPE buffer = 0; buffer < DR_MAX_NUM_BUFFERS; buffer++) {
         // Assign the raw data to the buffer. Make sure to include the side of
@@ -166,6 +168,9 @@ bool FlexTrakComponentImpl ::detectCommand(const char* command, const char* line
 
 void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
                                               Fw::Buffer &buffer) {
+    TOKEN_TYPE token;
+    TOKEN_TYPE dataSize;
+    FwPacketDescriptorType packetType;
     char *pointer = reinterpret_cast<char *>(buffer.getData());
 
     U16 packetSize = buffer.getSize();
@@ -177,16 +182,44 @@ void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
         return;
         // @todo Implement event (?)
     }
+    
+    // Deserialize packet to know if it is events/telemetry/camera
+    Fw::SerializeBufferBase& deserBufferWrapper = buffer.getSerializeRepr();
+    deserBufferWrapper.resetDeser();
+    deserBufferWrapper.setBuffLen(buffer.getSize());
 
-    this->downlinkQueue_internalInterfaceInvoke(0,buffer);
-    /*/ @todo Add packet to downlink queue instead of internal interface
-    Os::Queue::QueueStatus stat = this->downlinkQueue.send(buffer, 1, Os::Queue::QUEUE_NONBLOCKING);
-    if(stat != Os::Queue::QUEUE_OK) {
-        printf("Error sending in queue %u\n", stat);
-    } else {
-        printf("Send in queue\n");
+    Fw::SerializeStatus stat = deserBufferWrapper.deserialize(token);
+    FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
+    FW_ASSERT(token == Svc::GroundInterfaceComponentImpl::START_WORD);
+
+    stat = deserBufferWrapper.deserialize(dataSize);
+    FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
+
+    stat = deserBufferWrapper.deserialize(packetType);
+    FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
+
+    if(packetType == Fw::ComPacket::FW_PACKET_LOG) {
+        printf("Downlink LogPacket %u\n", buffer.getSize());
+        this->downlinkQueue_internalInterfaceInvoke(0,buffer);
+        /*/ @todo Add packet to downlink queue 
+        Os::Queue::QueueStatus stat = this->downlinkQueue.send(buffer.getSer, 0, Os::Queue::QUEUE_NONBLOCKING);
+        if(stat == Os::Queue::QUEUE_OK) {
+            printf("Sent in queue\n");
+            Fw::Buffer unqueueBuffer;
+            stat = this->downlinkQueue.receive(, 0, Os::Queue::QUEUE_NONBLOCKING);
+            if(stat == Os::Queue::QUEUE_OK) {
+                printf("Queue read\n");
+            } else {
+                printf("Error reading queue %u\n", stat);
+            }
+        } else {
+            printf("Error sending in queue %u\n", stat);
+        }
+        //*/
+    } else if (packetType == Fw::ComPacket::FW_PACKET_TLM_REPORT) {
+        printf("Downlink TlmReport %u\n", buffer.getSize());
+        this->downlinkQueue_internalInterfaceInvoke(0,buffer);
     }
-    //*/
 }
 
 void FlexTrakComponentImpl::Run_handler(NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE context) {
@@ -254,6 +287,7 @@ void FlexTrakComponentImpl:: configureHardware() {
     char temp[20]; 
     // ensure array is big enough to contain command, parameters and additional 
     // '\r' added by sendFlexTrakCommand()
+    loRaMutex.lock();
     sendFlexTrakCommand("CH0"); // Low priority mode
     sendFlexTrakCommand("CV");  // Ask version
     sendFlexTrakCommand("CPFP1");   // Set payload name to FP1
@@ -271,6 +305,7 @@ void FlexTrakComponentImpl:: configureHardware() {
     sprintf(temp, "LF%.3f", frequency);
     sendFlexTrakCommand(temp);
     sendFlexTrakCommand("CS");  // Save settings
+    loRaMutex.unLock();
 }
 
 // ----------------------------------------------------------------------

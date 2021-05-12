@@ -36,6 +36,7 @@ void runcycles(NATIVE_INT_TYPE cycles) {
     }
 }
 
+// ./App -a 172.28.252.55 -p 50000
 int main(int argc, char* argv[]) {
     U32 port_number = 0; // Invalid port number forced
     I32 option;
