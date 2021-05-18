@@ -22,6 +22,7 @@
 #include <sstream>
 #include <iostream>
 
+#define FLEXAVR_PING_RESPONSE_LIMIT 5
 
 namespace App {
 
@@ -116,6 +117,8 @@ class FlexTrakComponentImpl : public FlexTrakComponentBase {
 
     bool loRaIsFree;
     Os::Mutex loRaMutex;
+
+    Fw::Time lastUpdate;
 
     Os::Queue downlinkQueue;      //!< queue to store packets to downlink
     Os::Mutex downlinkQueueMutex;

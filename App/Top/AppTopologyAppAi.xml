@@ -60,6 +60,7 @@
     <instance namespace="Svc" name="rateGroup3"     type="ActiveRateGroup"      base_id="73"   base_id_window="2" />
     <!-- Socket IP Communications driver -->
     <instance namespace="Drv" name="socketIpDriver" type="SocketIpDriver"       base_id="75"   base_id_window="0" />
+
     <!-- Reference Example Components -->
     <instance namespace="Ref" name="pingRcvr"       type="PingReceiver"         base_id="76"   base_id_window="2" />
     <instance namespace="Drv" name="blockDrv"       type="BlockDriver"          base_id="78"   base_id_window="1" />
@@ -602,6 +603,10 @@
         <source component="fatalAdapter" port="Time" type="Time" num="0"/>
         <target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
     </connection>
+    <connection name="chanTlmTime">
+        <source component="chanTlm" port="Time" type="Time" num="0"/>
+        <target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
+    </connection>
     <connection name="groundIfTime">
         <source component="groundIf" port="Time" type="Time" num="0"/>
         <target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
@@ -875,18 +880,21 @@
         <source component="flexTrak" port="batteryVoltage" type="BatteryLevel" num="0"/>
         <target component="eps" port="batteryVoltage" type="BatteryLevel" num="0"/>
     </connection>
+    <connection name="flexTrakGps">
+        <source component="flexTrak" port="gps" type="Position" num="0"/>
+        <target component="gps" port="positionIn" type="Position" num="0"/>
+    </connection> 
         <!-- GPS -->
-    <!--
-    <connection name="gpsPredictor">
-        <source component="gps" port="position" type="Position" num="0"/>
-        <target component="predictor" port="position" type="Position" num="0"/>
-    </connection>
     <connection name="gpsPiCamera">
-        <source component="gps" port="position" type="Position" num="1"/>
+        <source component="gps" port="positionOut" type="Position" num="0"/>
         <target component="piCamera" port="position" type="Position" num="0"/>
     </connection> 
+    <!--
+    <connection name="gpsPredictor">
+        <source component="gps" port="positionOut" type="Position" num="0"/>
+        <target component="predictor" port="position" type="Position" num="0"/>
+    </connection>
     -->
-
         <!-- Thermometer --> 
     <connection name = "SenseHatThermometer">
         <source component = "senseHat" port = "SHT" type = "App::SHTPort" num = "0"/>

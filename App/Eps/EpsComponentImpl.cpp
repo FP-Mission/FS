@@ -36,7 +36,8 @@ EpsComponentImpl ::~EpsComponentImpl(void) {}
 
 void EpsComponentImpl ::batteryVoltage_handler(const NATIVE_INT_TYPE portNum,
                                                U16 voltage) {
-    // TODO
+    printf("[EPS] Battery: %u\n", voltage);
+    tlmWrite_Eps_BatteryVoltage(voltage);
 }
 
 // ----------------------------------------------------------------------

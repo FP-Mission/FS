@@ -10,6 +10,7 @@
     <import_port_type>App/FlexTrak/TemperaturePort/TemperaturePortAi.xml</import_port_type>
     <import_port_type>App/FlexTrak/BatteryLevelPort/BatteryLevelPortAi.xml</import_port_type>
     <import_port_type>Fw/Buffer/BufferSendPortAi.xml</import_port_type>
+    <import_port_type>App/FlexTrak/Position/PositionPortAi.xml</import_port_type>
 
     <internal_interfaces>
         <internal_interface name="downlinkQueue" priority="1" full="drop">
@@ -53,6 +54,7 @@
         <port name="serialBufferOut" data_type="Fw::BufferSend"  kind="output"  max_number="1">
         </port>
 
+
         <!--
         <port name="pictureTaken" data_type="U8" kind="async_input" max_number="1">
             <comment>
@@ -74,6 +76,11 @@
         <port name="externalTemp" data_type="App::Temperature" kind="output" max_number="1">
             <comment>
                 External temperature in °C
+            </comment>
+        </port>
+        <port name="gps" data_type="App::Position" kind="output" max_number="1">
+            <comment>
+                Position received by FlexAvr
             </comment>
         </port>
     </ports>

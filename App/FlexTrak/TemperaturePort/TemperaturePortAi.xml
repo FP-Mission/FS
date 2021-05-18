@@ -5,7 +5,7 @@
         Temperature port
     </comment>
     <args>
-        <arg name="degree" type="F32">
+        <arg name="degree" type="I16">
             <comment>Temperature in °C</comment>
         </arg>
     </args>

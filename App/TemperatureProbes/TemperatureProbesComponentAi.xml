@@ -24,7 +24,7 @@
                 Set internal temperature warning level
             </comment>
             <args>
-                <arg name="temperature" type="F32">
+                <arg name="temperature" type="I16">
                     <comment>Temperature in °C</comment>
                 </arg>          
             </args>
@@ -34,7 +34,7 @@
                 Set external temperature warning level
             </comment>
             <args>
-                <arg name="temperature" type="F32">
+                <arg name="temperature" type="I16">
                     <comment>Temperature in °C</comment>
                 </arg>          
             </args>
@@ -42,12 +42,12 @@
     </commands>
 
     <telemetry>
-        <channel id="0" name="TempProb_InternalTemperature" data_type="F32">
+        <channel id="0" name="TempProb_InternalTemperature" data_type="I16">
             <comment>
                 Internal temperature in °C
             </comment>
         </channel>
-        <channel id="1" name="TempProb_ExternalTemperature" data_type="F32">
+        <channel id="1" name="TempProb_ExternalTemperature" data_type="I16">
             <comment>
                 External temperature in °C
             </comment>
@@ -55,22 +55,22 @@
     </telemetry>
 
     <events>
-        <event id="0" name="TempPro_LowInternalWarning" severity="WARNING_HI" format_string="Low internal temperature: %f" >
+        <event id="0" name="TempPro_LowInternalWarning" severity="WARNING_HI" format_string="Low internal temperature: %d" >
             <comment>
                 Sent when internal temperature reachs low level
             </comment>
             <args>
-                <arg name="temperature" type="F32">
+                <arg name="temperature" type="I16">
                     <comment>Temperature in °C</comment>
                 </arg>          
             </args>
         </event>
-        <event id="1" name="TempPro_LowExternalWarning" severity="WARNING_HI" format_string="Low external temperature: %f" >
+        <event id="1" name="TempPro_LowExternalWarning" severity="WARNING_HI" format_string="Low external temperature: %d" >
             <comment>
                 Sent when external temperature reachs low level
             </comment>
             <args>
-                <arg name="temperature" type="F32">
+                <arg name="temperature" type="I16">
                     <comment>Temperature in °C</comment>
                 </arg>          
             </args>
