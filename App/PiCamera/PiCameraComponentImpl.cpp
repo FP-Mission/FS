@@ -45,6 +45,7 @@ namespace App {
       Os::FileSystem::createDirectory(PPM_DIRECTORY);
       Os::FileSystem::createDirectory(PNG_DIRECTORY);
       Os::FileSystem::createDirectory(JPG_DIRECTORY);
+       Os::FileSystem::createDirectory(BIN_DIRECTORY);
 
 
     std::ofstream outFileTelemetry (osTelemetry.str());
