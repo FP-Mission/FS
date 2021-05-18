@@ -43,7 +43,7 @@ void GpsComponentImpl ::positionIn_handler(
       U8 satellite
   )
 {
-    printf("[GPS] (%f, %f, %u) %u\n", latitude, longitude, altitude, satellite);
+    //printf("[GPS] (%f, %f, %u) %u\n", latitude, longitude, altitude, satellite);
     // Generate Tlm for GPS position
     App::PositionSer pos;
     pos.setlatitude(latitude);

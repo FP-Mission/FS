@@ -37,13 +37,13 @@ TemperatureProbesComponentImpl ::~TemperatureProbesComponentImpl(void) {}
 
 void TemperatureProbesComponentImpl ::internal_handler(
     const NATIVE_INT_TYPE portNum, I16 degree) {
-    printf("[TemperatureProbes] Internal temperature: %d\n", degree);
+    //printf("[TemperatureProbes] Internal temperature: %d\n", degree);
     tlmWrite_TempProb_InternalTemperature(degree);
 }
 
 void TemperatureProbesComponentImpl ::external_handler(
     const NATIVE_INT_TYPE portNum, I16 degree) {
-    printf("[TemperatureProbes] External temperature: %d\n", degree);
+    //printf("[TemperatureProbes] External temperature: %d\n", degree);
     tlmWrite_TempProb_ExternalTemperature(degree);
 }
 
