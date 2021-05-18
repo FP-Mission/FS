@@ -264,8 +264,7 @@ namespace App {
   void PiCameraComponentImpl::manageJpg(unsigned char* data){
     std::ostringstream osPicture;
     std::ostringstream osPictureSsdv;
-    osPictureSsdv << "ssdv -e -c BALL -i "<< indexSSDV <<" "<< JPG_DIRECTORY << currentTime <<".jpg " << BIN_DIRECTORY <<currentTime<<".bin";
-    printf("%s\n", osPicture.str().c_str());
+    osPictureSsdv << "ssdv -e -c BALL -i "<< (U32)indexSSDV <<" "<< JPG_DIRECTORY << currentTime <<".jpg " << BIN_DIRECTORY <<currentTime<<".bin";
     osPicture << JPG_DIRECTORY << currentTime <<".jpg";
 
     ++indexSSDV;
