@@ -58,6 +58,7 @@
     <instance namespace="Svc" name="rateGroup1"     type="ActiveRateGroup"      base_id="69"   base_id_window="2" />
     <instance namespace="Svc" name="rateGroup2"     type="ActiveRateGroup"      base_id="71"   base_id_window="2" />
     <instance namespace="Svc" name="rateGroup3"     type="ActiveRateGroup"      base_id="73"   base_id_window="2" />
+
     <!-- Socket IP Communications driver -->
     <instance namespace="Drv" name="socketIpDriver" type="SocketIpDriver"       base_id="75"   base_id_window="0" />
 
@@ -103,18 +104,18 @@
     </connection>
     
     <!-- CHOSE BETWEEN IP OR FLEXTRAK -->
-    <!-- Send data to Ip -->
+    <!-- Send data to Ip
     <connection name="CommunicationSend">
         <source component="groundIf" port="write" type="Fw::BufferSend" num="0"/>
         <target component="socketIpDriver" port="send" type="Fw::BufferSend" num="0"/>
     </connection>
-    <!-- -->
-    <!-- Send data to FlexTrak 
+     -->
+    <!-- Send data to FlexTrak -->
     <connection name="CommunicationSend">
         <source component="groundIf" port="write" type="Fw::BufferSend" num="0"/>
         <target component="flexTrak" port="sendData" type="Fw::BufferSend" num="0"/>
     </connection>
-     -->
+    <!-- -->
 
     <!-- Fault Connections -->
     <connection name="eventLoggerFatalOut">
