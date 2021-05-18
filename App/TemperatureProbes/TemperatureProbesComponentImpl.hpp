@@ -49,13 +49,13 @@ class TemperatureProbesComponentImpl : public TemperatureProbesComponentBase {
         //!
         void
         internal_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
-                         F32 degree /*!< Temperature in °C*/
+                         I16 degree /*!< Temperature in °C*/
         );
 
     //! Handler implementation for external
     //!
     void external_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
-                          F32 degree /*!< Temperature in °C*/
+                          I16 degree /*!< Temperature in °C*/
     );
 
     PRIVATE :
@@ -70,7 +70,7 @@ class TemperatureProbesComponentImpl : public TemperatureProbesComponentBase {
         TempProb_SetInternalLevel_cmdHandler(
             const FwOpcodeType opCode, /*!< The opcode*/
             const U32 cmdSeq,          /*!< The command sequence number*/
-            F32 temperature            /*!< Temperature in °C*/
+            I16 temperature            /*!< Temperature in °C*/
         );
 
     //! Implementation for TempProb_SetExternalLevel command handler
@@ -78,7 +78,7 @@ class TemperatureProbesComponentImpl : public TemperatureProbesComponentBase {
     void TempProb_SetExternalLevel_cmdHandler(
         const FwOpcodeType opCode, /*!< The opcode*/
         const U32 cmdSeq,          /*!< The command sequence number*/
-        F32 temperature            /*!< Temperature in °C*/
+        I16 temperature            /*!< Temperature in °C*/
     );
 };
 
