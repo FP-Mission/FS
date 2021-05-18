@@ -792,16 +792,19 @@
         <source component="flexTrak" port="batteryVoltage" type="BatteryLevel" num="0"/>
         <target component="eps" port="batteryVoltage" type="BatteryLevel" num="0"/>
     </connection>
+    <connection name="flexTrakGps">
+        <source component="flexTrak" port="gps" type="Position" num="0"/>
+        <target component="gps" port="positionIn" type="Position" num="0"/>
+    </connection> 
         <!-- GPS -->
-    <!--
-    <connection name="gpsPredictor">
-        <source component="gps" port="position" type="Position" num="0"/>
-        <target component="predictor" port="position" type="Position" num="0"/>
-    </connection>
     <connection name="gpsPiCamera">
-        <source component="gps" port="position" type="Position" num="1"/>
+        <source component="gps" port="positionOut" type="Position" num="0"/>
         <target component="piCamera" port="position" type="Position" num="0"/>
     </connection> 
+    <!--
+    <connection name="gpsPredictor">
+        <source component="gps" port="positionOut" type="Position" num="0"/>
+        <target component="predictor" port="position" type="Position" num="0"/>
+    </connection>
     -->
-    
 </assembly>

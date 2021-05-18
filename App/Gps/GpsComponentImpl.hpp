@@ -37,6 +37,21 @@ class GpsComponentImpl : public GpsComponentBase {
     //!
     ~GpsComponentImpl(void);
 
+      // ----------------------------------------------------------------------
+      // Handler implementations for user-defined typed input ports
+      // ----------------------------------------------------------------------
+
+      //! Handler implementation for positionIn
+      //!
+      void positionIn_handler(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          Fw::Time time, /*!< Measure time*/
+          F64 latitude, /*!< Latitude in ? @todo*/
+          F64 longitude, /*!< Longitude in ? @todo*/
+          U16 altitude, /*!< Altitude in meters*/
+          U8 satellite /*!< Satellite count*/
+      );
+
     PRIVATE :
 
         // ----------------------------------------------------------------------

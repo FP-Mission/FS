@@ -125,68 +125,61 @@ void FlexTrakComponentImpl ::serialRecv_handler(const NATIVE_INT_TYPE portNum,
     // Make sure end of char is '\0'
     *(pointer + buffsize) = '\0';
 
-    if(detectCommand("*", pointer)) {               // Command ack by the AVR
-        DEBUG_PRINT("[FlexAvr] Ack %s", pointer + 1);
-    } else if(detectCommand("?", pointer)) {        // Command error response AVR
-        DEBUG_PRINT("[FlexAvr] Command error %s", pointer + 1);
-    } else if (detectCommand("GPS=", pointer)) {
-        DEBUG_PRINT("[FlexAvr] Rx (%u): %s", buffsize, pointer);
-        // GPS=18/05/2021,08:43:32,46.22469,7.38071,0,3
-        struct GPS_t {
-            I16 day, month, year;
-            U8 hours, minutes, seconds;
-            F64 latitude, longitude;
-            U16 altitude;
-            U8 satellites;
-        } GPS;
+    try {
+        if(detectCommand("*", pointer)) {               // Command ack by the AVR
+            DEBUG_PRINT("[FlexAvr] Ack %s", pointer + 1);
+        } else if(detectCommand("?", pointer)) {        // Command error response AVR
+            DEBUG_PRINT("[FlexAvr] Command error %s", pointer + 1);
+        } else if (detectCommand("GPS=", pointer)) {
+            // GPS=18/05/2021,08:43:32,46.22469,7.38071,0,3
+            struct GPS_t {
+                I16 day, month, year;
+                U8 hours, minutes, seconds;
+                float latitude, longitude;
+                U16 altitude;
+                U8 satellites;
+            } GPS;
 
-        U8 res = 0;
-        res = sscanf(pointer + 4, "%d/%d/%d,%u:%u:%u,%.4f,%.4f,%u,%u", 
-                                    GPS.day, GPS.month, GPS.year, 
-                                    GPS.hours, GPS.minutes, GPS.seconds, 
-                                    GPS.latitude, GPS.longitude, GPS.altitude, 
-                                    GPS.satellites);
+            U8 res = 0;
+            res = sscanf(pointer + 4, "%d/%d/%d,%u:%u:%u,%f,%f,%u,%u", 
+                                        &GPS.day, &GPS.month, &GPS.year, 
+                                        &GPS.hours, &GPS.minutes, &GPS.seconds, 
+                                        &GPS.latitude, &GPS.longitude, &GPS.altitude, 
+                                        &GPS.satellites);
 
-        /*/
-        GPS.day = atoi(pointer+4);
-        GPS.month = atoi(pointer+7);
-        GPS.year = atoi(pointer+10);
-        GPS.hours = (U8)atoi(pointer+15);
-        GPS.minutes = (U8)atoi(pointer+18);
-        GPS.seconds = (U8)atoi(pointer+21);
-        GPS.latitude = atof(pointer+24);
-        GPS.longitude = atof(pointer+33);
-        GPS.altitude = atoi(pointer+41);
-        GPS.satellites = (U8)atoi(pointer+43);
-        //*/
-
-        if(res == 10) {
-            printf("%u:%u:%u le %d.%d.%d à (%.5f, %ld, %u) : %u\n", GPS.hours, GPS.minutes, GPS.seconds, GPS.day, GPS.month, GPS.year, GPS.latitude, GPS.longitude, GPS.altitude, GPS.satellites);
-        } else {
-            printf("sscanf res=%u\n", res);
+            if(res == 10) {
+                //printf("%u:%u:%u le %d.%d.%d à (%f, %f, %u) : %u\n", GPS.hours, GPS.minutes, GPS.seconds, GPS.day, GPS.month, GPS.year, GPS.latitude, GPS.longitude, GPS.altitude, GPS.satellites);
+                // @todo Set FS time with received data
+                Fw::Time time = getTime();
+                this->gps_out(0, time, GPS.latitude, GPS.longitude, GPS.altitude, GPS.satellites);
+            } else {
+                printf("sscanf res=%u\n", res);
+            }
+        } else if(detectCommand("Batt=", pointer)) {
+            I16 batteryVoltage = atoi(pointer + 5);
+            batteryVoltage_out(0, (U16)batteryVoltage);
+        }  else if(detectCommand("Temp0=", pointer)) {
+            I16 temp0 = atoi(pointer + 6);
+            internalTemp_out(0, temp0);
+        }  else if(detectCommand("Temp1=", pointer)) {
+            I16 temp1 = atoi(pointer + 6);
+            externalTemp_out(0, temp1);
+        } else if(detectCommand("LoRaIsFree=", pointer)) {
+            loRaMutex.lock();
+            loRaIsFree = atoi(pointer + 11) == 1 ? true : false;
+            loRaMutex.unLock();
+            if(loRaIsFree) {
+                DEBUG_PRINT("[FlexAvr] LoRa freed\n");
+            } else {
+                DEBUG_PRINT("[FlexAvr] LoRa not free\n");
+            }
+        } else if(detectCommand("DataDownlinked=", pointer)) {
+            DEBUG_PRINT("[FlexAvr] Data downlinked (%u)\n", atoi(pointer + 15));
+        } else {    
+            DEBUG_PRINT("[FlexAvr] Rx (%u): %s", buffsize, pointer);
         }
-    } else if(detectCommand("Batt=", pointer)) {
-        I16 batteryVoltage = atoi(pointer + 5);
-        batteryVoltage_out(0, (U16)batteryVoltage);
-    }  else if(detectCommand("Temp0=", pointer)) {
-        I16 temp0 = atoi(pointer + 6);
-        internalTemp_out(0, temp0);
-    }  else if(detectCommand("Temp1=", pointer)) {
-        I16 temp1 = atoi(pointer + 6);
-        externalTemp_out(0, temp1);
-    } else if(detectCommand("LoRaIsFree=", pointer)) {
-        loRaMutex.lock();
-        loRaIsFree = atoi(pointer + 11) == 1 ? true : false;
-        loRaMutex.unLock();
-        if(loRaIsFree) {
-            DEBUG_PRINT("[FlexAvr] LoRa freed\n");
-        } else {
-            DEBUG_PRINT("[FlexAvr] LoRa not free\n");
-        }
-    } else if(detectCommand("DataDownlinked=", pointer)) {
-        DEBUG_PRINT("[FlexAvr] Data downlinked (%u)\n", atoi(pointer + 15));
-    } else {    
-        DEBUG_PRINT("[FlexAvr] Rx (%u): %s", buffsize, pointer);
+    } catch (...) {
+        Fw::Logger::logMsg("[ERROR] Unable to decode frame received from FlexAvr\n");
     }
 
     // Return buffer (see above note)
