@@ -74,6 +74,8 @@ class PiCameraComponentImpl : public PiCameraComponentBase {
             const FwOpcodeType opCode, /*!< The opcode*/
             const U32 cmdSeq           /*!< The command sequence number*/
         );
+
+    U32 pictureCnt;
 };
 
 }  // end namespace App
