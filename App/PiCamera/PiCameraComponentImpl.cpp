@@ -136,7 +136,7 @@ namespace App {
       bool sucessPicture = takePicture();
       if (sucessPicture){
           log_ACTIVITY_LO_PiCam_PictureTaken();
-          PictureOut_out(0,currentTime);
+          //PictureOut_out(0,currentTime);
           return;
       }
       log_WARNING_LO_PiCam_PictureError(0);
@@ -265,6 +265,7 @@ namespace App {
     std::ostringstream osPicture;
     std::ostringstream osPictureSsdv;
     osPictureSsdv << "ssdv -e -c BALL -i "<< indexSSDV <<" "<< JPG_DIRECTORY << currentTime <<".jpg " << BIN_DIRECTORY <<currentTime<<".bin";
+    printf("%s\n", osPicture.str().c_str());
     osPicture << JPG_DIRECTORY << currentTime <<".jpg";
 
     ++indexSSDV;
