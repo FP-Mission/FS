@@ -144,6 +144,7 @@ namespace App {
 
       static std::ofstream jpgFile;
 
+      U8 indexSSDV;
 
     };
 

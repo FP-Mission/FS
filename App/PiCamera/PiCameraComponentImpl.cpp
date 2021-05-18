@@ -33,7 +33,7 @@ namespace App {
   PiCameraComponentImpl ::
     PiCameraComponentImpl(
         const char *const compName
-    ) : PiCameraComponentBase(compName), nbPicture(0) ,width(BASE_WIDTH), height(BASE_HEIGHT)
+    ) : PiCameraComponentBase(compName), nbPicture(0) ,width(BASE_WIDTH), height(BASE_HEIGHT), indexSSDV(0)
   {
     std::ostringstream osTelemetry;
     osTelemetry << TELEMETRY_DIRECTORY << "telemetry.csv";
@@ -98,6 +98,7 @@ namespace App {
     this->longitude = longitude;
     this->altitudeGps = altitude;
     this->satellite = satellite; 
+    log_ACTIVITY_LO_PiCam_PositionUpdate();
   }
 
   void PiCameraComponentImpl ::
@@ -131,7 +132,13 @@ namespace App {
         NATIVE_UINT_TYPE context
     )
   {
-      takePicture();
+      bool sucessPicture = takePicture();
+      if (sucessPicture){
+          log_ACTIVITY_LO_PiCam_PictureTaken();
+          PictureOut_out(0,currentTime);
+          return;
+      }
+      log_WARNING_LO_PiCam_PictureError(0);
   }
 
 
@@ -147,9 +154,12 @@ namespace App {
   {
     bool sucessPicture = takePicture();
     if(sucessPicture){
+      log_ACTIVITY_LO_PiCam_PictureTaken();
       this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+      PictureOut_out(0,currentTime);
       return;
     }
+    log_WARNING_LO_PiCam_PictureError(0);
     this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
 
   }
@@ -253,8 +263,10 @@ namespace App {
   void PiCameraComponentImpl::manageJpg(unsigned char* data){
     std::ostringstream osPicture;
     std::ostringstream osPictureSsdv;
-    osPictureSsdv << "ssdv -e -c TEST01 -i ID " << JPG_DIRECTORY << currentTime <<".jpg " << JPG_DIRECTORY <<currentTime<<".bin";
-    osPicture << JPG_DIRECTORY << currentTime <<".jpg";
+    osPictureSsdv << "ssdv -e -c BALL -i "<< indexSSDV <<" "<< JPG_DIRECTORY << currentTime <<".jpg " << JPG_DIRECTORY <<currentTime<<".bin";
+    osPicture << BIN_DIRECTORY << currentTime <<".jpg";
+
+    ++indexSSDV;
 
     PiCameraComponentImpl::jpgFile.open(osPicture.str() ,std::ios_base::out | std::ios_base::binary);
     const bool isRGB      = true;  // true = RGB image, else false = grayscale

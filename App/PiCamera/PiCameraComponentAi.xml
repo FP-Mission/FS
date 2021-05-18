@@ -7,7 +7,9 @@
     <import_port_type>App/FlexTrak/Position/PositionPortAi.xml</import_port_type>
     <import_port_type>App/PiCamera/PiCameraPort/PiCameraBarometerPortAi.xml</import_port_type>
     <import_port_type>App/PiCamera/PiCameraPort/PiCameraSizePortAi.xml</import_port_type>
+    <import_port_type>App/PiCamera/PiCameraPort/PiCameraPicturePortAi.xml</import_port_type>
     <import_port_type>Svc/Sched/SchedPortAi.xml</import_port_type>
+    
 
     <ports>
         <port name="PingIn" data_type="Svc::Ping" kind="async_input" max_number="1">
@@ -45,6 +47,11 @@
         <port name="Schedin" data_type="Sched" kind="async_input">
             <comment>
             The rate groupe scheduler input
+            </comment>
+        </port>
+        <port name="PictureOut" data_type="PiCameraPicturePort" kind="output">
+            <comment>
+            Port out for the last picture path;
             </comment>
         </port>
     </ports>
