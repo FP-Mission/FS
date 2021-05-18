@@ -14,6 +14,7 @@
 #define PiCamera_HPP
 
 #include "App/PiCamera/PiCameraComponentAc.hpp"
+#include "App/Config/PiCameraConfig.hpp"
 
 #include <raspicam/raspicam.h>
 #include <fstream>

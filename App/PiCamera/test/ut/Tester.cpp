@@ -12,7 +12,6 @@
 
 #include "Tester.hpp"
 #include "Os/FileSystem.hpp"
-#include "App/Config/PiCameraConfig.hpp"
 
 #define INSTANCE 0
 #define MAX_HISTORY_SIZE 10
@@ -49,7 +48,7 @@ namespace App {
   // ----------------------------------------------------------------------
 
   void Tester ::
-    testCreatedDirectory(void) 
+    testCreatedDirectories(void) 
   {
     U32 sizeDirectories = 5;
     Fw::EightyCharString directories[sizeDirectories];

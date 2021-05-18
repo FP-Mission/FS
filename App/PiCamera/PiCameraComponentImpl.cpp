@@ -14,7 +14,6 @@
 #include <App/PiCamera/PiCameraComponentImpl.hpp>
 #include "Fw/Types/BasicTypes.hpp"
 #include "Os/FileSystem.hpp"
-#include "App/Config/PiCameraConfig.hpp"
 
 #include "toojpeg.h"
 #include <iostream>

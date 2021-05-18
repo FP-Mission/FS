@@ -5,10 +5,9 @@
 #include "Tester.hpp"
 #include <Fw/Test/UnitTest.hpp>
 
-TEST(Nominal, TestCreatedTree) {
-    Ref::Tester tester;
-    TEST_CASE(PiCamera.0,"Test directory are created");
-    tester.testCreatedDirectory();
+TEST(Nominal, TestCreated) {
+    App::Tester tester;
+    tester.testCreatedDirectories();
 }
 
 int main(int argc, char **argv) {

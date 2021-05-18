@@ -44,7 +44,7 @@ namespace App {
 
       //! To do
       //!
-      void testCreatedDirectory(void);
+      void testCreatedDirectories(void);
 
     private:
 
