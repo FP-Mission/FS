@@ -43,7 +43,7 @@
 
     <!-- Core C&DH Components -->
     <instance namespace="Svc" name="fatalHandler"   type="FatalHandler"         base_id="1"     base_id_window="0" />
-    <instance namespace="Svc" name="chanTlm"        type="TlmChan"              base_id="2"    base_id_window="0" />
+    <instance namespace="Svc" name="tlmChan"        type="TlmChan"              base_id="2"    base_id_window="1" />
     <instance namespace="Svc" name="cmdDisp"        type="CommandDispatcher"    base_id="3"    base_id_window="10" />
     <instance namespace="Svc" name="prmDb"          type="PrmDb"                base_id="13"    base_id_window="8" />
     <instance namespace="Svc" name="fatalAdapter"   type="AssertFatalAdapter"   base_id="21"    base_id_window="8" />
@@ -88,18 +88,18 @@
     
 
     <!-- GROUND INTERFACE DOWNLINK - CHOSE BETWEEN IP OR FLEXTRAK -->
-    <!-- Send data to Ip 
+    <!-- Send data to Ip -->
     <connection name="CommunicationSend">
         <source component="groundIf" port="write" type="Fw::BufferSend" num="0"/>
         <target component="socketIpDriver" port="send" type="Fw::BufferSend" num="0"/>
      </connection>
-     -->
-     <!-- Send data to FlexTrak -->
+     <!-- -->
+     <!-- Send data to FlexTrak
      <connection name="CommunicationSend">
         <source component="groundIf" port="write" type="Fw::BufferSend" num="0"/>
         <target component="flexTrak" port="sendData" type="Fw::BufferSend" num="0"/>
      </connection>
-     <!-- -->
+     -->
 
     <!-- Command Registration/Dispatch/Reply Connections -->
    
@@ -127,6 +127,10 @@
     <connection name="PingRcvReg">
          <source component="pingRcvr" port="CmdReg" type="CmdReg" num="0"/>
          <target component="cmdDisp" port="compCmdReg" type="CmdReg" num="5"/>
+    </connection>
+    <connection name="TlmChanReg">
+         <source component="tlmChan" port="CmdReg" type="CmdReg" num="0"/>
+         <target component="cmdDisp" port="compCmdReg" type="CmdReg" num="6"/>
     </connection>
     <connection name="EpsReg">
          <source component="eps" port="CmdReg" type="CmdReg" num="0"/>
@@ -178,6 +182,10 @@
          <source component="cmdDisp" port="compCmdSend" type="Cmd" num="5"/>
          <target component="pingRcvr" port="CmdDisp" type="Cmd" num="0"/>
     </connection>
+    <connection name="TlmChanDisp">
+         <source component="cmdDisp" port="compCmdSend" type="Cmd" num="6"/>
+         <target component="tlmChan" port="CmdDisp" type="Cmd" num="0"/>
+    </connection>  
     <connection name="EpsDisp">
          <source component="cmdDisp" port="compCmdSend" type="Cmd" num="10"/>
          <target component="eps" port="CmdDisp" type="Cmd" num="0"/>
@@ -207,6 +215,10 @@
         <!-- Command Reply Ports - Go to the same response port on the dispatcher -->
     <connection name="EventLoggerReply">
         <source component="eventLogger" port="CmdStatus" type="CmdResponse" num="0"/>
+        <target component="cmdDisp" port="compCmdStat" type="CmdResponse" num="0"/>
+    </connection>
+    <connection name="TlmChanReply">
+        <source component="tlmChan" port="CmdStatus" type="CmdResponse" num="0"/>
         <target component="cmdDisp" port="compCmdStat" type="CmdResponse" num="0"/>
     </connection>
     <connection name="CmdSeqReply">
@@ -282,6 +294,10 @@
     </connection>
     <connection name="CmdDispLog">
         <source component="cmdDisp" port="Log" type="Log" num="0"/>
+        <target component="eventLogger" port="LogRecv" type="Log" num="0"/>
+    </connection>
+    <connection name="TlmChanLog">
+        <source component="tlmChan" port="Log" type="Log" num="0"/>
         <target component="eventLogger" port="LogRecv" type="Log" num="0"/>
     </connection>
     <connection name="CmdSeqLog">
@@ -364,6 +380,10 @@
         <source component="groundIf" port="LogText" type="LogText" num="0"/>
         <target component="textLogger" port="TextLogger" type="LogText" num="0"/>
     </connection>
+    <connection name="tlmChanTextLog">
+        <source component="tlmChan" port="LogText" type="LogText" num="0"/>
+        <target component="textLogger" port="TextLogger" type="LogText" num="0"/>
+    </connection>
     <connection name="FatalAdapterTextLog">
         <source component="fatalAdapter" port="LogText" type="LogText" num="0"/>
         <target component="textLogger" port="TextLogger" type="LogText" num="0"/>
@@ -430,74 +450,78 @@
     <!-- Telemetry Connections -->
     <connection name="cmdSeqTlm">
         <source component="cmdSeq" port="tlmOut" type="Tlm" num="0"/>
-        <target component="chanTlm" port="TlmRecv" type="Tlm" num="0"/>
+        <target component="tlmChan" port="TlmRecv" type="Tlm" num="0"/>
     </connection>
     <connection name="cmdDispTlm">
         <source component="cmdDisp" port="Tlm" type="Tlm" num="0"/>
-        <target component="chanTlm" port="TlmRecv" type="Tlm" num="0"/>
+        <target component="tlmChan" port="TlmRecv" type="Tlm" num="0"/>
     </connection>
     <connection name="Rg1Tlm">
          <source component="rateGroup1" port="Tlm" type="Tlm" num="0"/>
-         <target component="chanTlm" port="TlmRecv" type="Tlm" num="0"/>
+         <target component="tlmChan" port="TlmRecv" type="Tlm" num="0"/>
     </connection>
     <connection name="Rg2Tlm">
          <source component="rateGroup2" port="Tlm" type="Tlm" num="0"/>
-         <target component="chanTlm" port="TlmRecv" type="Tlm" num="0"/>
+         <target component="tlmChan" port="TlmRecv" type="Tlm" num="0"/>
     </connection>
     <connection name="Rg3Tlm">
          <source component="rateGroup3" port="Tlm" type="Tlm" num="0"/>
-         <target component="chanTlm" port="TlmRecv" type="Tlm" num="0"/>
+         <target component="tlmChan" port="TlmRecv" type="Tlm" num="0"/>
     </connection>
     <connection name="healthTlm">
         <source component="health" port="Tlm" type="Tlm" num="0"/>
-        <target component="chanTlm" port="TlmRecv" type="Tlm" num="0"/>
+        <target component="tlmChan" port="TlmRecv" type="Tlm" num="0"/>
     </connection>
     <connection name="pingTlm">
          <source component="pingRcvr" port="Tlm" type="Tlm" num="0"/>
-         <target component="chanTlm" port="TlmRecv" type="Tlm" num="0"/>
+         <target component="tlmChan" port="TlmRecv" type="Tlm" num="0"/>
     </connection>
     <connection name="blockDrvTlm">
          <source component="blockDrv" port="Tlm" type="Tlm" num="0"/>
-         <target component="chanTlm" port="TlmRecv" type="Tlm" num="0"/>
+         <target component="tlmChan" port="TlmRecv" type="Tlm" num="0"/>
     </connection>
     <connection name="serialDriver1Tlm">
          <source component="serialDriver1" port="Tlm" type="Tlm" num="0"/>
-         <target component="chanTlm" port="TlmRecv" type="Tlm" num="0"/>
+         <target component="tlmChan" port="TlmRecv" type="Tlm" num="0"/>
     </connection>
     <connection name="epsTlm">
          <source component="eps" port="Tlm" type="Tlm" num="0"/>
-         <target component="chanTlm" port="TlmRecv" type="Tlm" num="0"/>
+         <target component="tlmChan" port="TlmRecv" type="Tlm" num="0"/>
     </connection>
     <connection name="flexTrakTlm">
          <source component="flexTrak" port="Tlm" type="Tlm" num="0"/>
-         <target component="chanTlm" port="TlmRecv" type="Tlm" num="0"/>
+         <target component="tlmChan" port="TlmRecv" type="Tlm" num="0"/>
     </connection>
     <connection name="gpsTlm">
          <source component="gps" port="Tlm" type="Tlm" num="0"/>
-         <target component="chanTlm" port="TlmRecv" type="Tlm" num="0"/>
+         <target component="tlmChan" port="TlmRecv" type="Tlm" num="0"/>
     </connection>
     <connection name="piCameraTlm">
          <source component="piCamera" port="Tlm" type="Tlm" num="0"/>
-         <target component="chanTlm" port="TlmRecv" type="Tlm" num="0"/>
+         <target component="tlmChan" port="TlmRecv" type="Tlm" num="0"/>
     </connection>
     <connection name="predictorTlm">
          <source component="predictor" port="Tlm" type="Tlm" num="0"/>
-         <target component="chanTlm" port="TlmRecv" type="Tlm" num="0"/>
+         <target component="tlmChan" port="TlmRecv" type="Tlm" num="0"/>
     </connection>
     <!-- @todo Uncomment for RockBlock telemetry report
     <connection name="rockBlockTlm">
          <source component="rockBlock" port="Tlm" type="Tlm" num="0"/>
-         <target component="chanTlm" port="TlmRecv" type="Tlm" num="0"/>
+         <target component="tlmChan" port="TlmRecv" type="Tlm" num="0"/>
     </connection>
     -->
     <connection name="temperatureProbesTlm">
          <source component="temperatureProbes" port="Tlm" type="Tlm" num="0"/>
-         <target component="chanTlm" port="TlmRecv" type="Tlm" num="0"/>
+         <target component="tlmChan" port="TlmRecv" type="Tlm" num="0"/>
     </connection>
 
     <!-- Time Connections -->
     <connection name="prmDbTime">
         <source component="prmDb" port="Time" type="Time" num="0"/>
+        <target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
+    </connection>
+    <connection name="tlmChanTime">
+        <source component="tlmChan" port="Time" type="Time" num="0"/>
         <target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
     </connection>
     <connection name="eventLoggerTime">
@@ -532,8 +556,8 @@
         <source component="fatalAdapter" port="Time" type="Time" num="0"/>
         <target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
     </connection>
-    <connection name="chanTlmTime">
-        <source component="chanTlm" port="Time" type="Time" num="0"/>
+    <connection name="tlmChanTime">
+        <source component="tlmChan" port="Time" type="Time" num="0"/>
         <target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
     </connection>
     <connection name="groundIfTime">
@@ -598,7 +622,7 @@
     </connection>
     <connection name="Rg1ChTlm">
          <source component="rateGroup1" port="RateGroupMemberOut" type="Sched" num="2"/>
-         <target component="chanTlm" port="Run" type="Sched" num="0"/>
+         <target component="tlmChan" port="Run" type="Sched" num="0"/>
     </connection>
 
 
@@ -682,12 +706,12 @@
         <source component="cmdSeq" port="pingOut" type="Ping" num="0"/>
         <target component="health" port="PingReturn" type="Ping" num="5"/>
     </connection>
-    <connection name="chanTlmPingSend">
+    <connection name="tlmChanPingSend">
         <source component="health" port="PingSend" type="Ping" num="6"/>
-        <target component="chanTlm" port="pingIn" type="Ping" num="0"/>
+        <target component="tlmChan" port="pingIn" type="Ping" num="0"/>
     </connection>
-    <connection name="chanTlmPingRecv">
-        <source component="chanTlm" port="pingOut" type="Ping" num="0"/>
+    <connection name="tlmChanPingRecv">
+        <source component="tlmChan" port="pingOut" type="Ping" num="0"/>
         <target component="health" port="PingReturn" type="Ping" num="6"/>
     </connection>
     <connection name="prmDbPingSend">
@@ -754,8 +778,8 @@
         <target component="groundIf" port="downlinkPort" type="Com" num="0"/>
     </connection>
    
-    <connection name="chanTlmPkts">
-        <source component="chanTlm" port="PktSend" type="Com" num="0"/>
+    <connection name="tlmChanPkts">
+        <source component="tlmChan" port="PktSend" type="Com" num="0"/>
         <target component="groundIf" port="downlinkPort" type="Com" num="0"/>
     </connection>
       
