@@ -62,6 +62,7 @@ void FlexTrakComponentImpl ::init(const NATIVE_INT_TYPE queueDepth,
     modes[1].spreading = 6;
     modes[1].lowopt = 0;
 
+    lastUpdate = getTime();
 }
 
 // Step 0: The linux serial driver keeps its storage externally. This means that
@@ -96,7 +97,13 @@ FlexTrakComponentImpl ::~FlexTrakComponentImpl(void) {}
 
 void FlexTrakComponentImpl ::PingIn_handler(const NATIVE_INT_TYPE portNum,
                                             U32 key) {
-    // @todo Implement Ping logic
+    Fw::Time currentTime = getTime();
+    Fw::Time delta = Fw::Time::sub(currentTime, lastUpdate);
+    if(delta.getSeconds() > FLEXAVR_PING_RESPONSE_LIMIT) {
+        Fw::Logger::logMsg("[ERROR] FlexAvr has not sent data since %u seconds\n", 
+                            FLEXAVR_PING_RESPONSE_LIMIT);
+        return;
+    }
     PingOut_out(0, key);
 }
 
@@ -112,6 +119,7 @@ void FlexTrakComponentImpl ::serialRecv_handler(const NATIVE_INT_TYPE portNum,
     // the buffer
     U32 buffsize = static_cast<U32>(serBuffer.getSize());
     char *pointer = reinterpret_cast<char *>(serBuffer.getData());
+
     // Check for invalid read status, log an error, return buffer and abort if
     // there is a problem
     if (status != Drv::SER_OK) {
@@ -124,6 +132,10 @@ void FlexTrakComponentImpl ::serialRecv_handler(const NATIVE_INT_TYPE portNum,
     }
     // Make sure end of char is '\0'
     *(pointer + buffsize) = '\0';
+
+    // Update last time data have been received
+    // Used by pingIn handler
+    lastUpdate = getTime();
 
     try {
         if(detectCommand("*", pointer)) {               // Command ack by the AVR
@@ -175,7 +187,7 @@ void FlexTrakComponentImpl ::serialRecv_handler(const NATIVE_INT_TYPE portNum,
             }
         } else if(detectCommand("DataDownlinked=", pointer)) {
             DEBUG_PRINT("[FlexAvr] Data downlinked (%u)\n", atoi(pointer + 15));
-        } else {    
+        } else {
             DEBUG_PRINT("[FlexAvr] Rx (%u): %s", buffsize, pointer);
         }
     } catch (...) {
