@@ -45,7 +45,7 @@ namespace App {
       Os::FileSystem::createDirectory(PPM_DIRECTORY);
       Os::FileSystem::createDirectory(PNG_DIRECTORY);
       Os::FileSystem::createDirectory(JPG_DIRECTORY);
-       Os::FileSystem::createDirectory(BIN_DIRECTORY);
+      Os::FileSystem::createDirectory(BIN_DIRECTORY);
 
 
     std::ofstream outFileTelemetry (osTelemetry.str());
@@ -264,8 +264,8 @@ namespace App {
   void PiCameraComponentImpl::manageJpg(unsigned char* data){
     std::ostringstream osPicture;
     std::ostringstream osPictureSsdv;
-    osPictureSsdv << "ssdv -e -c BALL -i "<< indexSSDV <<" "<< JPG_DIRECTORY << currentTime <<".jpg " << JPG_DIRECTORY <<currentTime<<".bin";
-    osPicture << BIN_DIRECTORY << currentTime <<".jpg";
+    osPictureSsdv << "ssdv -e -c BALL -i "<< indexSSDV <<" "<< JPG_DIRECTORY << currentTime <<".jpg " << BIN_DIRECTORY <<currentTime<<".bin";
+    osPicture << JPG_DIRECTORY << currentTime <<".jpg";
 
     ++indexSSDV;
 
