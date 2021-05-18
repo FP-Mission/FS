@@ -1,16 +1,19 @@
 #ifndef _PICAMERACFG_HPP_
 #define _PICAMERACFG_HPP_
-const char*  BASE_DIRECTORY = "/home/pi/FS_Data/";
-
-const char*  PICTURE_DIRECTORY = "/home/pi/FS_Data/picture/";
-const char*  PPM_DIRECTORY = "/home/pi/FS_Data/picture/ppm/";
-const char*  PNG_DIRECTORY = "/home/pi/FS_Data/picture/png/";
-const char*  JPG_DIRECTORY = "/home/pi/FS_Data/picture/jpg/";
-const char*  BIN_DIRECTORY = "/home/pi/FS_Data/picture/bin/";
-const char*  TELEMETRY_DIRECTORY = "/home/pi/FS_Data/telemetry/";
+namespace App{
 
 
-U32 BASE_WIDTH = 640;
-U32 BASE_HEIGHT = 480;
+static const char*  BASE_DIRECTORY = "/home/pi/FS_Data/";
 
+static const char*  PICTURE_DIRECTORY = "/home/pi/FS_Data/picture/";
+static const char*  PPM_DIRECTORY = "/home/pi/FS_Data/picture/ppm/";
+static const char*  PNG_DIRECTORY = "/home/pi/FS_Data/picture/png/";
+static const char*  JPG_DIRECTORY = "/home/pi/FS_Data/picture/jpg/";
+static const char*  BIN_DIRECTORY = "/home/pi/FS_Data/picture/bin/";
+static const char*  TELEMETRY_DIRECTORY = "/home/pi/FS_Data/telemetry/";
+
+
+static const U32 BASE_WIDTH = 640;
+static const U32 BASE_HEIGHT = 480;
+}
 #endif
