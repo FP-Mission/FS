@@ -99,10 +99,10 @@ void FlexTrakComponentImpl ::PingIn_handler(const NATIVE_INT_TYPE portNum,
                                             U32 key) {
     Fw::Time currentTime = getTime();
     Fw::Time delta = Fw::Time::sub(currentTime, lastUpdate);
+    printf("Delta %u.%u\n", delta.getSeconds(), delta.getUSeconds());
     if(delta.getSeconds() > FLEXAVR_PING_RESPONSE_LIMIT) {
         Fw::Logger::logMsg("[ERROR] FlexAvr has not sent data since %u seconds\n", 
                             FLEXAVR_PING_RESPONSE_LIMIT);
-        return;
     }
     PingOut_out(0, key);
 }
