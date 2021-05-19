@@ -100,9 +100,11 @@ class FlexTrakComponentImpl : public FlexTrakComponentBase {
             U8 mode
         );
 
+    // Serial buffer provider to LinuxSerialDriver
     Fw::Buffer m_recvBuffers[DR_MAX_NUM_BUFFERS];
     BYTE m_uartBuffers[DR_MAX_NUM_BUFFERS][UART_READ_BUFF_SIZE];
 
+    // Lora configuration variables
     struct LoRaConfig {
         U8 implicit;
         U8 coding;
@@ -110,7 +112,6 @@ class FlexTrakComponentImpl : public FlexTrakComponentBase {
         U8 spreading;
         U8 lowopt;
     };
-
     LoRaConfig modes[2];
     U8 mode;
     F32 frequency;
@@ -118,7 +119,8 @@ class FlexTrakComponentImpl : public FlexTrakComponentBase {
     bool loRaIsFree;
     Os::Mutex loRaMutex;
 
-    Fw::Time lastUpdate;
+    U32 pingKey; //<! Save pingKey on pingIn
+    Os::Mutex pingMutex; //<! Mutual exclusion between PingIn_handler and serialRecv_handler
 
     Os::Queue downlinkQueue;      //!< queue to store packets to downlink
     Os::Mutex downlinkQueueMutex;
