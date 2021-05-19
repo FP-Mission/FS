@@ -61,8 +61,6 @@ void FlexTrakComponentImpl ::init(const NATIVE_INT_TYPE queueDepth,
     modes[1].bandwidth = 3;
     modes[1].spreading = 6;
     modes[1].lowopt = 0;
-
-    lastUpdate = getTime();
 }
 
 // Step 0: The linux serial driver keeps its storage externally. This means that
@@ -75,6 +73,8 @@ void FlexTrakComponentImpl ::init(const NATIVE_INT_TYPE queueDepth,
 void FlexTrakComponentImpl::preamble(void) {
     // LoRa is considered as free on init
     this->loRaIsFree = true;
+    // Default ping key value
+    this->pingKey = 0;
     // Create queue to store packets to downlink
     Fw::EightyCharString queueName("downlink");
     this->downlinkQueue.create(queueName, 10, Fw::ComBuffer::SERIALIZED_SIZE);
@@ -87,6 +87,7 @@ void FlexTrakComponentImpl::preamble(void) {
         // Invoke the port to send the buffer out.
         this->serialBufferOut_out(0, this->m_recvBuffers[buffer]);
     }
+
 }
 
 FlexTrakComponentImpl ::~FlexTrakComponentImpl(void) {}
@@ -97,14 +98,10 @@ FlexTrakComponentImpl ::~FlexTrakComponentImpl(void) {}
 
 void FlexTrakComponentImpl ::PingIn_handler(const NATIVE_INT_TYPE portNum,
                                             U32 key) {
-    Fw::Time currentTime = getTime();
-    Fw::Time delta = Fw::Time::sub(currentTime, lastUpdate);
-    if(delta.getSeconds() > FLEXAVR_PING_RESPONSE_LIMIT) {
-        Fw::Logger::logMsg("[ERROR] FlexAvr has not sent data since %u seconds\n", 
-                            FLEXAVR_PING_RESPONSE_LIMIT);
-        return;
-    }
-    PingOut_out(0, key);
+    // Save ping key to allow response in serialRecv_handler
+    pingMutex.lock();
+    this->pingKey = key;
+    pingMutex.unLock();
 }
 
 void FlexTrakComponentImpl ::serialRecv_handler(const NATIVE_INT_TYPE portNum,
@@ -133,9 +130,14 @@ void FlexTrakComponentImpl ::serialRecv_handler(const NATIVE_INT_TYPE portNum,
     // Make sure end of char is '\0'
     *(pointer + buffsize) = '\0';
 
-    // Update last time data have been received
-    // Used by pingIn handler
-    lastUpdate = getTime();
+    // Ping response sent each time ping request was received
+    pingMutex.lock();
+    if(this->pingKey != 0) {
+        PingOut_out(0, this->pingKey);
+        this->pingKey = 0;
+
+    }
+    pingMutex.unLock();
 
     try {
         if(detectCommand("*", pointer)) {               // Command ack by the AVR

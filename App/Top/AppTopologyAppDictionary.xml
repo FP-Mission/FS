@@ -135,6 +135,11 @@
   </serializables>
   <arrays/>
   <commands>
+    <command component="tlmChan" mnemonic="DUMP_CHANNEL" opcode="0x2">
+      <args>
+        <arg name="id" type="U8"/>
+      </args>
+    </command>
     <command component="cmdDisp" mnemonic="CMD_NO_OP" opcode="0x3">
       <args/>
     </command>
@@ -260,6 +265,11 @@
     </command>
   </commands>
   <events>
+    <event component="tlmChan" name="TLM_NOT_UPDATED" id="0x2" severity="WARNING_LO" format_string="Channel 0x%.2X has never been updated">
+      <args>
+        <arg name="id" type="U8"/>
+      </args>
+    </event>
     <event component="cmdDisp" name="OpCodeRegistered" id="0x3" severity="DIAGNOSTIC" format_string="Opcode 0x%04X registered to port %d slot %d">
       <args>
         <arg name="Opcode" type="U8"/>

@@ -36,7 +36,7 @@ void PiCameraComponentImpl ::init(const NATIVE_INT_TYPE queueDepth,
     if (!Camera.open())
         printf("Error opening camera\n");
     */
-
+   pictureCnt = 0;
 }
 
 PiCameraComponentImpl ::~PiCameraComponentImpl(void) {}
@@ -66,6 +66,7 @@ void PiCameraComponentImpl ::PiCam_TakePicture_cmdHandler(
     const FwOpcodeType opCode, const U32 cmdSeq) {
     // @todo
     this->log_ACTIVITY_LO_PiCam_PictureTaken();
+    this->tlmWrite_PiCam_PictureCnt(++pictureCnt);
     this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
 }
 
