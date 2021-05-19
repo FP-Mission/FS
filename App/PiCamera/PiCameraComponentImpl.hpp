@@ -109,6 +109,12 @@ namespace App {
           const U32 cmdSeq /*!< The command sequence number*/
       );
 
+      void PiCam_SetTimeInterval_cmdHandler(
+          const FwOpcodeType opCode, /*!< The opcode*/
+          const U32 cmdSeq, /*!< The command sequence number*/
+          const U8 timeInterval /*!< The command sequence number*/
+      );
+
       //! Implementation for PiCam_SetSize command handler
       //! Take picture
       void PiCam_SetSize_cmdHandler(
@@ -146,7 +152,8 @@ namespace App {
       static std::ofstream jpgFile;
 
       U8 indexSSDV;
-
+      U8 timeInterval;
+      U8 timeCpt;
     };
 
 } // end namespace App

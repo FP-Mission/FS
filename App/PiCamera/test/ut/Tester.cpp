@@ -13,6 +13,7 @@
 #include "Tester.hpp"
 #include "Os/FileSystem.hpp"
 
+
 #define INSTANCE 0
 #define MAX_HISTORY_SIZE 10
 #define QUEUE_DEPTH 10
@@ -50,13 +51,78 @@ namespace App {
   void Tester ::
     testCreatedDirectories(void) 
   {
-    U32 sizeDirectories = 5;
-    Fw::EightyCharString directories[sizeDirectories];
-    U32 numFile = 0;
-    Os::FileSystem::Status status = Os::FileSystem::readDirectory(BASE_DIRECTORY,sizeDirectories,
-    directories,numFile); 
+    Os::FileSystem::Status statusBase = Os::FileSystem::createDirectory(BASE_DIRECTORY); 
+    Os::FileSystem::Status statusTlm = Os::FileSystem::createDirectory(TELEMETRY_DIRECTORY); 
+    Os::FileSystem::Status statusPct = Os::FileSystem::createDirectory(PICTURE_DIRECTORY); 
+    Os::FileSystem::Status statusPng = Os::FileSystem::createDirectory(PNG_DIRECTORY); 
+    Os::FileSystem::Status statusJpg = Os::FileSystem::createDirectory(JPG_DIRECTORY); 
+    Os::FileSystem::Status statusPpm = Os::FileSystem::createDirectory(PPM_DIRECTORY); 
+    Os::FileSystem::Status statusBin = Os::FileSystem::createDirectory(BIN_DIRECTORY); 
 
-    printf("size %d\n",numFile);
+
+    ASSERT_EQ(statusBase, Os::FileSystem::ALREADY_EXISTS);
+    ASSERT_EQ(statusTlm, Os::FileSystem::ALREADY_EXISTS);
+    ASSERT_EQ(statusPct, Os::FileSystem::ALREADY_EXISTS);
+    ASSERT_EQ(statusPng, Os::FileSystem::ALREADY_EXISTS);
+    ASSERT_EQ(statusJpg, Os::FileSystem::ALREADY_EXISTS);
+    ASSERT_EQ(statusPpm, Os::FileSystem::ALREADY_EXISTS);
+    ASSERT_EQ(statusBin, Os::FileSystem::ALREADY_EXISTS);
+  }
+
+  void Tester::testFile(void){
+    std::ostringstream osTelemetry, dataTheoritical;
+    osTelemetry << TELEMETRY_DIRECTORY << "telemetry.csv";
+
+    dataTheoritical<< "Timecode" <<","<< "AltitudeGPS" <<","<< "AltitudeBaro" << 
+    ","<<"Temperature"<<","<< "Pressure"<<","<< "Longitude" <<","<< "Latitude";
+
+    std::ifstream f(osTelemetry.str());
+    std::string dataEmpirical;
+    std::getline(f, dataEmpirical);
+    ASSERT_STRCASEEQ(dataTheoritical.str().c_str(),dataEmpirical.c_str()); 
+
+
+    this->component.getNumberOfLine(osTelemetry);
+
+    ASSERT_EQ(this->component.nbPicture,0);
+
+  }
+
+  void Tester::testBarometerPort(void){
+    U16 alt = 1000;
+    F32 pressure = 1000.4;
+    F32 temperature = 34.5;
+    this->invoke_to_barometerDataIn(0,alt,pressure,temperature);
+
+    ASSERT_EQ(this->component.altitudeBaro,alt);
+    ASSERT_FLOAT_EQ(this->component.pressure,pressure);
+    ASSERT_FLOAT_EQ(this->component.temperature,temperature);
+
+
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_PiCam_BarometerDataUpdate_SIZE(1);
+    ASSERT_EVENTS_PiCam_BarometerDataUpdate(0,temperature,pressure,alt);
+    this->clearHistory();
+  }
+
+  void Tester::testPositionPort(void){
+    Fw::Time time;
+    F64 latitude;
+    F64 longitude;
+    U16 altitude;
+    U8 satellite;
+    this->invoke_to_position(0,time,latitude,longitude,altitude,satellite);
+
+    ASSERT_EQ(this->component.altitudeGps,altitude);
+    ASSERT_DOUBLE_EQ(this->component.latitude,latitude);
+    ASSERT_DOUBLE_EQ(this->component.longitude,longitude);
+    ASSERT_EQ(this->component.satellite,satellite);
+
+
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_PiCam_PositionUpdate_SIZE(1);
+    this->clearHistory();
+
   }
 
   // ----------------------------------------------------------------------

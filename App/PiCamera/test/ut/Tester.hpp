@@ -45,6 +45,9 @@ namespace App {
       //! To do
       //!
       void testCreatedDirectories(void);
+      void testFile(void);
+      void testBarometerPort(void);
+      void testPositionPort(void);
 
     private:
 

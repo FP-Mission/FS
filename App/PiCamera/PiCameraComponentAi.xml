@@ -10,6 +10,8 @@
     <import_port_type>App/PiCamera/PiCameraPort/PiCameraPicturePortAi.xml</import_port_type>
     <import_port_type>Svc/Sched/SchedPortAi.xml</import_port_type>
     
+    <import_serializable_type>App/PiCamera/PiCameraType/PictureSizeSerializableAi.xml</import_serializable_type>
+
 
     <ports>
         <port name="PingIn" data_type="Svc::Ping" kind="async_input" max_number="1">
@@ -62,7 +64,17 @@
             Take picture
             </comment>
         </command>
-        <command kind="async" opcode="1" mnemonic="PiCam_SetSize">
+        <command kind="async" opcode="1" mnemonic="PiCam_SetTimeInterval">
+            <comment>
+            Set time interval
+            </comment>
+            <args>
+                <arg name="timeInterval" type="U8">
+                    <comment>Time interval</comment>
+                </arg>
+            </args>
+        </command>
+        <command kind="async" opcode="2" mnemonic="PiCam_SetSize">
             <comment>
             Set the size of picture
             </comment>
@@ -81,6 +93,16 @@
         <channel id="0" name="PiCam_PictureCnt" data_type="U32">
             <comment>
                 Number of pictures taken
+            </comment>
+        </channel>
+         <channel id="1" name="PiCam_PictureSize" data_type="App::PictureSize">
+            <comment>
+                Number of pictures taken
+            </comment>
+        </channel>
+         <channel id="2" name="PiCam_Timeinterval" data_type="U8">
+            <comment>
+                Time interval of 10 seconds
             </comment>
         </channel>
     </telemetry>
@@ -121,6 +143,29 @@
                     <comment>Error code</comment>
                 </arg>          
             </args>
+        </event>
+        <event id="4" name="PiCam_SetTimeInterval" severity="ACTIVITY_LO" format_string = "Time interval of 10sec set to : %hu" >
+            <comment>
+                Time interval update
+            </comment>
+            <args>
+                <arg name="timeInterval" type="U8">
+                    <comment>time interval</comment>
+                </arg>
+            </args> 
+        </event>
+        <event id="5" name="PiCam_SetPictureSize" severity="ACTIVITY_LO" format_string = "Picture size set to : width : %u, height : %u" >
+            <comment>
+                Time interval update
+            </comment>
+            <args>
+                <arg name="width" type="U32">
+                    <comment>Picture width</comment>
+                </arg>
+                <arg name="height" type="U32">
+                    <comment>Picture height</comment>
+                </arg>
+            </args> 
         </event>
      </events>
 </component>

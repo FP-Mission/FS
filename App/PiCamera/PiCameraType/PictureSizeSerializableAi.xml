@@ -1,0 +1,9 @@
+<serializable namespace="App" name="PictureSize">
+    <comment>
+    This value holds the values of ICM sensor
+    </comment>
+    <members>
+        <member name="width" type="U32"/>
+        <member name="height" type="U32"/>
+    </members>
+</serializable>

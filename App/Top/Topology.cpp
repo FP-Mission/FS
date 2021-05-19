@@ -35,7 +35,7 @@ Fw::MallocAllocator seqMallocator;
 Svc::LinuxTimeImpl linuxTime(FW_OPTIONAL_NAME("LTIME"));
 
 static NATIVE_INT_TYPE rgDivs[Svc::RateGroupDriverImpl::DIVIDER_SIZE] = {1, 2,
-                                                                         4, 60};
+                                                                         4, 10};
 Svc::RateGroupDriverImpl rateGroupDrv(FW_OPTIONAL_NAME("RGDvr"), rgDivs,
                                       FW_NUM_ARRAY_ELEMENTS(rgDivs));
 

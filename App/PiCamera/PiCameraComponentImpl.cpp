@@ -32,7 +32,8 @@ namespace App {
   PiCameraComponentImpl ::
     PiCameraComponentImpl(
         const char *const compName
-    ) : PiCameraComponentBase(compName), nbPicture(0) ,width(BASE_WIDTH), height(BASE_HEIGHT), indexSSDV(0)
+    ) : PiCameraComponentBase(compName), nbPicture(0) ,width(BASE_WIDTH),
+     height(BASE_HEIGHT), indexSSDV(0), timeInterval(6), timeCpt(0)
   {
     std::ostringstream osTelemetry;
     osTelemetry << TELEMETRY_DIRECTORY << "telemetry.csv";
@@ -132,10 +133,18 @@ namespace App {
         NATIVE_UINT_TYPE context
     )
   {
+      tlmWrite_PiCam_Timeinterval(this->timeInterval);
+      PictureSize pictureSize(this->width,this->height);
+      tlmWrite_PiCam_PictureSize(pictureSize);
+      if(timeCpt < timeInterval){
+          timeCpt++;
+          return;
+      }
       bool sucessPicture = takePicture();
       if (sucessPicture){
           log_ACTIVITY_LO_PiCam_PictureTaken();
           //PictureOut_out(0,currentTime);
+          timeCpt=1;
           return;
       }
       log_WARNING_LO_PiCam_PictureError(0);
@@ -163,6 +172,17 @@ namespace App {
     this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
 
   }
+
+  void PiCameraComponentImpl::PiCam_SetTimeInterval_cmdHandler(
+          const FwOpcodeType opCode, /*!< The opcode*/
+          const U32 cmdSeq, /*!< The command sequence number*/
+          const U8 timeInterval /*!< The command sequence number*/
+      ){
+        this->timeInterval = timeInterval;
+        tlmWrite_PiCam_Timeinterval(timeInterval);
+        log_ACTIVITY_LO_PiCam_SetTimeInterval(timeInterval);
+        this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+      }
   void PiCameraComponentImpl ::
      PiCam_SetSize_cmdHandler(
           const FwOpcodeType opCode, /*!< The opcode*/
@@ -172,6 +192,9 @@ namespace App {
       ){
         this->width = width;
         this->height = height;
+        PictureSize pictureSize(this->width,this->height);
+        tlmWrite_PiCam_PictureSize(pictureSize);
+        log_ACTIVITY_LO_PiCam_SetPictureSize(width,height);
         this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
       }
 
