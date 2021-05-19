@@ -261,7 +261,10 @@ void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
         }
         //*/
     } else if (packetType == Fw::ComPacket::FW_PACKET_TLM_REPORT) {
-        printf("Downlink TlmReport %u\n", buffer.getSize());
+        printf("Downlink TlmReportPacket %u\n", buffer.getSize());
+        this->downlinkQueue_internalInterfaceInvoke(0,buffer);
+    } else if (packetType == Fw::ComPacket::FW_PACKET_TELEM) {
+        printf("Downlink TlmPacket %u\n", buffer.getSize());
         this->downlinkQueue_internalInterfaceInvoke(0,buffer);
     }
 }
