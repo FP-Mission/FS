@@ -98,8 +98,8 @@
         <source component="eventLogger" port="PktSend" type="Com" num="0"/>
         <target component="groundIf" port="downlinkPort" type="Com" num="0"/>
     </connection>
-    <connection name="chanTlmPkts">
-        <source component="chanTlm" port="PktSend" type="Com" num="0"/>
+    <connection name="tlmChanPkts">
+        <source component="tlmChan" port="PktSend" type="Com" num="0"/>
         <target component="groundIf" port="downlinkPort" type="Com" num="0"/>
     </connection>
     
@@ -577,15 +577,15 @@
     </connection>
     <connection name = "ThermometerTextTlm">
         <source component = "thermometer" port = "Tlm" type = "Tlm" num = "0"/>
-        <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
+        <target component = "tlmChan" port = "TlmRecv" type = "Tlm" num = "0"/>
     </connection>
     <connection name = "BarometerTextTlm">
         <source component = "barometer" port = "Tlm" type = "Tlm" num = "0"/>
-        <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
+        <target component = "tlmChan" port = "TlmRecv" type = "Tlm" num = "0"/>
     </connection>
     <connection name = "MotionTrackingTextTlm">
         <source component = "motionTracking" port = "Tlm" type = "Tlm" num = "0"/>
-        <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
+        <target component = "tlmChan" port = "TlmRecv" type = "Tlm" num = "0"/>
     </connection>
     
     <!-- Time Connections -->
