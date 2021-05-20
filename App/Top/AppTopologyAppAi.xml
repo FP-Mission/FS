@@ -539,7 +539,7 @@
     </connection>
     <connection name="Rg4Tlm">
         <source component="rateGroup4" port="Tlm" type="Tlm" num="0"/>
-        <target component="chanTlm" port="TlmRecv" type="Tlm" num="0"/>
+        <target component="tlmChan" port="TlmRecv" type="Tlm" num="0"/>
     </connection>
     <connection name="healthTlm">
         <source component="health" port="Tlm" type="Tlm" num="0"/>
