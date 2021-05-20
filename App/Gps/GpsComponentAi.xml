@@ -7,9 +7,14 @@
     <import_serializable_type>App/FlexTrak/Position/PositionSerializableAi.xml</import_serializable_type>
     
     <ports>
-        <port name="position" data_type="App::Position" kind="output" max_number="2">
+        <port name="positionOut" data_type="App::Position" kind="output" max_number="2">
             <comment>
                 GPS Position output
+            </comment>
+        </port>
+        <port name="positionIn" data_type="App::Position" kind="sync_input" max_number="1">
+            <comment>
+                Current balloon position
             </comment>
         </port>
     </ports>

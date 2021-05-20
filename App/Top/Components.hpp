@@ -44,7 +44,7 @@ extern Svc::GroundInterfaceComponentImpl groundIf;
 extern Svc::ConsoleTextLoggerImpl textLogger;
 extern Svc::ActiveLoggerImpl eventLogger;
 extern Svc::LinuxTimeImpl linuxTime;
-extern Svc::TlmChanImpl chanTlm;
+extern Svc::TlmChanImpl tlmChan;
 extern Svc::CommandDispatcherImpl cmdDisp;
 extern Svc::PrmDbImpl prmDb;
 extern Svc::AssertFatalAdapterComponentImpl fatalAdapter;

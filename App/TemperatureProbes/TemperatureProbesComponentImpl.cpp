@@ -36,13 +36,15 @@ TemperatureProbesComponentImpl ::~TemperatureProbesComponentImpl(void) {}
 // ----------------------------------------------------------------------
 
 void TemperatureProbesComponentImpl ::internal_handler(
-    const NATIVE_INT_TYPE portNum, F32 degree) {
-    // TODO
+    const NATIVE_INT_TYPE portNum, I16 degree) {
+    //printf("[TemperatureProbes] Internal temperature: %d\n", degree);
+    tlmWrite_TempProb_InternalTemperature(degree);
 }
 
 void TemperatureProbesComponentImpl ::external_handler(
-    const NATIVE_INT_TYPE portNum, F32 degree) {
-    // TODO
+    const NATIVE_INT_TYPE portNum, I16 degree) {
+    //printf("[TemperatureProbes] External temperature: %d\n", degree);
+    tlmWrite_TempProb_ExternalTemperature(degree);
 }
 
 // ----------------------------------------------------------------------
@@ -50,16 +52,16 @@ void TemperatureProbesComponentImpl ::external_handler(
 // ----------------------------------------------------------------------
 
 void TemperatureProbesComponentImpl ::TempProb_SetInternalLevel_cmdHandler(
-    const FwOpcodeType opCode, const U32 cmdSeq, F32 temperature) {
+    const FwOpcodeType opCode, const U32 cmdSeq, I16 temperature) {
     // @todo
-    this->log_WARNING_HI_TempPro_LowInternalWarning(2.15);
+    this->log_WARNING_HI_TempPro_LowInternalWarning(2);
     this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
 }
 
 void TemperatureProbesComponentImpl ::TempProb_SetExternalLevel_cmdHandler(
-    const FwOpcodeType opCode, const U32 cmdSeq, F32 temperature) {
+    const FwOpcodeType opCode, const U32 cmdSeq, I16 temperature) {
     // @todo
-    this->log_WARNING_HI_TempPro_LowExternalWarning(-15.3);
+    this->log_WARNING_HI_TempPro_LowExternalWarning(-15);
     this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
 }
 

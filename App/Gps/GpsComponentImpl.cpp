@@ -29,6 +29,32 @@ void GpsComponentImpl ::init(const NATIVE_INT_TYPE instance) {
 
 GpsComponentImpl ::~GpsComponentImpl(void) {}
 
+
+// ----------------------------------------------------------------------
+// Handler implementations for user-defined typed input ports
+// ----------------------------------------------------------------------
+
+void GpsComponentImpl ::positionIn_handler(
+      const NATIVE_INT_TYPE portNum,
+      Fw::Time time,
+      F64 latitude,
+      F64 longitude,
+      U16 altitude,
+      U8 satellite
+  )
+{
+    //printf("[GPS] (%f, %f, %u) %u\n", latitude, longitude, altitude, satellite);
+    // Generate Tlm for GPS position
+    App::PositionSer pos;
+    pos.setlatitude(latitude);
+    pos.setlongitude(longitude);
+    pos.setaltitude(altitude);
+    pos.setsatellite(satellite);
+    this->tlmWrite_Gps_Position(pos);
+    // Forward GPS to PiCamera
+    this->positionOut_out(0, time, latitude, longitude, altitude, satellite);
+}
+
 // ----------------------------------------------------------------------
 // Command handler implementations
 // ----------------------------------------------------------------------

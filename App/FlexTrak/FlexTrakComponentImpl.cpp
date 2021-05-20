@@ -11,6 +11,8 @@
 // ======================================================================
 
 #include <App/FlexTrak/FlexTrakComponentImpl.hpp>
+#include <Fw/Com/ComPacket.hpp>
+#include <Svc/GroundInterface/GroundInterface.hpp>
 
 #include "Fw/Logger/Logger.hpp"
 #include "Fw/Types/BasicTypes.hpp"
@@ -45,7 +47,7 @@ void FlexTrakComponentImpl ::init(const NATIVE_INT_TYPE queueDepth,
     {'implicit': 0, 'coding': 8, 'bandwidth': 5, 'spreading': 11, 'lowopt': 0},  # 5
     {'implicit': 1, 'coding': 5, 'bandwidth': 5, 'spreading':  6, 'lowopt': 0}]  # 6
     //*/
-    mode = 0;
+    mode = 1;
     frequency = 434.225;
 
     modes[0].implicit = 0;
@@ -59,7 +61,6 @@ void FlexTrakComponentImpl ::init(const NATIVE_INT_TYPE queueDepth,
     modes[1].bandwidth = 3;
     modes[1].spreading = 6;
     modes[1].lowopt = 0;
-
 }
 
 // Step 0: The linux serial driver keeps its storage externally. This means that
@@ -72,9 +73,11 @@ void FlexTrakComponentImpl ::init(const NATIVE_INT_TYPE queueDepth,
 void FlexTrakComponentImpl::preamble(void) {
     // LoRa is considered as free on init
     this->loRaIsFree = true;
+    // Default ping key value
+    this->pingKey = 0;
     // Create queue to store packets to downlink
     Fw::EightyCharString queueName("downlink");
-    this->downlinkQueue.create(queueName, 10, sizeof(Fw::Buffer));
+    this->downlinkQueue.create(queueName, 10, Fw::ComBuffer::SERIALIZED_SIZE);
 
     for (NATIVE_INT_TYPE buffer = 0; buffer < DR_MAX_NUM_BUFFERS; buffer++) {
         // Assign the raw data to the buffer. Make sure to include the side of
@@ -84,6 +87,7 @@ void FlexTrakComponentImpl::preamble(void) {
         // Invoke the port to send the buffer out.
         this->serialBufferOut_out(0, this->m_recvBuffers[buffer]);
     }
+
 }
 
 FlexTrakComponentImpl ::~FlexTrakComponentImpl(void) {}
@@ -94,8 +98,10 @@ FlexTrakComponentImpl ::~FlexTrakComponentImpl(void) {}
 
 void FlexTrakComponentImpl ::PingIn_handler(const NATIVE_INT_TYPE portNum,
                                             U32 key) {
-    // @todo Implement Ping logic
-    PingOut_out(0, key);
+    // Save ping key to allow response in serialRecv_handler
+    pingMutex.lock();
+    this->pingKey = key;
+    pingMutex.unLock();
 }
 
 void FlexTrakComponentImpl ::serialRecv_handler(const NATIVE_INT_TYPE portNum,
@@ -110,6 +116,7 @@ void FlexTrakComponentImpl ::serialRecv_handler(const NATIVE_INT_TYPE portNum,
     // the buffer
     U32 buffsize = static_cast<U32>(serBuffer.getSize());
     char *pointer = reinterpret_cast<char *>(serBuffer.getData());
+
     // Check for invalid read status, log an error, return buffer and abort if
     // there is a problem
     if (status != Drv::SER_OK) {
@@ -123,31 +130,70 @@ void FlexTrakComponentImpl ::serialRecv_handler(const NATIVE_INT_TYPE portNum,
     // Make sure end of char is '\0'
     *(pointer + buffsize) = '\0';
 
-    if(detectCommand("*", pointer)) {               // Command ack by the AVR
-        DEBUG_PRINT("[FlexAvr] Ack %s", pointer + 1);
-    } else if(detectCommand("?", pointer)) {        // Command error response AVR
-        DEBUG_PRINT("[FlexAvr] Command error %s", pointer + 1);
-    } else if (detectCommand("GPS=", pointer)) {
-        //printf("gps received\n");
-    } else if(detectCommand("Batt=", pointer)) {
-        //printf("Bat found\n");
-    }  else if(detectCommand("Temp0=", pointer)) {
-        //printf("Bat found\n");
-    }  else if(detectCommand("Temp1=", pointer)) {
-        //printf("Bat found\n");
-    } else if(detectCommand("LoRaIsFree=", pointer)) {
-        loRaMutex.lock();
-        loRaIsFree = atoi(pointer + 11) == 1 ? true : false;
-        loRaMutex.unLock();
-        if(loRaIsFree) {
-            DEBUG_PRINT("[FlexAvr] LoRa freed\n");
+    // Ping response sent each time ping request was received
+    pingMutex.lock();
+    if(this->pingKey != 0) {
+        PingOut_out(0, this->pingKey);
+        this->pingKey = 0;
+
+    }
+    pingMutex.unLock();
+
+    try {
+        if(detectCommand("*", pointer)) {               // Command ack by the AVR
+            DEBUG_PRINT("[FlexAvr] Ack %s", pointer + 1);
+        } else if(detectCommand("?", pointer)) {        // Command error response AVR
+            DEBUG_PRINT("[FlexAvr] Command error %s", pointer + 1);
+        } else if (detectCommand("GPS=", pointer)) {
+            // GPS=18/05/2021,08:43:32,46.22469,7.38071,0,3
+            struct GPS_t {
+                I16 day, month, year;
+                U8 hours, minutes, seconds;
+                float latitude, longitude;
+                U16 altitude;
+                U8 satellites;
+            } GPS;
+
+            U8 res = 0;
+            res = sscanf(pointer + 4, "%d/%d/%d,%u:%u:%u,%f,%f,%u,%u", 
+                                        &GPS.day, &GPS.month, &GPS.year, 
+                                        &GPS.hours, &GPS.minutes, &GPS.seconds, 
+                                        &GPS.latitude, &GPS.longitude, &GPS.altitude, 
+                                        &GPS.satellites);
+
+            if(res == 10) {
+                //printf("%u:%u:%u le %d.%d.%d à (%f, %f, %u) : %u\n", GPS.hours, GPS.minutes, GPS.seconds, GPS.day, GPS.month, GPS.year, GPS.latitude, GPS.longitude, GPS.altitude, GPS.satellites);
+                // @todo Set FS time with received data
+                Fw::Time time = getTime();
+                this->gps_out(0, time, GPS.latitude, GPS.longitude, GPS.altitude, GPS.satellites);
+            } else {
+                printf("sscanf res=%u\n", res);
+            }
+        } else if(detectCommand("Batt=", pointer)) {
+            I16 batteryVoltage = atoi(pointer + 5);
+            batteryVoltage_out(0, (U16)batteryVoltage);
+        }  else if(detectCommand("Temp0=", pointer)) {
+            I16 temp0 = atoi(pointer + 6);
+            internalTemp_out(0, temp0);
+        }  else if(detectCommand("Temp1=", pointer)) {
+            I16 temp1 = atoi(pointer + 6);
+            externalTemp_out(0, temp1);
+        } else if(detectCommand("LoRaIsFree=", pointer)) {
+            loRaMutex.lock();
+            loRaIsFree = atoi(pointer + 11) == 1 ? true : false;
+            loRaMutex.unLock();
+            if(loRaIsFree) {
+                DEBUG_PRINT("[FlexAvr] LoRa freed\n");
+            } else {
+                DEBUG_PRINT("[FlexAvr] LoRa not free\n");
+            }
+        } else if(detectCommand("DataDownlinked=", pointer)) {
+            DEBUG_PRINT("[FlexAvr] Data downlinked (%u)\n", atoi(pointer + 15));
         } else {
-            DEBUG_PRINT("[FlexAvr] LoRa not free\n");
+            DEBUG_PRINT("[FlexAvr] Rx (%u): %s", buffsize, pointer);
         }
-    } else if(detectCommand("DataDownlinked=", pointer)) {
-        DEBUG_PRINT("[FlexAvr] Data downlinked (%u)\n", atoi(pointer + 15));
-    } else {    
-        DEBUG_PRINT("[FlexAvr] Rx (%u): %s", buffsize, pointer);
+    } catch (...) {
+        Fw::Logger::logMsg("[ERROR] Unable to decode frame received from FlexAvr\n");
     }
 
     // Return buffer (see above note)
@@ -166,6 +212,9 @@ bool FlexTrakComponentImpl ::detectCommand(const char* command, const char* line
 
 void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
                                               Fw::Buffer &buffer) {
+    TOKEN_TYPE token;
+    TOKEN_TYPE dataSize;
+    FwPacketDescriptorType packetType;
     char *pointer = reinterpret_cast<char *>(buffer.getData());
 
     U16 packetSize = buffer.getSize();
@@ -177,16 +226,44 @@ void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
         return;
         // @todo Implement event (?)
     }
+    
+    // Deserialize packet to know if it is events/telemetry/camera
+    Fw::SerializeBufferBase& deserBufferWrapper = buffer.getSerializeRepr();
+    deserBufferWrapper.resetDeser();
+    deserBufferWrapper.setBuffLen(buffer.getSize());
 
-    this->downlinkQueue_internalInterfaceInvoke(0,buffer);
-    /*/ @todo Add packet to downlink queue instead of internal interface
-    Os::Queue::QueueStatus stat = this->downlinkQueue.send(buffer, 1, Os::Queue::QUEUE_NONBLOCKING);
-    if(stat != Os::Queue::QUEUE_OK) {
-        printf("Error sending in queue %u\n", stat);
-    } else {
-        printf("Send in queue\n");
+    Fw::SerializeStatus stat = deserBufferWrapper.deserialize(token);
+    FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
+    FW_ASSERT(token == Svc::GroundInterfaceComponentImpl::START_WORD);
+
+    stat = deserBufferWrapper.deserialize(dataSize);
+    FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
+
+    stat = deserBufferWrapper.deserialize(packetType);
+    FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
+
+    if(packetType == Fw::ComPacket::FW_PACKET_LOG) {
+        printf("Downlink LogPacket %u\n", buffer.getSize());
+        this->downlinkQueue_internalInterfaceInvoke(0,buffer);
+        /*/ @todo Add packet to downlink queue 
+        Os::Queue::QueueStatus stat = this->downlinkQueue.send(buffer.getSer, 0, Os::Queue::QUEUE_NONBLOCKING);
+        if(stat == Os::Queue::QUEUE_OK) {
+            printf("Sent in queue\n");
+            Fw::Buffer unqueueBuffer;
+            stat = this->downlinkQueue.receive(, 0, Os::Queue::QUEUE_NONBLOCKING);
+            if(stat == Os::Queue::QUEUE_OK) {
+                printf("Queue read\n");
+            } else {
+                printf("Error reading queue %u\n", stat);
+            }
+        } else {
+            printf("Error sending in queue %u\n", stat);
+        }
+        //*/
+    } else if (packetType == Fw::ComPacket::FW_PACKET_TLM_REPORT) {
+        printf("Downlink TlmReport %u\n", buffer.getSize());
+        this->downlinkQueue_internalInterfaceInvoke(0,buffer);
     }
-    //*/
 }
 
 void FlexTrakComponentImpl::Run_handler(NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE context) {
@@ -254,6 +331,7 @@ void FlexTrakComponentImpl:: configureHardware() {
     char temp[20]; 
     // ensure array is big enough to contain command, parameters and additional 
     // '\r' added by sendFlexTrakCommand()
+    loRaMutex.lock();
     sendFlexTrakCommand("CH0"); // Low priority mode
     sendFlexTrakCommand("CV");  // Ask version
     sendFlexTrakCommand("CPFP1");   // Set payload name to FP1
@@ -271,6 +349,7 @@ void FlexTrakComponentImpl:: configureHardware() {
     sprintf(temp, "LF%.3f", frequency);
     sendFlexTrakCommand(temp);
     sendFlexTrakCommand("CS");  // Save settings
+    loRaMutex.unLock();
 }
 
 // ----------------------------------------------------------------------

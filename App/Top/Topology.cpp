@@ -61,7 +61,7 @@ Svc::AssertFatalAdapterComponentImpl fatalAdapter(
 Svc::CommandDispatcherImpl cmdDisp(FW_OPTIONAL_NAME("CMDDISP"));
 Svc::CmdSequencerComponentImpl cmdSeq(FW_OPTIONAL_NAME("CMDSEQ"));
 Svc::ActiveLoggerImpl eventLogger(FW_OPTIONAL_NAME("ELOG"));
-Svc::TlmChanImpl chanTlm(FW_OPTIONAL_NAME("TLM"));
+Svc::TlmChanImpl tlmChan(FW_OPTIONAL_NAME("TLM"));
 Svc::HealthImpl health(FW_OPTIONAL_NAME("health"));
 Svc::PrmDbImpl prmDb(FW_OPTIONAL_NAME("PRM"), "PrmDb.dat");
 Svc::GroundInterfaceComponentImpl groundIf(FW_OPTIONAL_NAME("GNDIF"));
@@ -135,7 +135,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
 
     linuxTime.init(0);
 
-    chanTlm.init(10, 0);
+    tlmChan.init(10, 0);
 
     cmdDisp.init(20, 0);
 
@@ -177,6 +177,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     }
 
     /* Register commands */
+    tlmChan.regCommands();
     cmdSeq.regCommands();
     cmdDisp.regCommands();
     eventLogger.regCommands();
@@ -248,7 +249,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     cmdSeq.start(0, 100, 10 * 1024);
     // start telemetry
     eventLogger.start(0, 98, 10 * 1024);
-    chanTlm.start(0, 97, 10 * 1024);
+    tlmChan.start(0, 97, 10 * 1024);
     prmDb.start(0, 96, 10 * 1024);
 
     pingRcvr.start(0, 100, 10 * 1024);
@@ -279,6 +280,27 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     if (hostname != NULL && port_number != 0) {
         socketIpDriver.startSocketTask(100, 10 * 1024, hostname, port_number);
     }
+
+    // Set health ping entries
+    Svc::HealthImpl::PingEntry pingEntries[] = {
+        {3, 5, getHealthName(rateGroup1)},   // 0
+        {3, 5, getHealthName(rateGroup2)},   // 1
+        {3, 5, getHealthName(rateGroup3)},   // 2
+        {3, 5, getHealthName(cmdDisp)},      // 3
+        {3, 5, getHealthName(eventLogger)},  // 4
+        {3, 5, getHealthName(cmdSeq)},       // 5
+        {3, 5, getHealthName(tlmChan)},      // 6
+        {3, 5, getHealthName(prmDb)},        // 7
+        {3, 5, getHealthName(pingRcvr)},     // 8
+        {3, 5, getHealthName(blockDrv)},     // 9
+        {3, 5, getHealthName(flexTrak)},     // 10
+        {3, 5, getHealthName(piCamera)},     // 11
+        {3, 5, getHealthName(rockBlock)},    // 12
+    };
+
+    // register ping table
+    health.setPingEntries(pingEntries, FW_NUM_ARRAY_ELEMENTS(pingEntries),
+                          0x123);
     
     return false;
 }
@@ -291,7 +313,7 @@ void exitTasks(void) {
     blockDrv.exit();
     cmdDisp.exit();
     eventLogger.exit();
-    chanTlm.exit();
+    tlmChan.exit();
     prmDb.exit();
     cmdSeq.exit();
     pingRcvr.exit();
@@ -315,7 +337,7 @@ void exitTasks(void) {
     (void)blockDrv.ActiveComponentBase::join(NULL);
     (void)cmdDisp.ActiveComponentBase::join(NULL);
     (void)eventLogger.ActiveComponentBase::join(NULL);
-    (void)chanTlm.ActiveComponentBase::join(NULL);
+    (void)tlmChan.ActiveComponentBase::join(NULL);
     (void)prmDb.ActiveComponentBase::join(NULL);
     (void)cmdSeq.ActiveComponentBase::join(NULL);
     (void)pingRcvr.ActiveComponentBase::join(NULL);

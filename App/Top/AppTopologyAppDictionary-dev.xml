@@ -247,12 +247,12 @@
     </command>
     <command component="temperatureProbes" mnemonic="TempProb_SetInternalLevel" opcode="0x92">
       <args>
-        <arg name="temperature" type="F32"/>
+        <arg name="temperature" type="I16"/>
       </args>
     </command>
     <command component="temperatureProbes" mnemonic="TempProb_SetExternalLevel" opcode="0x93">
       <args>
-        <arg name="temperature" type="F32"/>
+        <arg name="temperature" type="I16"/>
       </args>
     </command>
     <command component="senseHat" mnemonic="MS_GET_TM" opcode="0x9c">
@@ -739,14 +739,14 @@
         <arg name="flightMode" type="App::FlightMode"/>
       </args>
     </event>
-    <event component="temperatureProbes" name="TempPro_LowInternalWarning" id="0x92" severity="WARNING_HI" format_string="Low internal temperature: %f">
+    <event component="temperatureProbes" name="TempPro_LowInternalWarning" id="0x92" severity="WARNING_HI" format_string="Low internal temperature: %d">
       <args>
-        <arg name="temperature" type="F32"/>
+        <arg name="temperature" type="I16"/>
       </args>
     </event>
-    <event component="temperatureProbes" name="TempPro_LowExternalWarning" id="0x93" severity="WARNING_HI" format_string="Low external temperature: %f">
+    <event component="temperatureProbes" name="TempPro_LowExternalWarning" id="0x93" severity="WARNING_HI" format_string="Low external temperature: %d">
       <args>
-        <arg name="temperature" type="F32"/>
+        <arg name="temperature" type="I16"/>
       </args>
     </event>
     <event component="senseHat" name="MS_DATA" id="0x9c" severity="ACTIVITY_LO" format_string="Sense hat data update">
@@ -805,8 +805,8 @@
     <channel component="gps" name="Gps_Position" id="0x6a" description="GPS position" type="App::PositionSer"/>
     <channel component="piCamera" name="PiCam_PictureCnt" id="0x74" description="Number of pictures taken" type="U32"/>
     <channel component="predictor" name="Predi_LandingPosition" id="0x7e" description="Predicted landing position" type="App::PositionSer"/>
-    <channel component="temperatureProbes" name="TempProb_InternalTemperature" id="0x92" description="Internal temperature in &#176;C" type="F32"/>
-    <channel component="temperatureProbes" name="TempProb_ExternalTemperature" id="0x93" description="External temperature in &#176;C" type="F32"/>
+    <channel component="temperatureProbes" name="TempProb_InternalTemperature" id="0x92" description="Internal temperature in &#176;C" type="I16"/>
+    <channel component="temperatureProbes" name="TempProb_ExternalTemperature" id="0x93" description="External temperature in &#176;C" type="I16"/>
     <channel component="thermometer" name="THERMOMETER_TEMP" id="0xa6" description="Temperature value" type="F32"/>
     <channel component="thermometer" name="THERMOMETER_HUMI" id="0xa7" description="Humidtiy value" type="F32"/>
     <channel component="motionTracking" name="MOTIONTRACKING_ANGLES" id="0xb0" description="Angles values" type="App::AnglesTlm"/>
