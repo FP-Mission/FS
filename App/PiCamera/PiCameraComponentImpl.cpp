@@ -165,7 +165,7 @@ namespace App {
     if(sucessPicture){
       log_ACTIVITY_LO_PiCam_PictureTaken();
       this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
-      PictureOut_out(0,currentTime);
+      //PictureOut_out(0,currentTime);
       return;
     }
     log_WARNING_LO_PiCam_PictureError(0);
