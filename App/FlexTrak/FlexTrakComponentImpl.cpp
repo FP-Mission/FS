@@ -12,7 +12,7 @@
 
 #include <App/FlexTrak/FlexTrakComponentImpl.hpp>
 #include <Fw/Com/ComPacket.hpp>
-//#include <Svc/GroundInterface/GroundInterface.hpp>
+#include <Svc/GroundInterface/GroundInterface.hpp>
 
 #include "Fw/Logger/Logger.hpp"
 #include "Fw/Types/BasicTypes.hpp"
@@ -215,14 +215,14 @@ bool FlexTrakComponentImpl ::detectCommand(const char* command, const char* line
 
 void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
                                               Fw::Buffer &buffer) {
-   // TOKEN_TYPE token;
-   // TOKEN_TYPE dataSize;
+    TOKEN_TYPE token;
+    TOKEN_TYPE dataSize;
     FwPacketDescriptorType packetType;
     char *pointer = reinterpret_cast<char *>(buffer.getData());
 
     U16 packetSize = buffer.getSize();
 
-    // DEBUG_PRINT("Tx buffer size %u\n", packetSize);
+    //DEBUG_PRINT("Tx buffer size %u\n", packetSize);
 
     if(packetSize > FW_COM_BUFFER_MAX_SIZE) {
         Fw::Logger::logMsg("Too big packet to downlink %u\n", packetSize);
@@ -230,20 +230,20 @@ void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
         // @todo Implement event (?)
     }
     
-    // Deserialize packet to know if it is events/telemetry/camera
+    //Deserialize packet to know if it is events/telemetry/camera
     Fw::SerializeBufferBase& deserBufferWrapper = buffer.getSerializeRepr();
     deserBufferWrapper.resetDeser();
     deserBufferWrapper.setBuffLen(buffer.getSize());
 
-    //Fw::SerializeStatus stat = deserBufferWrapper.deserialize(token);
-    //FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
-    //FW_ASSERT(token == Svc::GroundInterfaceComponentImpl::START_WORD);
+    Fw::SerializeStatus stat = deserBufferWrapper.deserialize(token);
+    FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
+    FW_ASSERT(token == Svc::GroundInterfaceComponentImpl::START_WORD);
 
-   // stat = deserBufferWrapper.deserialize(dataSize);
-    //FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
+    stat = deserBufferWrapper.deserialize(dataSize);
+    FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
 
-    //stat = deserBufferWrapper.deserialize(packetType);
-    //FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
+    stat = deserBufferWrapper.deserialize(packetType);
+    FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
 
     if(packetType == Fw::ComPacket::FW_PACKET_LOG) {
         printf("Downlink LogPacket %u\n", buffer.getSize());
