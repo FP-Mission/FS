@@ -19,10 +19,7 @@
 #include <Os/Queue.hpp>
 
 #include <string>
-#include <sstream>
-#include <iostream>
 
-#define FLEXAVR_PING_RESPONSE_LIMIT 5
 #define LORA_MIN_FREQUENCY (F32)434.040 
 #define LORA_MAX_FREQUENCY (F32)434.790
 
@@ -94,7 +91,7 @@ class FlexTrakComponentImpl : public FlexTrakComponentBase {
     // Command handler implementations
     // ----------------------------------------------------------------------
 
-    //! Implementation for FT_CHANGE_MODe command handler
+    //! Implementation for FT_CHANGE_MODE command handler
     //! Change LoRa mode (0 or 1)
     void FT_CHANGE_MODE_cmdHandler(
         const FwOpcodeType opCode,
@@ -127,7 +124,7 @@ class FlexTrakComponentImpl : public FlexTrakComponentBase {
     F32 frequency;
 
     bool loRaIsFree;
-    Os::Mutex loRaMutex;
+    Os::Mutex serialMutex;    //<! Lock when serial line is used
 
     U32 pingKey; //<! Save pingKey on pingIn
     Os::Mutex pingMutex; //<! Mutual exclusion between PingIn_handler and serialRecv_handler

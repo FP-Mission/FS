@@ -4,6 +4,7 @@
 #include <Fw/Types/MallocAllocator.hpp>
 #include <Os/Log.hpp>
 #include <Os/Task.hpp>
+#include <unistd.h>
 
 #if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
 #include <ctype.h>
@@ -70,6 +71,8 @@ Drv::SocketIpDriverComponentImpl socketIpDriver(
     FW_OPTIONAL_NAME("SocketIpDriver"));
 Drv::LinuxSerialDriverComponentImpl serialDriver1(
     FW_OPTIONAL_NAME("serialDriver1"));
+Drv::LinuxSerialDriverComponentImpl serialDriver2(
+    FW_OPTIONAL_NAME("serialDriver2"));
 
 App::EpsComponentImpl eps(FW_OPTIONAL_NAME("Eps"));
 App::FlexTrakComponentImpl flexTrak(FW_OPTIONAL_NAME("FlexTrak"));
@@ -90,6 +93,7 @@ const char* getHealthName(Fw::ObjBase& comp) {
 
 bool constructApp(bool dump, U32 port_number, char* hostname) {
     bool flextrak_connected = false;
+    bool rockblock_connected = false;
 #if FW_PORT_TRACING
     Fw::PortBase::setTrace(false);
 #endif
@@ -129,6 +133,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     groundIf.init(0);
     socketIpDriver.init(0);
     serialDriver1.init(0);
+    serialDriver2.init(0);
 
     fatalAdapter.init(0);
     fatalHandler.init(0);
@@ -168,7 +173,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     gps.regCommands();
     piCamera.regCommands();
     predictor.regCommands();
-    // rockBlock.regCommands();
+    rockBlock.regCommands();
     temperatureProbes.regCommands();
 
     // read parameters
@@ -184,6 +189,18 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     } else {
         Fw::Logger::logMsg("[INFO] Opened FlexTrak UART\n");
         flextrak_connected = true;
+    }
+
+    if (!serialDriver2.open("/dev/ttyUSB0",
+                   Drv::LinuxSerialDriverComponentImpl::BAUD_19200,
+                   Drv::LinuxSerialDriverComponentImpl::NO_FLOW, 
+                   Drv::LinuxSerialDriverComponentImpl::PARITY_NONE,
+                   true))
+    {
+        Fw::Logger::logMsg("[ERROR] Failed to open RockBlock UART\n");
+    } else {
+        Fw::Logger::logMsg("[INFO] Opened RockBlock UART\n");
+        rockblock_connected = true;
     }
 
     // Active component startup
@@ -205,16 +222,22 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     pingRcvr.start(0, 100, 10 * 1024);
 
     // App
-    flexTrak.start(0, 100, 10 * 1024);
     if (flextrak_connected) {
+        flexTrak.start(0, 100, 10 * 1024);
         serialDriver1.startReadThread(90, 20 * 1024);
-        flexTrak.configureHardware();
+        //flexTrak.configureHardware(); // todo UNCOMMENT - Remove during rockBlock dev !!!!!!
+    }
+
+    if (rockblock_connected) {
+        rockBlock.start(0, 100, 10 * 1024);
+        serialDriver2.startReadThread(90, 20 * 1024);
+        sleep(1);
+        rockBlock.configureHardware();
     }
 
     eps.start(0, 100, 10 * 1024);
     piCamera.start(0, 100, 10 * 1024);
     predictor.start(0, 100, 10 * 1024);
-    rockBlock.start(0, 100, 10 * 1024);
     temperatureProbes.start(0, 100, 10 * 1024);
 
     // Initialize socket server if and only if there is a valid specification

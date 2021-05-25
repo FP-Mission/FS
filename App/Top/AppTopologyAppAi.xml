@@ -67,14 +67,15 @@
     <instance namespace="Ref" name="pingRcvr"       type="PingReceiver"         base_id="76"   base_id_window="2" />
     <instance namespace="Drv" name="blockDrv"       type="BlockDriver"          base_id="78"   base_id_window="1" />
     <instance namespace="Drv" name="serialDriver1"  type="LinuxSerialDriver"    base_id="79"   base_id_window="7" />
+    <instance namespace="Drv" name="serialDriver2"  type="LinuxSerialDriver"    base_id="89"   base_id_window="7" />
 
-    <instance namespace="App" name="eps"                type="Eps"                  base_id="86"   base_id_window="10" />
-    <instance namespace="App" name="flexTrak"           type="FlexTrak"             base_id="96"   base_id_window="10" />
-    <instance namespace="App" name="gps"                type="Gps"                  base_id="106"   base_id_window="10" />
-    <instance namespace="App" name="piCamera"           type="PiCamera"             base_id="116"   base_id_window="10" />
-    <instance namespace="App" name="predictor"          type="Predictor"            base_id="126"   base_id_window="10" />
-    <instance namespace="App" name="rockBlock"          type="RockBlock"            base_id="136"   base_id_window="10" />
-    <instance namespace="App" name="temperatureProbes"  type="TemperatureProbes"    base_id="146"   base_id_window="10" />
+    <instance namespace="App" name="eps"                type="Eps"                  base_id="100"   base_id_window="10" />
+    <instance namespace="App" name="flexTrak"           type="FlexTrak"             base_id="110"   base_id_window="10" />
+    <instance namespace="App" name="gps"                type="Gps"                  base_id="120"   base_id_window="10" />
+    <instance namespace="App" name="piCamera"           type="PiCamera"             base_id="130"   base_id_window="10" />
+    <instance namespace="App" name="predictor"          type="Predictor"            base_id="140"   base_id_window="10" />
+    <instance namespace="App" name="rockBlock"          type="RockBlock"            base_id="150"   base_id_window="10" />
+    <instance namespace="App" name="temperatureProbes"  type="TemperatureProbes"    base_id="160"   base_id_window="10" />
 
     <!-- ########### -->
     <!-- Connections -->
@@ -156,6 +157,10 @@
          <source component="temperatureProbes" port="CmdReg" type="CmdReg" num="0"/>
          <target component="cmdDisp" port="compCmdReg" type="CmdReg" num="15"/>
     </connection>
+    <connection name="RockBlockReg">
+         <source component="rockBlock" port="CmdReg" type="CmdReg" num="0"/>
+         <target component="cmdDisp" port="compCmdReg" type="CmdReg" num="16"/>
+    </connection>
 
         <!-- Command Dispatch Ports - Dispatch port number must match registration port for each component -->
     <connection name="EventLoggerDisp">
@@ -210,7 +215,10 @@
          <source component="cmdDisp" port="compCmdSend" type="Cmd" num="15"/>
          <target component="temperatureProbes" port="CmdDisp" type="Cmd" num="0"/>
     </connection>
-    
+    <connection name="RockBlockDisp">
+         <source component="cmdDisp" port="compCmdSend" type="Cmd" num="16"/>
+         <target component="rockBlock" port="CmdDisp" type="Cmd" num="0"/>
+    </connection>
    
         <!-- Command Reply Ports - Go to the same response port on the dispatcher -->
     <connection name="EventLoggerReply">
@@ -241,7 +249,6 @@
          <source component="pingRcvr" port="CmdStatus" type="CmdResponse" num="0"/>
          <target component="cmdDisp" port="compCmdStat" type="CmdResponse" num="0"/>
     </connection>
-
     <connection name="EpsStat">
          <source component="eps" port="CmdStatus" type="CmdResponse" num="0"/>
          <target component="cmdDisp" port="compCmdStat" type="CmdResponse" num="0"/>
@@ -264,6 +271,10 @@
     </connection>
     <connection name="TemperatureProbesStat">
          <source component="temperatureProbes" port="CmdStatus" type="CmdResponse" num="0"/>
+         <target component="cmdDisp" port="compCmdStat" type="CmdResponse" num="0"/>
+    </connection>
+    <connection name="RockBlockStat">
+         <source component="rockBlock" port="CmdStatus" type="CmdResponse" num="0"/>
          <target component="cmdDisp" port="compCmdStat" type="CmdResponse" num="0"/>
     </connection>
 
@@ -332,6 +343,10 @@
          <source component="serialDriver1" port="Log" type="Log" num="0"/>
          <target component="eventLogger" port="LogRecv" type="Log" num="0"/>
     </connection>
+    <connection name="serialDriver2Evt">
+         <source component="serialDriver2" port="Log" type="Log" num="0"/>
+         <target component="eventLogger" port="LogRecv" type="Log" num="0"/>
+    </connection>
     <connection name="epsEvt">
          <source component="eps" port="Log" type="Log" num="0"/>
          <target component="eventLogger" port="LogRecv" type="Log" num="0"/>
@@ -352,12 +367,10 @@
          <source component="predictor" port="Log" type="Log" num="0"/>
          <target component="eventLogger" port="LogRecv" type="Log" num="0"/>
     </connection>
-    <!-- @todo Uncomment for RockBlock events report
     <connection name="rockBlockEvt">
          <source component="rockBlock" port="Log" type="Log" num="0"/>
          <target component="eventLogger" port="LogRecv" type="Log" num="0"/>
     </connection>
-    -->
     <connection name="temperatureProbesEvt">
          <source component="temperatureProbes" port="Log" type="Log" num="0"/>
          <target component="eventLogger" port="LogRecv" type="Log" num="0"/>
@@ -416,6 +429,10 @@
          <source component="serialDriver1" port="LogText" type="LogText" num="0"/>
          <target component="textLogger" port="TextLogger" type="LogText" num="0"/>
     </connection>
+    <connection name="serialDriver2Text">
+         <source component="serialDriver2" port="LogText" type="LogText" num="0"/>
+         <target component="textLogger" port="TextLogger" type="LogText" num="0"/>
+    </connection>
     <connection name="epsText">
          <source component="eps" port="LogText" type="LogText" num="0"/>
          <target component="textLogger" port="TextLogger" type="LogText" num="0"/>
@@ -436,12 +453,10 @@
          <source component="predictor" port="LogText" type="LogText" num="0"/>
          <target component="textLogger" port="TextLogger" type="LogText" num="0"/>
     </connection>
-    <!-- @todo Uncomment for RockBlock text events report
     <connection name="rockBlockText">
          <source component="rockBlock" port="LogText" type="LogText" num="0"/>
          <target component="textLogger" port="TextLogger" type="LogText" num="0"/>
     </connection>
-    -->
     <connection name="temperatureProbesText">
          <source component="temperatureProbes" port="LogText" type="LogText" num="0"/>
          <target component="textLogger" port="TextLogger" type="LogText" num="0"/>
@@ -484,6 +499,10 @@
          <source component="serialDriver1" port="Tlm" type="Tlm" num="0"/>
          <target component="tlmChan" port="TlmRecv" type="Tlm" num="0"/>
     </connection>
+    <connection name="serialDriver2Tlm">
+         <source component="serialDriver2" port="Tlm" type="Tlm" num="0"/>
+         <target component="tlmChan" port="TlmRecv" type="Tlm" num="0"/>
+    </connection>
     <connection name="epsTlm">
          <source component="eps" port="Tlm" type="Tlm" num="0"/>
          <target component="tlmChan" port="TlmRecv" type="Tlm" num="0"/>
@@ -504,12 +523,10 @@
          <source component="predictor" port="Tlm" type="Tlm" num="0"/>
          <target component="tlmChan" port="TlmRecv" type="Tlm" num="0"/>
     </connection>
-    <!-- @todo Uncomment for RockBlock telemetry report
     <connection name="rockBlockTlm">
          <source component="rockBlock" port="Tlm" type="Tlm" num="0"/>
          <target component="tlmChan" port="TlmRecv" type="Tlm" num="0"/>
     </connection>
-    -->
     <connection name="temperatureProbesTlm">
          <source component="temperatureProbes" port="Tlm" type="Tlm" num="0"/>
          <target component="tlmChan" port="TlmRecv" type="Tlm" num="0"/>
@@ -575,7 +592,11 @@
     <connection name="serialDriver1Time">
          <source component="serialDriver1" port="Time" type="Time" num="0"/>
          <target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
-    </connection>    
+    </connection>
+    <connection name="serialDriver2Time">
+         <source component="serialDriver2" port="Time" type="Time" num="0"/>
+         <target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
+    </connection>
     <connection name="epsTime">
          <source component="eps" port="Time" type="Time" num="0"/>
          <target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
@@ -596,12 +617,10 @@
          <source component="predictor" port="Time" type="Time" num="0"/>
          <target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
     </connection>
-    <!-- @todo Uncomment for RockBlock time requests
     <connection name="rockBlockTime">
          <source component="rockBlock" port="Time" type="Time" num="0"/>
          <target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
     </connection>
-    -->
     <connection name="temperatureProbesTime">
          <source component="temperatureProbes" port="Time" type="Time" num="0"/>
          <target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
@@ -790,45 +809,52 @@
     </connection>
     
      <!-- App Connections -->
-          <!-- Serial Driver 1 - FlexTrak -->
-     <connection name="serialDriverRecv">
+        <!-- Serial Driver 1 - FlexTrak -->
+     <connection name = "serialDriver1Buff">
+        <source component = "flexTrak" port = "serialBufferOut" type = "BufferSend" num = "0"/>
+        <target component = "serialDriver1" port = "readBufferSend" type = "BufferSend" num = "0"/>
+     </connection>
+     <connection name="serialDriver1Recv">
         <source component="serialDriver1" port="serialRecv" type="SerialRead" num="0"/>
         <target component="flexTrak" port="serialRecv" type="SerialRead" num="0"/>
      </connection>
-     <connection name = "serialDriverBuff">
-        <source component = "flexTrak" port = "serialBufferOut" type = "BufferSend" num = "0"/>
-        <target component = "serialDriver1" port = "readBufferSend" type = "BufferSend" num = "0"/>
-    </connection>
-     <connection name="serialDriverSend">
-          <source component="flexTrak" port="serialSend" type="SerialWrite" num="0"/>
-          <target component="serialDriver1" port="serialSend" type="SerialWrite" num="0"/>
+     <connection name="serialDriver1Send">
+        <source component="flexTrak" port="serialSend" type="SerialWrite" num="0"/>
+        <target component="serialDriver1" port="serialSend" type="SerialWrite" num="0"/>
      </connection>
-          <!-- FlexTrak - Sensors -->
-    <connection name="flexTrakInternalTemp">
+        <!-- FlexTrak - Sensors -->
+     <connection name="flexTrakInternalTemp">
         <source component="flexTrak" port="internalTemp" type="Temperature" num="0"/>
         <target component="temperatureProbes" port="internal" type="Temperature" num="0"/>
-    </connection>
-    <connection name="flexTrakExternalTemp">
+     </connection>
+     <connection name="flexTrakExternalTemp">
         <source component="flexTrak" port="externalTemp" type="Temperature" num="0"/>
         <target component="temperatureProbes" port="external" type="Temperature" num="0"/>
-    </connection>
-    <connection name="flexTrakBattery">
+     </connection>
+     <connection name="flexTrakBattery">
         <source component="flexTrak" port="batteryVoltage" type="BatteryLevel" num="0"/>
         <target component="eps" port="batteryVoltage" type="BatteryLevel" num="0"/>
-    </connection>
-    <connection name="flexTrakGps">
+     </connection>
+     <connection name="flexTrakGps">
         <source component="flexTrak" port="gps" type="Position" num="0"/>
         <target component="gps" port="positionIn" type="Position" num="0"/>
-    </connection> 
+     </connection>
+        <!-- Serial Driver 2 - rockBlock -->
+     <connection name = "serialDriver2Buff">
+        <source component = "rockBlock" port = "serialBufferOut" type = "BufferSend" num = "0"/>
+        <target component = "serialDriver2" port = "readBufferSend" type = "BufferSend" num = "0"/>
+     </connection>
+     <connection name="serialDriver2Recv">
+        <source component="serialDriver2" port="serialRecv" type="SerialRead" num="0"/>
+        <target component="rockBlock" port="serialRecv" type="SerialRead" num="0"/>
+     </connection>
+     <connection name="serialDriver2Send">
+        <source component="rockBlock" port="serialSend" type="SerialWrite" num="0"/>
+        <target component="serialDriver2" port="serialSend" type="SerialWrite" num="0"/>
+     </connection>
         <!-- GPS -->
-    <connection name="gpsPiCamera">
+     <connection name="gpsPiCamera">
         <source component="gps" port="positionOut" type="Position" num="0"/>
         <target component="piCamera" port="position" type="Position" num="0"/>
-    </connection> 
-    <!--
-    <connection name="gpsPredictor">
-        <source component="gps" port="positionOut" type="Position" num="0"/>
-        <target component="predictor" port="position" type="Position" num="0"/>
-    </connection>
-    -->
+     </connection>
 </assembly>

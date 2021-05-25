@@ -3,10 +3,10 @@
 <component name="RockBlock" kind="active" namespace="App">
     <comment>Component handling the RockBlock module for uplink communication</comment>
     
-    <import_port_type>Svc/Ping/PingPortAi.xml</import_port_type>
-    <import_port_type>Fw/Buffer/BufferSendPortAi.xml</import_port_type>
     <import_port_type>Drv/SerialDriverPorts/SerialReadPortAi.xml</import_port_type>
     <import_port_type>Drv/SerialDriverPorts/SerialWritePortAi.xml</import_port_type>
+    <import_port_type>Fw/Buffer/BufferSendPortAi.xml</import_port_type>
+    <import_port_type>Svc/Ping/PingPortAi.xml</import_port_type>
 
     <ports>
         <port name="PingIn" data_type="Svc::Ping" kind="async_input" max_number="1">
@@ -25,61 +25,43 @@
         </port>
         <port name="recvData" data_type="Fw::BufferSend" kind="output" max_number="1">
         </port>
+        <!-- Used at startup to supply buffers to the serial driver -->
+        <port name="serialBufferOut" data_type="Fw::BufferSend"  kind="output"  max_number="1">
+        </port>
     </ports>
 
-    <!--
     <commands>
-        <command kind="async" opcode="0" mnemonic="Eps_SetWarningLevel">
+        <command kind="async" opcode="0" mnemonic="RckBlck_SendCommand">
             <comment>
-                Set low battery level
+                Sample command
             </comment>
+            <!--
             <args>
-                <arg name="voltage" type="U16">
-                    <comment>Voltage in mV</comment>
-                </arg>          
+                <arg type="U8" name="AT_Command" string size="16">
+                    <comment>AT command to send</comment>
+                </arg>
             </args>
-        </command>
-        <command kind="async" opcode="1" mnemonic="Eps_SetCriticalLevel">
-            <comment>
-                Set critical low battery level 
-            </comment>
-            <args>
-                <arg name="voltage" type="U16">
-                    <comment>Voltage in mV</comment>
-                </arg>          
-            </args>
+            -->
         </command>
     </commands>
 
     <telemetry>
-        <channel id="0" name="Eps_BatteryVoltage" data_type="U16">
+        <channel id="0" name="RckBlck_Ch" data_type="U16">
             <comment>
-                Battery level in mV
+                Sample channel
             </comment>
         </channel>
     </telemetry>
 
     <events>
-        <event id="0" name="Eps_LowBattery" severity="WARNING_HI" format_string = "Low battery level: %u mV" >
+        <event id="0" name="RckBlck_Ev" severity="ACTIVITY_HI" format_string = "RockBlock event: %u" >
             <comment>
-                Sent when battery voltage reachs low battery level
+                Sample event
             </comment>
             <args>
-                <arg name="voltage" type="U16">
-                    <comment>Current battery level in mV</comment>
-                </arg>          
-            </args>
-        </event>
-        <event id="1" name="Eps_CriticallyLowBattery" severity="FATAL" format_string = "Critically low battery level: %u mV" >
-            <comment>
-                Sent when battery voltage reachs critically low battery level
-            </comment>
-            <args>
-                <arg name="voltage" type="U16">
-                    <comment>Current battery level in mV</comment>
+                <arg name="value" type="U16">
                 </arg>          
             </args>
         </event>
      </events>
-     -->
 </component>

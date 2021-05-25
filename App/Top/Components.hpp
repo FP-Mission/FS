@@ -49,14 +49,14 @@ extern Svc::HealthImpl health;
 extern Drv::BlockDriverImpl blockDrv;
 extern Ref::PingReceiverComponentImpl pingRcvr;
 extern Drv::SocketIpDriverComponentImpl socketIpDriver;
-extern Drv::LinuxSerialDriverComponentImpl serialDriver1;
+extern Drv::LinuxSerialDriverComponentImpl serialDriver1, serialDriver2;
 
 extern App::EpsComponentImpl eps;
 extern App::FlexTrakComponentImpl flexTrak;
+extern App::RockBlockComponentImpl rockBlock;
 extern App::GpsComponentImpl gps;
 extern App::PiCameraComponentImpl piCamera;
 extern App::PredictorComponentImpl predictor;
-extern App::RockBlockComponentImpl rockBlock;
 extern App::TemperatureProbesComponentImpl temperatureProbes;
 
 #endif
