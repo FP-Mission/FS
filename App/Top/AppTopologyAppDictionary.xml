@@ -237,6 +237,11 @@
         <arg name="mode" type="U8"/>
       </args>
     </command>
+    <command component="flexTrak" mnemonic="FT_CHANGE_FREQ" opcode="0x61">
+      <args>
+        <arg name="frequency" type="F32"/>
+      </args>
+    </command>
     <command component="gps" mnemonic="Gps_SetFlightModeAltitude" opcode="0x6a">
       <args>
         <arg name="altitude" type="U16"/>
@@ -731,6 +736,11 @@
     <event component="flexTrak" name="FT_Mode" id="0x60" severity="ACTIVITY_HI" format_string="Current FlexTrak mode : %u">
       <args>
         <arg name="mode" type="U8"/>
+      </args>
+    </event>
+    <event component="flexTrak" name="FT_Frequency" id="0x61" severity="ACTIVITY_HI" format_string="Current FlexTrak frequency : %f MHz">
+      <args>
+        <arg name="frequency" type="F32"/>
       </args>
     </event>
     <event component="gps" name="Gps_Error" id="0x6a" severity="ACTIVITY_HI" format_string="Error">

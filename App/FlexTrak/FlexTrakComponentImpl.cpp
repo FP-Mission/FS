@@ -261,7 +261,10 @@ void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
         }
         //*/
     } else if (packetType == Fw::ComPacket::FW_PACKET_TLM_REPORT) {
-        printf("Downlink TlmReport %u\n", buffer.getSize());
+        printf("Downlink TlmReportPacket %u\n", buffer.getSize());
+        this->downlinkQueue_internalInterfaceInvoke(0,buffer);
+    } else if (packetType == Fw::ComPacket::FW_PACKET_TELEM) {
+        printf("Downlink TlmPacket %u\n", buffer.getSize());
         this->downlinkQueue_internalInterfaceInvoke(0,buffer);
     }
 }
@@ -369,7 +372,24 @@ void FlexTrakComponentImpl :: FT_CHANGE_MODE_cmdHandler(
         this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
         return;
     }
-    Fw::Logger::logMsg("[ERROR] Invalid mode for LoRa - Please use 0 or 1");
+    Fw::Logger::logMsg("[ERROR] Invalid mode for LoRa: %u - Please use 0 or 1\n", mode);
+    this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_EXECUTION_ERROR);
+}
+
+void FlexTrakComponentImpl :: FT_CHANGE_FREQ_cmdHandler(
+    const FwOpcodeType opCode,
+    const U32 cmdSeq,
+    F32 frequency 
+){
+    if(frequency >= LORA_MIN_FREQUENCY && frequency <= LORA_MAX_FREQUENCY) {
+        this->frequency = frequency;
+        this->configureHardware();
+        this->log_ACTIVITY_HI_FT_Frequency(frequency);
+        this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+        return;
+    }
+    Fw::Logger::logMsg("[ERROR] Invalid frequency for LoRa : %f\n", 
+                        frequency);
     this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_EXECUTION_ERROR);
 }
 
