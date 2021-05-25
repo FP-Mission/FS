@@ -39,6 +39,18 @@
 #define ASSERT_TLM_PiCam_PictureCnt(index, value) \
   this->assertTlm_PiCam_PictureCnt(__FILE__, __LINE__, index, value)
 
+#define ASSERT_TLM_PiCam_PictureSize_SIZE(size) \
+  this->assertTlm_PiCam_PictureSize_size(__FILE__, __LINE__, size)
+
+#define ASSERT_TLM_PiCam_PictureSize(index, value) \
+  this->assertTlm_PiCam_PictureSize(__FILE__, __LINE__, index, value)
+
+#define ASSERT_TLM_PiCam_Timeinterval_SIZE(size) \
+  this->assertTlm_PiCam_Timeinterval_size(__FILE__, __LINE__, size)
+
+#define ASSERT_TLM_PiCam_Timeinterval(index, value) \
+  this->assertTlm_PiCam_Timeinterval(__FILE__, __LINE__, index, value)
+
 // ----------------------------------------------------------------------
 // Macros for event history assertions
 // ----------------------------------------------------------------------
@@ -63,6 +75,18 @@
 
 #define ASSERT_EVENTS_PiCam_PictureError(index, _code) \
   this->assertEvents_PiCam_PictureError(__FILE__, __LINE__, index, _code)
+
+#define ASSERT_EVENTS_PiCam_SetTimeInterval_SIZE(size) \
+  this->assertEvents_PiCam_SetTimeInterval_size(__FILE__, __LINE__, size)
+
+#define ASSERT_EVENTS_PiCam_SetTimeInterval(index, _timeInterval) \
+  this->assertEvents_PiCam_SetTimeInterval(__FILE__, __LINE__, index, _timeInterval)
+
+#define ASSERT_EVENTS_PiCam_SetPictureSize_SIZE(size) \
+  this->assertEvents_PiCam_SetPictureSize_size(__FILE__, __LINE__, size)
+
+#define ASSERT_EVENTS_PiCam_SetPictureSize(index, _width, _height) \
+  this->assertEvents_PiCam_SetPictureSize(__FILE__, __LINE__, index, _width, _height)
 
 // ----------------------------------------------------------------------
 // Macros for typed user from port history assertions
@@ -216,6 +240,48 @@ namespace App {
     protected:
 
       // ----------------------------------------------------------------------
+      // Channel: PiCam_PictureSize
+      // ----------------------------------------------------------------------
+
+      //! Assert telemetry value in history at index
+      //!
+      void assertTlm_PiCam_PictureSize_size(
+          const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
+          const U32 __callSiteLineNumber, /*!< The line number of the call site*/
+          const U32 size /*!< The asserted size*/
+      ) const;
+
+      void assertTlm_PiCam_PictureSize(
+          const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
+          const U32 __callSiteLineNumber, /*!< The line number of the call site*/
+          const U32 __index, /*!< The index*/
+          const App::PictureSize& val /*!< The channel value*/
+      ) const;
+
+    protected:
+
+      // ----------------------------------------------------------------------
+      // Channel: PiCam_Timeinterval
+      // ----------------------------------------------------------------------
+
+      //! Assert telemetry value in history at index
+      //!
+      void assertTlm_PiCam_Timeinterval_size(
+          const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
+          const U32 __callSiteLineNumber, /*!< The line number of the call site*/
+          const U32 size /*!< The asserted size*/
+      ) const;
+
+      void assertTlm_PiCam_Timeinterval(
+          const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
+          const U32 __callSiteLineNumber, /*!< The line number of the call site*/
+          const U32 __index, /*!< The index*/
+          const U8& val /*!< The channel value*/
+      ) const;
+
+    protected:
+
+      // ----------------------------------------------------------------------
       // Events
       // ----------------------------------------------------------------------
 
@@ -287,6 +353,45 @@ namespace App {
           const U32 __callSiteLineNumber, /*!< The line number of the call site*/
           const U32 __index, /*!< The index*/
           const U32 code /*!< Error code*/
+      ) const;
+
+    protected:
+
+      // ----------------------------------------------------------------------
+      // Event: PiCam_SetTimeInterval
+      // ----------------------------------------------------------------------
+
+      void assertEvents_PiCam_SetTimeInterval_size(
+          const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
+          const U32 __callSiteLineNumber, /*!< The line number of the call site*/
+          const U32 size /*!< The asserted size*/
+      ) const;
+
+      void assertEvents_PiCam_SetTimeInterval(
+          const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
+          const U32 __callSiteLineNumber, /*!< The line number of the call site*/
+          const U32 __index, /*!< The index*/
+          const U8 timeInterval /*!< time interval*/
+      ) const;
+
+    protected:
+
+      // ----------------------------------------------------------------------
+      // Event: PiCam_SetPictureSize
+      // ----------------------------------------------------------------------
+
+      void assertEvents_PiCam_SetPictureSize_size(
+          const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
+          const U32 __callSiteLineNumber, /*!< The line number of the call site*/
+          const U32 size /*!< The asserted size*/
+      ) const;
+
+      void assertEvents_PiCam_SetPictureSize(
+          const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
+          const U32 __callSiteLineNumber, /*!< The line number of the call site*/
+          const U32 __index, /*!< The index*/
+          const U32 width, /*!< Picture width*/
+          const U32 height /*!< Picture height*/
       ) const;
 
     protected:

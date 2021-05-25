@@ -553,6 +553,14 @@ namespace App {
           const U32 cmdSeq /*!< The command sequence number*/
       );
 
+      //! Send a PiCam_SetTimeInterval command
+      //!
+      void sendCmd_PiCam_SetTimeInterval(
+          const NATIVE_INT_TYPE instance, /*!< The instance number*/
+          const U32 cmdSeq, /*!< The command sequence number*/
+          U8 timeInterval /*!< Time interval*/
+      );
+
       //! Send a PiCam_SetSize command
       //!
       void sendCmd_PiCam_SetSize(
@@ -739,6 +747,54 @@ namespace App {
     protected:
 
       // ----------------------------------------------------------------------
+      // Event: PiCam_SetTimeInterval
+      // ----------------------------------------------------------------------
+
+      //! Handle event PiCam_SetTimeInterval
+      //!
+      virtual void logIn_ACTIVITY_LO_PiCam_SetTimeInterval(
+          U8 timeInterval /*!< time interval*/
+      );
+
+      //! A history entry for event PiCam_SetTimeInterval
+      //!
+      typedef struct {
+        U8 timeInterval;
+      } EventEntry_PiCam_SetTimeInterval;
+
+      //! The history of PiCam_SetTimeInterval events
+      //!
+      History<EventEntry_PiCam_SetTimeInterval>
+        *eventHistory_PiCam_SetTimeInterval;
+
+    protected:
+
+      // ----------------------------------------------------------------------
+      // Event: PiCam_SetPictureSize
+      // ----------------------------------------------------------------------
+
+      //! Handle event PiCam_SetPictureSize
+      //!
+      virtual void logIn_ACTIVITY_LO_PiCam_SetPictureSize(
+          U32 width, /*!< Picture width*/
+          U32 height /*!< Picture height*/
+      );
+
+      //! A history entry for event PiCam_SetPictureSize
+      //!
+      typedef struct {
+        U32 width;
+        U32 height;
+      } EventEntry_PiCam_SetPictureSize;
+
+      //! The history of PiCam_SetPictureSize events
+      //!
+      History<EventEntry_PiCam_SetPictureSize>
+        *eventHistory_PiCam_SetPictureSize;
+
+    protected:
+
+      // ----------------------------------------------------------------------
       // Telemetry dispatch
       // ----------------------------------------------------------------------
 
@@ -782,6 +838,56 @@ namespace App {
       //!
       History<TlmEntry_PiCam_PictureCnt>
         *tlmHistory_PiCam_PictureCnt;
+
+    protected:
+
+      // ----------------------------------------------------------------------
+      // Channel: PiCam_PictureSize
+      // ----------------------------------------------------------------------
+
+      //! Handle channel PiCam_PictureSize
+      //!
+      virtual void tlmInput_PiCam_PictureSize(
+          const Fw::Time& timeTag, /*!< The time*/
+          const App::PictureSize& val /*!< The channel value*/
+      );
+
+      //! A telemetry entry for channel PiCam_PictureSize
+      //!
+      typedef struct {
+        Fw::Time timeTag;
+        App::PictureSize arg;
+      } TlmEntry_PiCam_PictureSize;
+
+      //! The history of PiCam_PictureSize values
+      //!
+      History<TlmEntry_PiCam_PictureSize>
+        *tlmHistory_PiCam_PictureSize;
+
+    protected:
+
+      // ----------------------------------------------------------------------
+      // Channel: PiCam_Timeinterval
+      // ----------------------------------------------------------------------
+
+      //! Handle channel PiCam_Timeinterval
+      //!
+      virtual void tlmInput_PiCam_Timeinterval(
+          const Fw::Time& timeTag, /*!< The time*/
+          const U8& val /*!< The channel value*/
+      );
+
+      //! A telemetry entry for channel PiCam_Timeinterval
+      //!
+      typedef struct {
+        Fw::Time timeTag;
+        U8 arg;
+      } TlmEntry_PiCam_Timeinterval;
+
+      //! The history of PiCam_Timeinterval values
+      //!
+      History<TlmEntry_PiCam_Timeinterval>
+        *tlmHistory_PiCam_Timeinterval;
 
     protected:
 

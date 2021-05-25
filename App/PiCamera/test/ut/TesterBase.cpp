@@ -40,6 +40,10 @@ namespace App {
     // Initialize telemetry histories
     this->tlmHistory_PiCam_PictureCnt =
       new History<TlmEntry_PiCam_PictureCnt>(maxHistorySize);
+    this->tlmHistory_PiCam_PictureSize =
+      new History<TlmEntry_PiCam_PictureSize>(maxHistorySize);
+    this->tlmHistory_PiCam_Timeinterval =
+      new History<TlmEntry_PiCam_Timeinterval>(maxHistorySize);
     // Initialize event histories
 #if FW_ENABLE_TEXT_LOGGING
     this->textLogHistory = new History<TextLogEntry>(maxHistorySize);
@@ -48,6 +52,10 @@ namespace App {
       new History<EventEntry_PiCam_BarometerDataUpdate>(maxHistorySize);
     this->eventHistory_PiCam_PictureError =
       new History<EventEntry_PiCam_PictureError>(maxHistorySize);
+    this->eventHistory_PiCam_SetTimeInterval =
+      new History<EventEntry_PiCam_SetTimeInterval>(maxHistorySize);
+    this->eventHistory_PiCam_SetPictureSize =
+      new History<EventEntry_PiCam_SetPictureSize>(maxHistorySize);
     // Initialize histories for typed user output ports
     this->fromPortHistory_PingOut =
       new History<FromPortEntry_PingOut>(maxHistorySize);
@@ -64,12 +72,16 @@ namespace App {
     delete this->cmdResponseHistory;
     // Destroy telemetry histories
     delete this->tlmHistory_PiCam_PictureCnt;
+    delete this->tlmHistory_PiCam_PictureSize;
+    delete this->tlmHistory_PiCam_Timeinterval;
     // Destroy event histories
 #if FW_ENABLE_TEXT_LOGGING
     delete this->textLogHistory;
 #endif
     delete this->eventHistory_PiCam_BarometerDataUpdate;
     delete this->eventHistory_PiCam_PictureError;
+    delete this->eventHistory_PiCam_SetTimeInterval;
+    delete this->eventHistory_PiCam_SetPictureSize;
     // Destroy port histories
     delete this->fromPortHistory_PingOut;
     // Destroy port histories
@@ -1018,6 +1030,44 @@ namespace App {
   }
 
   // ----------------------------------------------------------------------
+  // Command: PiCam_SetTimeInterval
+  // ----------------------------------------------------------------------
+
+  void PiCameraTesterBase ::
+    sendCmd_PiCam_SetTimeInterval(
+        const NATIVE_INT_TYPE instance,
+        const U32 cmdSeq,
+        U8 timeInterval
+    )
+  {
+
+    // Serialize arguments
+
+    Fw::CmdArgBuffer buff;
+    Fw::SerializeStatus _status;
+    _status = buff.serialize(timeInterval);
+    FW_ASSERT(_status == Fw::FW_SERIALIZE_OK,static_cast<AssertArg>(_status));
+
+    // Call output command port
+
+    FwOpcodeType _opcode;
+    const U32 idBase = this->getIdBase();
+    _opcode = PiCameraComponentBase::OPCODE_PICAM_SETTIMEINTERVAL + idBase;
+
+    if (this->m_to_CmdDisp[0].isConnected()) {
+      this->m_to_CmdDisp[0].invoke(
+          _opcode,
+          cmdSeq,
+          buff
+      );
+    }
+    else {
+      printf("Test Command Output port not connected!\n");
+    }
+
+  }
+
+  // ----------------------------------------------------------------------
   // Command: PiCam_SetSize
   // ----------------------------------------------------------------------
 
@@ -1132,6 +1182,30 @@ namespace App {
         break;
       }
 
+      case PiCameraComponentBase::CHANNELID_PICAM_PICTURESIZE:
+      {
+        App::PictureSize arg;
+        const Fw::SerializeStatus _status = val.deserialize(arg);
+        if (_status != Fw::FW_SERIALIZE_OK) {
+          printf("Error deserializing PiCam_PictureSize: %d\n", _status);
+          return;
+        }
+        this->tlmInput_PiCam_PictureSize(timeTag, arg);
+        break;
+      }
+
+      case PiCameraComponentBase::CHANNELID_PICAM_TIMEINTERVAL:
+      {
+        U8 arg;
+        const Fw::SerializeStatus _status = val.deserialize(arg);
+        if (_status != Fw::FW_SERIALIZE_OK) {
+          printf("Error deserializing PiCam_Timeinterval: %d\n", _status);
+          return;
+        }
+        this->tlmInput_PiCam_Timeinterval(timeTag, arg);
+        break;
+      }
+
       default: {
         FW_ASSERT(0, id);
         break;
@@ -1146,6 +1220,8 @@ namespace App {
   {
     this->tlmSize = 0;
     this->tlmHistory_PiCam_PictureCnt->clear();
+    this->tlmHistory_PiCam_PictureSize->clear();
+    this->tlmHistory_PiCam_Timeinterval->clear();
   }
 
   // ----------------------------------------------------------------------
@@ -1160,6 +1236,36 @@ namespace App {
   {
     TlmEntry_PiCam_PictureCnt e = { timeTag, val };
     this->tlmHistory_PiCam_PictureCnt->push_back(e);
+    ++this->tlmSize;
+  }
+
+  // ----------------------------------------------------------------------
+  // Channel: PiCam_PictureSize
+  // ----------------------------------------------------------------------
+
+  void PiCameraTesterBase ::
+    tlmInput_PiCam_PictureSize(
+        const Fw::Time& timeTag,
+        const App::PictureSize& val
+    )
+  {
+    TlmEntry_PiCam_PictureSize e = { timeTag, val };
+    this->tlmHistory_PiCam_PictureSize->push_back(e);
+    ++this->tlmSize;
+  }
+
+  // ----------------------------------------------------------------------
+  // Channel: PiCam_Timeinterval
+  // ----------------------------------------------------------------------
+
+  void PiCameraTesterBase ::
+    tlmInput_PiCam_Timeinterval(
+        const Fw::Time& timeTag,
+        const U8& val
+    )
+  {
+    TlmEntry_PiCam_Timeinterval e = { timeTag, val };
+    this->tlmHistory_PiCam_Timeinterval->push_back(e);
     ++this->tlmSize;
   }
 
@@ -1340,6 +1446,107 @@ namespace App {
 
       }
 
+      case PiCameraComponentBase::EVENTID_PICAM_SETTIMEINTERVAL:
+      {
+
+        Fw::SerializeStatus _status = Fw::FW_SERIALIZE_OK;
+#if FW_AMPCS_COMPATIBLE
+        // Deserialize the number of arguments.
+        U8 _numArgs;
+        _status = args.deserialize(_numArgs);
+        FW_ASSERT(
+          _status == Fw::FW_SERIALIZE_OK,
+          static_cast<AssertArg>(_status)
+        );
+        // verify they match expected.
+        FW_ASSERT(_numArgs == 1,_numArgs,1);
+
+#endif
+        U8 timeInterval;
+#if FW_AMPCS_COMPATIBLE
+        {
+          // Deserialize the argument size
+          U8 _argSize;
+          _status = args.deserialize(_argSize);
+          FW_ASSERT(
+            _status == Fw::FW_SERIALIZE_OK,
+            static_cast<AssertArg>(_status)
+          );
+          FW_ASSERT(_argSize == sizeof(U8),_argSize,sizeof(U8));
+        }
+#endif
+        _status = args.deserialize(timeInterval);
+        FW_ASSERT(
+            _status == Fw::FW_SERIALIZE_OK,
+            static_cast<AssertArg>(_status)
+        );
+
+        this->logIn_ACTIVITY_LO_PiCam_SetTimeInterval(timeInterval);
+
+        break;
+
+      }
+
+      case PiCameraComponentBase::EVENTID_PICAM_SETPICTURESIZE:
+      {
+
+        Fw::SerializeStatus _status = Fw::FW_SERIALIZE_OK;
+#if FW_AMPCS_COMPATIBLE
+        // Deserialize the number of arguments.
+        U8 _numArgs;
+        _status = args.deserialize(_numArgs);
+        FW_ASSERT(
+          _status == Fw::FW_SERIALIZE_OK,
+          static_cast<AssertArg>(_status)
+        );
+        // verify they match expected.
+        FW_ASSERT(_numArgs == 2,_numArgs,2);
+
+#endif
+        U32 width;
+#if FW_AMPCS_COMPATIBLE
+        {
+          // Deserialize the argument size
+          U8 _argSize;
+          _status = args.deserialize(_argSize);
+          FW_ASSERT(
+            _status == Fw::FW_SERIALIZE_OK,
+            static_cast<AssertArg>(_status)
+          );
+          FW_ASSERT(_argSize == sizeof(U32),_argSize,sizeof(U32));
+        }
+#endif
+        _status = args.deserialize(width);
+        FW_ASSERT(
+            _status == Fw::FW_SERIALIZE_OK,
+            static_cast<AssertArg>(_status)
+        );
+
+        U32 height;
+#if FW_AMPCS_COMPATIBLE
+        {
+          // Deserialize the argument size
+          U8 _argSize;
+          _status = args.deserialize(_argSize);
+          FW_ASSERT(
+            _status == Fw::FW_SERIALIZE_OK,
+            static_cast<AssertArg>(_status)
+          );
+          FW_ASSERT(_argSize == sizeof(U32),_argSize,sizeof(U32));
+        }
+#endif
+        _status = args.deserialize(height);
+        FW_ASSERT(
+            _status == Fw::FW_SERIALIZE_OK,
+            static_cast<AssertArg>(_status)
+        );
+
+        this->logIn_ACTIVITY_LO_PiCam_SetPictureSize(width, height);
+
+        break;
+
+      }
+
       default: {
         FW_ASSERT(0, id);
         break;
@@ -1357,6 +1564,8 @@ namespace App {
     this->eventsSize_PiCam_PositionUpdate = 0;
     this->eventHistory_PiCam_BarometerDataUpdate->clear();
     this->eventHistory_PiCam_PictureError->clear();
+    this->eventHistory_PiCam_SetTimeInterval->clear();
+    this->eventHistory_PiCam_SetPictureSize->clear();
   }
 
 #if FW_ENABLE_TEXT_LOGGING
@@ -1494,6 +1703,39 @@ namespace App {
       code
     };
     eventHistory_PiCam_PictureError->push_back(e);
+    ++this->eventsSize;
+  }
+
+  // ----------------------------------------------------------------------
+  // Event: PiCam_SetTimeInterval
+  // ----------------------------------------------------------------------
+
+  void PiCameraTesterBase ::
+    logIn_ACTIVITY_LO_PiCam_SetTimeInterval(
+        U8 timeInterval
+    )
+  {
+    EventEntry_PiCam_SetTimeInterval e = {
+      timeInterval
+    };
+    eventHistory_PiCam_SetTimeInterval->push_back(e);
+    ++this->eventsSize;
+  }
+
+  // ----------------------------------------------------------------------
+  // Event: PiCam_SetPictureSize
+  // ----------------------------------------------------------------------
+
+  void PiCameraTesterBase ::
+    logIn_ACTIVITY_LO_PiCam_SetPictureSize(
+        U32 width,
+        U32 height
+    )
+  {
+    EventEntry_PiCam_SetPictureSize e = {
+      width, height
+    };
+    eventHistory_PiCam_SetPictureSize->push_back(e);
     ++this->eventsSize;
   }
 

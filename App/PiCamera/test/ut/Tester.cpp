@@ -13,7 +13,6 @@
 #include "Tester.hpp"
 #include "Os/FileSystem.hpp"
 
-
 #define INSTANCE 0
 #define MAX_HISTORY_SIZE 10
 #define QUEUE_DEPTH 10

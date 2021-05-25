@@ -971,4 +971,9 @@
         <target component = "piCamera" port = "barometerDataIn" type = "App::PiCameraBarometerPort" num = "0"/>
     </connection>
 
+    <connection name="groundIfPiCamera">
+        <source component="piCamera" port="PictureOut" type="TiPiCameraPicturePortme" num="0"/>
+        <target component="groundIf" port="pictureIn" type="PiCameraPicturePort" num="0"/>
+    </connection>
+
 </assembly>

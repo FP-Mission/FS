@@ -136,6 +136,9 @@ namespace App {
       tlmWrite_PiCam_Timeinterval(this->timeInterval);
       PictureSize pictureSize(this->width,this->height);
       tlmWrite_PiCam_PictureSize(pictureSize);
+      if(timeInterval == 0){
+        return;
+      }
       if(timeCpt < timeInterval){
           timeCpt++;
           return;
@@ -143,7 +146,7 @@ namespace App {
       bool sucessPicture = takePicture();
       if (sucessPicture){
           log_ACTIVITY_LO_PiCam_PictureTaken();
-          //PictureOut_out(0,currentTime);
+          PictureOut_out(0,currentTime);
           timeCpt=1;
           return;
       }
