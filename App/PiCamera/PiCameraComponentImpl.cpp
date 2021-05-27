@@ -205,8 +205,8 @@ namespace App {
         outFileData.close();
 
         loadPicture();
-        for(U32 i = 0; i< fileSize/256; i++){
-          m_picturePacket.setData(binaryData,i,256);
+        for(U32 i = 0; i< fileSize/40; i++){
+          m_picturePacket.setData(binaryData,i,40);
           m_picturePacket.setFrameId(i);
           m_picturePacket.setPictureId(pictureId);
           m_comBuffer.resetSer();
