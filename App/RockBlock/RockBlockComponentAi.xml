@@ -90,11 +90,30 @@
                 An error occurred while attempting to perform a mailbox check or receive a message from the GSS.
             </comment>
         </event>
-        <event id="5" name="RckBlck_RingAlert" severity="ACTIVITY_HI" format_string = "Rin alter received" >
+        <event id="5" name="RckBlck_RingAlert" severity="ACTIVITY_HI" format_string = "Ring altert received" >
             <comment>
                 Ring alert received
             </comment>
         </event>
-        
+        <event id="6" name="RckBlck_CommandSent" severity="DIAGNOSTIC" format_string = "AT command sent: %s" >
+            <comment>
+                Command sent to the RockBlock module
+            </comment>
+            <args>
+                <arg name="command" type="string" size="16">
+                    <comment>AT command sent</comment>
+                </arg>
+            </args>
+        </event>
+        <event id="7" name="RckBlck_Response" severity="DIAGNOSTIC" format_string = "Response: %s" >
+            <comment>
+                Log RockBlock response
+            </comment>
+            <args>
+                <arg name="data" type="string" size="32">
+                    <comment>Data received</comment>
+                </arg>
+            </args>
+        </event>
      </events>
 </component>

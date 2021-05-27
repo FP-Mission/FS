@@ -79,7 +79,9 @@ void RockBlockComponentImpl:: sendRockBlockCommand(std::string command) {
         buffer.setData((U8*)commandToSend);
         buffer.setSize(size);
         this->serialSend_out(0, buffer);
-        DEBUG_PRINT("[RockBlock] Tx (%u) %s\n", size, command.c_str());
+
+        Fw::LogStringArg arg(command.c_str());
+        this->log_DIAGNOSTIC_RckBlck_CommandSent(arg);
     } else {
         // @todo Replace by queue
         DEBUG_PRINT("RockBlock is not ok, abord command %s\n", command.c_str());
@@ -159,7 +161,8 @@ void RockBlockComponentImpl ::serialRecv_handler(
     try {
         if(detectCommand("OK", pointer)) {
             this->rockBlockIsOk = true;
-            DEBUG_PRINT("[RockBlock] OK\n");
+            Fw::LogStringArg arg("OK");
+            this->log_DIAGNOSTIC_RckBlck_Response(arg);
         } else if(detectCommand("+CSQ:", pointer)) {
             U8 signalQuality = atoi(pointer + 5);
             this->log_ACTIVITY_LO_RckBlck_CSQ(signalQuality);
@@ -222,7 +225,8 @@ void RockBlockComponentImpl ::serialRecv_handler(
             // Empty line
             //DEBUG_PRINT("[RockBlock] Emtpy\n", pointer);
         } else {
-            DEBUG_PRINT("[RockBlock] Rx (%u): %s\n", buffsize, pointer);
+            Fw::LogStringArg arg(pointer);
+            this->log_DIAGNOSTIC_RckBlck_Response(arg);
         }
     } catch (...) {
         Fw::Logger::logMsg("[ERROR] Unable to decode frame received from RockBlock\n");

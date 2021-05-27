@@ -808,8 +808,18 @@
     <event component="rockBlock" name="RckBlck_MailboxCheckFail" id="0x9a" severity="WARNING_HI" format_string="Unable to check mailbox or receive message from GSS">
       <args/>
     </event>
-    <event component="rockBlock" name="RckBlck_RingAlert" id="0x9b" severity="ACTIVITY_HI" format_string="Rin alter received">
+    <event component="rockBlock" name="RckBlck_RingAlert" id="0x9b" severity="ACTIVITY_HI" format_string="Ring altert received">
       <args/>
+    </event>
+    <event component="rockBlock" name="RckBlck_CommandSent" id="0x9c" severity="DIAGNOSTIC" format_string="AT command sent: %s">
+      <args>
+        <arg name="command" len="16" type="string"/>
+      </args>
+    </event>
+    <event component="rockBlock" name="RckBlck_Response" id="0x9d" severity="DIAGNOSTIC" format_string="Response: %s">
+      <args>
+        <arg name="data" len="32" type="string"/>
+      </args>
     </event>
     <event component="temperatureProbes" name="TempPro_LowInternalWarning" id="0xa0" severity="WARNING_HI" format_string="Low internal temperature: %d">
       <args>
