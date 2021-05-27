@@ -195,7 +195,7 @@ namespace App {
         sendingPicture = currentTime;
         pictureId = nbPicture;
         std::ostringstream osData;
-        osData << TELEMETRY_DIRECTORY << "data.bin";
+        osData << DATA_DIRECTORY << "data.bin";
         std::ofstream outFileData (osData.str(), std::ios::out | std::ios::binary);
         outFileData.write((char*)&sendingPicture,sizeof(sendingPicture));
         outFileData.write((char*)&pictureId,sizeof(pictureId));
@@ -345,7 +345,7 @@ namespace App {
       }
       std::ifstream indata; // indata is like cin
       std::ostringstream osData;
-      osData << TELEMETRY_DIRECTORY << "data.bin";
+      osData << DATA_DIRECTORY << "data.bin";
       indata.open(osData.str(), std::ios::in | std::ios::binary); // opens the file
       if(!indata){
         return;
@@ -353,11 +353,14 @@ namespace App {
       indata.read((char*)&sendingPicture,sizeof(sendingPicture));
       indata.read((char*)&pictureId,sizeof(pictureId));
       indata.close();
-
+      printf("sewsedsederdrefdrefdred : %d",sendingPicture);
       std::ostringstream osPictureSsdv;
-      osPictureSsdv << App::BIN_DIRECTORY << sendingPicture <<".bin";
+      osPictureSsdv << BIN_DIRECTORY << sendingPicture <<".bin";
       printf("%s\n",osPictureSsdv.str().c_str());
       std::ifstream in(osPictureSsdv.str().c_str(),std::ios::binary | std::ios::ate);
+      if(!in){
+        return;
+      }
       U32 nbPacket = in.tellg()/256;
       U8 data[nbPacket][257];
       printf("nb image packet : %d\n",nbPacket);
