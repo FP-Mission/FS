@@ -196,6 +196,7 @@ namespace App {
         pictureId = nbPicture;
         std::ostringstream osData;
         osData << DATA_DIRECTORY << "data.bin";
+        printf("sesesesederfd %d\n",sendingPicture);
         std::ofstream outFileData (osData.str(), std::ios::out | std::ios::binary);
         outFileData.write((char*)&sendingPicture,sizeof(sendingPicture));
         outFileData.write((char*)&pictureId,sizeof(pictureId));
@@ -353,10 +354,8 @@ namespace App {
       indata.read((char*)&sendingPicture,sizeof(sendingPicture));
       indata.read((char*)&pictureId,sizeof(pictureId));
       indata.close();
-      printf("sewsedsederdrefdrefdred : %d",sendingPicture);
       std::ostringstream osPictureSsdv;
       osPictureSsdv << BIN_DIRECTORY << sendingPicture <<".bin";
-      printf("%s\n",osPictureSsdv.str().c_str());
       std::ifstream in(osPictureSsdv.str().c_str(),std::ios::binary | std::ios::ate);
       if(!in){
         return;
