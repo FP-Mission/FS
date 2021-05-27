@@ -14,6 +14,8 @@
 #include <App/PiCamera/PiCameraComponentImpl.hpp>
 #include "Fw/Types/BasicTypes.hpp"
 #include "Os/FileSystem.hpp"
+#include <Fw/Com/ComPacket.hpp>
+
 
 #include "toojpeg.h"
 #include <iostream>
@@ -34,6 +36,7 @@ namespace App {
         const char *const compName
     ) : PiCameraComponentBase(compName), nbPicture(0) ,width(BASE_WIDTH),
      height(BASE_HEIGHT), indexSSDV(0), timeInterval(6), timeCpt(0), sendingPicture(0), pictureId(0)
+     ,fileSize(0)
   {
     std::ostringstream osTelemetry;
     osTelemetry << TELEMETRY_DIRECTORY << "telemetry.csv";
@@ -55,7 +58,7 @@ namespace App {
     outFileTelemetry.close();
     }
     getNumberOfLine(osTelemetry);
-    loadPicture();
+    loadData();
   }
 
   void PiCameraComponentImpl ::
@@ -196,14 +199,27 @@ namespace App {
         pictureId = nbPicture;
         std::ostringstream osData;
         osData << DATA_DIRECTORY << "data.bin";
-        printf("sesesesederfd %d\n",sendingPicture);
         std::ofstream outFileData (osData.str(), std::ios::out | std::ios::binary);
         outFileData.write((char*)&sendingPicture,sizeof(sendingPicture));
         outFileData.write((char*)&pictureId,sizeof(pictureId));
         outFileData.close();
 
-        this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+        loadPicture();
+        U8 frame[256];
+        for(U32 i = 0; i< fileSize/256; i++){
+          std::memcpy(frame,binaryData+i*256,256);
+          m_picturePacket.setData(frame,256);
+          m_picturePacket.setFrameId(i);
+          m_picturePacket.setPictureId(pictureId);
+          m_comBuffer.resetSer();
+          Fw::SerializeStatus stat = this->m_picturePacket.serialize(this->m_comBuffer);
+          FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
+          this->PictureOut_out(0,this->m_comBuffer,0);
+        }
 
+        
+        
+        this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
       }
 
   void PiCameraComponentImpl::PiCam_SetTimeInterval_cmdHandler(
@@ -341,6 +357,28 @@ namespace App {
     }
 
   void PiCameraComponentImpl::loadPicture(){
+    delete binaryData;
+      std::ostringstream osPictureSsdv;
+      osPictureSsdv << BIN_DIRECTORY << sendingPicture <<".bin";
+      std::ifstream in(osPictureSsdv.str().c_str(),std::ios::binary | std::ios::ate);
+      if(!in){
+        return;
+      }
+      fileSize = in.tellg();
+      in.seekg (0, std::ios::beg);
+      binaryData = new U8[fileSize];
+      char* dataChar = reinterpret_cast<char*>(binaryData);
+      in.read(dataChar ,fileSize);
+
+      in.close();
+
+      std::ofstream outFileData ("/home/pi/data.bin",std::ios::out | std::ios::binary);
+          outFileData.write(dataChar,fileSize);
+
+      outFileData.close();
+  }
+
+  void PiCameraComponentImpl::loadData(){
       if(nbPicture == 0){
         return;
       }
@@ -354,30 +392,8 @@ namespace App {
       indata.read((char*)&sendingPicture,sizeof(sendingPicture));
       indata.read((char*)&pictureId,sizeof(pictureId));
       indata.close();
-      std::ostringstream osPictureSsdv;
-      osPictureSsdv << BIN_DIRECTORY << sendingPicture <<".bin";
-      std::ifstream in(osPictureSsdv.str().c_str(),std::ios::binary | std::ios::ate);
-      if(!in){
-        return;
-      }
-      U32 nbPacket = in.tellg()/256;
-      U8 data[nbPacket][257];
-      printf("nb image packet : %d\n",nbPacket);
-      in.seekg (0, std::ios::beg);
 
-      for(U8 i = 0; i<nbPacket ;i++){
-          char* dataChar = reinterpret_cast<char*>(data[i]);
-          data[i][0] = i;
-          in.read(dataChar+1,256);
-      }
-      in.close();
-     std::ofstream outFileData ("/home/pi/data.bin",std::ios::out | std::ios::binary);
-      for(U8 i = 0; i<nbPacket ;i++){
-        char* dataChar = reinterpret_cast<char*>(data[i]);
-          outFileData.write(dataChar+1,256);
-      }
-      outFileData.close();
-      
+      loadPicture();
   }
 
 } // end namespace App

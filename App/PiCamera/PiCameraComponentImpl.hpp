@@ -15,6 +15,7 @@
 
 #include "App/PiCamera/PiCameraComponentAc.hpp"
 #include "App/Config/PiCameraConfig.hpp"
+#include <Fw/Tlm/PicturePacket.hpp>
 
 #include <raspicam/raspicam.h>
 #include <fstream>
@@ -145,6 +146,7 @@ namespace App {
       void getNumberOfLine(std::ostringstream& path);
 
       void loadPicture();
+      void loadData();
 
       F32 temperature;
       F32 pressure;
@@ -169,6 +171,11 @@ namespace App {
 
       U32 sendingPicture;
       U32 pictureId;
+      U32 fileSize;
+
+     Fw::ComBuffer m_comBuffer;
+     Fw::PicturePacket m_picturePacket;
+     U8* binaryData;
     };
 
 } // end namespace App
