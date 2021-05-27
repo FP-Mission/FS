@@ -8,6 +8,7 @@
     <import_port_type>App/PiCamera/PiCameraPort/PiCameraBarometerPortAi.xml</import_port_type>
     <import_port_type>App/PiCamera/PiCameraPort/PiCameraSizePortAi.xml</import_port_type>
     <import_port_type>App/PiCamera/PiCameraPort/PiCameraPicturePortAi.xml</import_port_type>
+    <import_port_type>App/PiCamera/PiCameraPort/PiCameraFramePortAi.xml</import_port_type>
     <import_port_type>Svc/Sched/SchedPortAi.xml</import_port_type>
     
     <import_serializable_type>App/PiCamera/PiCameraType/PictureSizeSerializableAi.xml</import_serializable_type>
@@ -56,6 +57,12 @@
             Port out for the last picture path;
             </comment>
         </port>
+        <port name="SendFrame" data_type="PiCameraFramePort" kind="sync_input">
+            <comment>
+            Port out for the last picture path;
+            </comment>
+        </port>
+
     </ports>
 
     <commands>
@@ -64,7 +71,12 @@
             Take picture
             </comment>
         </command>
-        <command kind="async" opcode="1" mnemonic="PiCam_SetTimeInterval">
+        <command kind="async" opcode="1" mnemonic="PiCam_SendLast">
+            <comment>
+            Take picture
+            </comment>
+        </command>
+        <command kind="async" opcode="2" mnemonic="PiCam_SetTimeInterval">
             <comment>
             Set time interval
             </comment>
@@ -74,7 +86,7 @@
                 </arg>
             </args>
         </command>
-        <command kind="async" opcode="2" mnemonic="PiCam_SetSize">
+        <command kind="async" opcode="3" mnemonic="PiCam_SetSize">
             <comment>
             Set the size of picture
             </comment>

@@ -33,7 +33,7 @@ namespace App {
     PiCameraComponentImpl(
         const char *const compName
     ) : PiCameraComponentBase(compName), nbPicture(0) ,width(BASE_WIDTH),
-     height(BASE_HEIGHT), indexSSDV(0), timeInterval(6), timeCpt(0)
+     height(BASE_HEIGHT), indexSSDV(0), timeInterval(6), timeCpt(0), sendingPicture(0), pictureId(0)
   {
     std::ostringstream osTelemetry;
     osTelemetry << TELEMETRY_DIRECTORY << "telemetry.csv";
@@ -46,15 +46,16 @@ namespace App {
       Os::FileSystem::createDirectory(PNG_DIRECTORY);
       Os::FileSystem::createDirectory(JPG_DIRECTORY);
       Os::FileSystem::createDirectory(BIN_DIRECTORY);
+      Os::FileSystem::createDirectory(DATA_DIRECTORY);
 
 
     std::ofstream outFileTelemetry (osTelemetry.str());
-    outFileTelemetry<< "Timecode" <<","<< "AltitudeGPS" <<","<< "AltitudeBaro" << 
+    outFileTelemetry<< "id" <<"Timecode" <<","<< "AltitudeGPS" <<","<< "AltitudeBaro" << 
     ","<<"Temperature"<<","<< "Pressure"<<","<< "Longitude" <<","<< "Latitude" << "\n";
     outFileTelemetry.close();
     }
-
     getNumberOfLine(osTelemetry);
+    loadPicture();
   }
 
   void PiCameraComponentImpl ::
@@ -153,6 +154,13 @@ namespace App {
       log_WARNING_LO_PiCam_PictureError(0);
   }
 
+      void PiCameraComponentImpl::SendFrame_handler(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          U32 frame /*!< The call order*/
+      ){
+
+      }
+
 
   // ----------------------------------------------------------------------
   // Command handler implementations
@@ -175,6 +183,27 @@ namespace App {
     this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
 
   }
+
+   void PiCameraComponentImpl::PiCam_SendLast_cmdHandler(
+          const FwOpcodeType opCode, /*!< The opcode*/
+          const U32 cmdSeq /*!< The command sequence number*/
+      ){
+        if(nbPicture == 0){
+          this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
+          return;
+        }
+        sendingPicture = currentTime;
+        pictureId = nbPicture;
+        std::ostringstream osData;
+        osData << TELEMETRY_DIRECTORY << "data.bin";
+        std::ofstream outFileData (osData.str(), std::ios::out | std::ios::binary);
+        outFileData.write((char*)&sendingPicture,sizeof(sendingPicture));
+        outFileData.write((char*)&pictureId,sizeof(pictureId));
+        outFileData.close();
+
+        this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+
+      }
 
   void PiCameraComponentImpl::PiCam_SetTimeInterval_cmdHandler(
           const FwOpcodeType opCode, /*!< The opcode*/
@@ -227,12 +256,12 @@ namespace App {
     //extract the image in rgb format
     Camera.retrieve ( data,raspicam::RASPICAM_FORMAT_RGB );//get camera image
 
+    ++nbPicture;
     managePpm(Camera,data);
     managePng(data);
     manageJpg(data);
     manageTelemetry();
    
-    ++nbPicture;
     tlmWrite_PiCam_PictureCnt(nbPicture);
 
     delete data;
@@ -244,7 +273,7 @@ namespace App {
     osTelemetry << TELEMETRY_DIRECTORY << "telemetry.csv";
     std::ofstream outFileTelemetry (osTelemetry.str(),std::ios::app );
 
-    outFileTelemetry << currentTime <<"," <<altitudeGps <<","<< altitudeBaro << 
+    outFileTelemetry << nbPicture <<currentTime <<"," <<altitudeGps <<","<< altitudeBaro << 
     ","<<temperature<<","<< pressure<<","<< longitude<<","<< latitude << "\n";
 
     outFileTelemetry.close();
@@ -309,5 +338,44 @@ namespace App {
   void PiCameraComponentImpl::myOutput(unsigned char byte){
       PiCameraComponentImpl::jpgFile << byte;
     }
+
+  void PiCameraComponentImpl::loadPicture(){
+      if(nbPicture == 0){
+        return;
+      }
+      std::ifstream indata; // indata is like cin
+      std::ostringstream osData;
+      osData << TELEMETRY_DIRECTORY << "data.bin";
+      indata.open(osData.str(), std::ios::in | std::ios::binary); // opens the file
+      if(!indata){
+        return;
+      }
+      indata.read((char*)&sendingPicture,sizeof(sendingPicture));
+      indata.read((char*)&pictureId,sizeof(pictureId));
+      indata.close();
+
+      std::ostringstream osPictureSsdv;
+      osPictureSsdv << App::BIN_DIRECTORY << sendingPicture <<".bin";
+      printf("%s\n",osPictureSsdv.str().c_str());
+      std::ifstream in(osPictureSsdv.str().c_str(),std::ios::binary | std::ios::ate);
+      U32 nbPacket = in.tellg()/256;
+      U8 data[nbPacket][257];
+      printf("nb image packet : %d\n",nbPacket);
+      in.seekg (0, std::ios::beg);
+
+      for(U8 i = 0; i<nbPacket ;i++){
+          char* dataChar = reinterpret_cast<char*>(data[i]);
+          data[i][0] = i;
+          in.read(dataChar+1,256);
+      }
+      in.close();
+     std::ofstream outFileData ("/home/pi/data.bin",std::ios::out | std::ios::binary);
+      for(U8 i = 0; i<nbPacket ;i++){
+        char* dataChar = reinterpret_cast<char*>(data[i]);
+          outFileData.write(dataChar+1,256);
+      }
+      outFileData.close();
+      
+  }
 
 } // end namespace App

@@ -96,6 +96,11 @@ namespace App {
           NATIVE_UINT_TYPE context /*!< The call order*/
       );
 
+    void SendFrame_handler(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          U32 frame /*!< The call order*/
+      );
+
     PRIVATE:
 
       // ----------------------------------------------------------------------
@@ -105,6 +110,11 @@ namespace App {
       //! Implementation for PiCam_TakePicture command handler
       //! Take picture
       void PiCam_TakePicture_cmdHandler(
+          const FwOpcodeType opCode, /*!< The opcode*/
+          const U32 cmdSeq /*!< The command sequence number*/
+      );
+
+     void PiCam_SendLast_cmdHandler(
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq /*!< The command sequence number*/
       );
@@ -134,6 +144,8 @@ namespace App {
 
       void getNumberOfLine(std::ostringstream& path);
 
+      void loadPicture();
+
       F32 temperature;
       F32 pressure;
       U16 altitudeBaro;
@@ -154,6 +166,9 @@ namespace App {
       U8 indexSSDV;
       U8 timeInterval;
       U8 timeCpt;
+
+      U32 sendingPicture;
+      U32 pictureId;
     };
 
 } // end namespace App
