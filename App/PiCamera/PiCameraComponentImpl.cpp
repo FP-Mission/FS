@@ -50,7 +50,7 @@ namespace App {
 
 
     std::ofstream outFileTelemetry (osTelemetry.str());
-    outFileTelemetry<< "id" <<"Timecode" <<","<< "AltitudeGPS" <<","<< "AltitudeBaro" << 
+    outFileTelemetry<< "id" <<","<<"Timecode" <<","<< "AltitudeGPS" <<","<< "AltitudeBaro" << 
     ","<<"Temperature"<<","<< "Pressure"<<","<< "Longitude" <<","<< "Latitude" << "\n";
     outFileTelemetry.close();
     }
@@ -147,7 +147,7 @@ namespace App {
       bool sucessPicture = takePicture();
       if (sucessPicture){
           log_ACTIVITY_LO_PiCam_PictureTaken();
-          PictureOut_out(0,currentTime);
+          //PictureOut_out(0,currentTime);
           timeCpt=1;
           return;
       }
@@ -273,7 +273,7 @@ namespace App {
     osTelemetry << TELEMETRY_DIRECTORY << "telemetry.csv";
     std::ofstream outFileTelemetry (osTelemetry.str(),std::ios::app );
 
-    outFileTelemetry << nbPicture <<currentTime <<"," <<altitudeGps <<","<< altitudeBaro << 
+    outFileTelemetry << nbPicture <<","<<currentTime <<"," <<altitudeGps <<","<< altitudeBaro << 
     ","<<temperature<<","<< pressure<<","<< longitude<<","<< latitude << "\n";
 
     outFileTelemetry.close();

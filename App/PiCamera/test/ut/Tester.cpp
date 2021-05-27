@@ -72,7 +72,7 @@ namespace App {
     std::ostringstream osTelemetry, dataTheoritical;
     osTelemetry << TELEMETRY_DIRECTORY << "telemetry.csv";
 
-    dataTheoritical<< "id" <<"Timecode" <<","<< "AltitudeGPS" <<","<< "AltitudeBaro" << 
+    dataTheoritical<< "id" <<","<<"Timecode" <<","<< "AltitudeGPS" <<","<< "AltitudeBaro" << 
     ","<<"Temperature"<<","<< "Pressure"<<","<< "Longitude" <<","<< "Latitude";
 
     std::ifstream f(osTelemetry.str());

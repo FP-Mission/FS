@@ -7,7 +7,7 @@
     <import_port_type>App/FlexTrak/Position/PositionPortAi.xml</import_port_type>
     <import_port_type>App/PiCamera/PiCameraPort/PiCameraBarometerPortAi.xml</import_port_type>
     <import_port_type>App/PiCamera/PiCameraPort/PiCameraSizePortAi.xml</import_port_type>
-    <import_port_type>App/PiCamera/PiCameraPort/PiCameraPicturePortAi.xml</import_port_type>
+    <import_port_type>Fw/Com/ComPortAi.xml</import_port_type>
     <import_port_type>App/PiCamera/PiCameraPort/PiCameraFramePortAi.xml</import_port_type>
     <import_port_type>Svc/Sched/SchedPortAi.xml</import_port_type>
     
@@ -52,7 +52,7 @@
             The rate groupe scheduler input
             </comment>
         </port>
-        <port name="PictureOut" data_type="PiCameraPicturePort" kind="output">
+        <port name="PictureOut" data_type="Fw::Com" kind="output">
             <comment>
             Port out for the last picture path;
             </comment>
