@@ -242,7 +242,9 @@
       </args>
     </command>
     <command component="rockBlock" mnemonic="RckBlck_SendCommand" opcode="0x96">
-      <args/>
+      <args>
+        <arg name="AT_Command" type="U8"/>
+      </args>
     </command>
     <command component="temperatureProbes" mnemonic="TempProb_SetInternalLevel" opcode="0xa0">
       <args>
@@ -787,10 +789,27 @@
         <arg name="flightMode" type="App::FlightMode"/>
       </args>
     </event>
-    <event component="rockBlock" name="RckBlck_Ev" id="0x96" severity="ACTIVITY_HI" format_string="RockBlock event: %u">
+    <event component="rockBlock" name="RckBlck_CSQ" id="0x96" severity="ACTIVITY_LO" format_string="+CSQ RSSI: %u">
       <args>
-        <arg name="value" type="U16"/>
+        <arg name="rssi" type="U8"/>
       </args>
+    </event>
+    <event component="rockBlock" name="RckBlck_MessageReceived" id="0x97" severity="ACTIVITY_HI" format_string="Message %u received (%u pending)">
+      <args>
+        <arg name="mtMsn" type="U16"/>
+        <arg name="mtQueued" type="U16"/>
+      </args>
+    </event>
+    <event component="rockBlock" name="RckBlck_UnableToSend" id="0x98" severity="WARNING_LO" format_string="Unable to send message (Error %u)">
+      <args>
+        <arg name="error" type="U8"/>
+      </args>
+    </event>
+    <event component="rockBlock" name="RckBlck_MailboxCheckFail" id="0x9a" severity="WARNING_HI" format_string="Unable to check mailbox or receive message from GSS">
+      <args/>
+    </event>
+    <event component="rockBlock" name="RckBlck_RingAlert" id="0x9b" severity="ACTIVITY_HI" format_string="Rin alter received">
+      <args/>
     </event>
     <event component="temperatureProbes" name="TempPro_LowInternalWarning" id="0xa0" severity="WARNING_HI" format_string="Low internal temperature: %d">
       <args>

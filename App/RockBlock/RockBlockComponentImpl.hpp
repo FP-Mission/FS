@@ -81,8 +81,9 @@ class RockBlockComponentImpl : public RockBlockComponentBase {
     //! Sample command
     void RckBlck_SendCommand_cmdHandler(
         const FwOpcodeType opCode, /*!< The opcode*/
-        const U32 cmdSeq /*!< The command sequence number*/
+        const U32 cmdSeq, /*!< The command sequence number*/
         //const Fw::CmdStringArg& AT_Command /*!< AT command to send */ 
+        const U8 AT_Command /*!< AT command to send */
     );
 
     // Serial buffer provider to LinuxSerialDriver

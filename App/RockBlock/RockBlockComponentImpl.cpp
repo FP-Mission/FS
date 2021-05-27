@@ -107,12 +107,26 @@ void RockBlockComponentImpl ::PingIn_handler(const NATIVE_INT_TYPE portNum,
 
 void RockBlockComponentImpl ::RckBlck_SendCommand_cmdHandler(
     const FwOpcodeType opCode,
-    const U32 cmdSeq
+    const U32 cmdSeq,
     //const Fw::CmdStringArg& AT_Command
+    const U8 AT_Command
 ) {
+    switch(AT_Command) {
+        case 0:
+            this->sendRockBlockCommand("AT+CSQ");
+            break;
+        case 1:
+            this->sendRockBlockCommand("AT+SBDIX");
+            break;
+        case 2:
+            this->sendRockBlockCommand("AT+SBDIXA");
+            break;
+        case 3:
+            this->sendRockBlockCommand("AT+SBDRT");
+            break;
+    }
     //std::string str(AT_Command.toChar());
     //printf("Send %s\n", str.c_str());
-    this->sendRockBlockCommand("AT+SBDIX");
     this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
 }
 
@@ -148,8 +162,7 @@ void RockBlockComponentImpl ::serialRecv_handler(
             DEBUG_PRINT("[RockBlock] OK\n");
         } else if(detectCommand("+CSQ:", pointer)) {
             U8 signalQuality = atoi(pointer + 5);
-            
-            DEBUG_PRINT("[RockBlock] +CSQ: %u\n", signalQuality);
+            this->log_ACTIVITY_LO_RckBlck_CSQ(signalQuality);
         } else if(detectCommand("+SBDMTA:", pointer)) {
             U8 ringAllertEnabled = atoi(pointer + 8);
             if(ringAllertEnabled) {
@@ -178,9 +191,9 @@ void RockBlockComponentImpl ::serialRecv_handler(
                                 SBDIX.moStatus, SBDIX.moMsn, SBDIX.mtStatus, SBDIX.mtMsn, SBDIX.mtLength, SBDIX.mtQueued);
 
                 if(SBDIX.moStatus >= 0 && SBDIX.moStatus <= 2) {
-                    DEBUG_PRINT("[RockBlock] Message, if any, transferred successfully (%u)\n", SBDIX.moMsn);
+                    Fw::Logger::logMsg("[RockBlock] Message, if any, transferred successfully (%u)\n", SBDIX.moMsn);
                 } else {
-                    Fw::Logger::logMsg("[ERROR] Unable to send RockBlock message\n");
+                    this->log_WARNING_LO_RckBlck_UnableToSend(SBDIX.moStatus);
                 }
 
                 switch (SBDIX.mtStatus) {
@@ -189,20 +202,22 @@ void RockBlockComponentImpl ::serialRecv_handler(
                         break;
                     case 1:
                         // SBD message successfully received from the GSS.
-                        DEBUG_PRINT("[RockBlock] Message %u received (%u pending)\n", SBDIX.mtMsn);
+                        this->log_ACTIVITY_HI_RckBlck_MessageReceived(SBDIX.mtMsn, SBDIX.mtQueued);
                         this->sendRockBlockCommand("AT+SBDRT");
                         break;
                     case 2:
-                        Fw::Logger::logMsg("[ERROR] Unable to check RockBlock mailbox or receive message from GSS\n");
+                        this->log_WARNING_HI_RckBlck_MailboxCheckFail();
                         break;
                 }
             } else {
                 Fw::Logger::logMsg("[ERROR] Unable to parse SBDIX RockBlock response, res=%u\n", res);
             }
         } else if(detectCommand("+SBDRT:", pointer)) {
+            // @todo process rx data
             printf("[RockBlock] %s\n", pointer);
         } else if (detectCommand("SBDRING", pointer)) {
-            DEBUG_PRINT("[RockBlock] SBDRING\n");
+            this->log_ACTIVITY_HI_RckBlck_RingAlert();
+            this->sendRockBlockCommand("AT+SBDIXA");
         } else if(detectCommand("\r\n", pointer) && buffsize == 2) {
             // Empty line
             //DEBUG_PRINT("[RockBlock] Emtpy\n", pointer);
@@ -210,7 +225,7 @@ void RockBlockComponentImpl ::serialRecv_handler(
             DEBUG_PRINT("[RockBlock] Rx (%u): %s\n", buffsize, pointer);
         }
     } catch (...) {
-        Fw::Logger::logMsg("[ERROR] Unable to decode frame received from FlexAvr\n");
+        Fw::Logger::logMsg("[ERROR] Unable to decode frame received from RockBlock\n");
     }
 
 
