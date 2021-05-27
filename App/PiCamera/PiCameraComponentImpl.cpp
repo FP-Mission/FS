@@ -205,10 +205,8 @@ namespace App {
         outFileData.close();
 
         loadPicture();
-        U8 frame[256];
         for(U32 i = 0; i< fileSize/256; i++){
-          std::memcpy(frame,binaryData+i*256,256);
-          m_picturePacket.setData(frame,256);
+          m_picturePacket.setData(binaryData,i,256);
           m_picturePacket.setFrameId(i);
           m_picturePacket.setPictureId(pictureId);
           m_comBuffer.resetSer();
