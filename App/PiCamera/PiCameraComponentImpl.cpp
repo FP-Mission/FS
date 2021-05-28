@@ -36,7 +36,7 @@ namespace App {
         const char *const compName
     ) : PiCameraComponentBase(compName), nbPicture(0) ,width(BASE_WIDTH),
      height(BASE_HEIGHT), indexSSDV(0), timeInterval(6), timeCpt(0), sendingPicture(0), pictureId(0)
-     ,fileSize(0)
+     ,fileSize(0), currentTime(0)
   {
     std::ostringstream osTelemetry;
     osTelemetry << TELEMETRY_DIRECTORY << "telemetry.csv";
@@ -195,8 +195,9 @@ namespace App {
           this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
           return;
         }
-        sendingPicture = currentTime;
+        if(currentTime != 0){
         pictureId = nbPicture;
+        sendingPicture = currentTime;
         std::ostringstream osData;
         osData << DATA_DIRECTORY << "data.bin";
         std::ofstream outFileData (osData.str(), std::ios::out | std::ios::binary);
@@ -205,8 +206,10 @@ namespace App {
         outFileData.close();
 
         loadPicture();
-        for(U32 i = 0; i< fileSize/40; i++){
-          m_picturePacket.setData(binaryData,i,40);
+        }
+
+        for(U32 i = 0; i< fileSize/32; i++){
+          m_picturePacket.setData(binaryData,i,32);
           m_picturePacket.setFrameId(i);
           m_picturePacket.setPictureId(pictureId);
           m_comBuffer.resetSer();
@@ -369,11 +372,6 @@ namespace App {
       in.read(dataChar ,fileSize);
 
       in.close();
-
-      std::ofstream outFileData ("/home/pi/data.bin",std::ios::out | std::ios::binary);
-          outFileData.write(dataChar,fileSize);
-
-      outFileData.close();
   }
 
   void PiCameraComponentImpl::loadData(){
