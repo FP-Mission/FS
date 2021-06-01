@@ -82,6 +82,13 @@ namespace App {
           Svc::InputSchedPort *const Schedin /*!< The port*/
       );
 
+      //! Connect SendFrame to to_SendFrame[portNum]
+      //!
+      void connect_to_SendFrame(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          App::InputPiCameraFramePortPort *const SendFrame /*!< The port*/
+      );
+
       //! Connect CmdDisp to to_CmdDisp[portNum]
       //!
       void connect_to_CmdDisp(
@@ -108,7 +115,7 @@ namespace App {
       //!
       //! \return from_PictureOut[portNum]
       //!
-      App::InputPiCameraPicturePortPort* get_from_PictureOut(
+      Fw::InputComPort* get_from_PictureOut(
           const NATIVE_INT_TYPE portNum /*!< The port number*/
       );
 
@@ -287,14 +294,16 @@ namespace App {
       //!
       virtual void from_PictureOut_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          U32 path /*!< path of picture*/
+          Fw::ComBuffer &data, /*!< Buffer containing packet data*/
+          U32 context /*!< Call context value; meaning chosen by user*/
       ) = 0;
 
       //! Handler base function for from_PictureOut
       //!
       void from_PictureOut_handlerBase(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          U32 path /*!< path of picture*/
+          Fw::ComBuffer &data, /*!< Buffer containing packet data*/
+          U32 context /*!< Call context value; meaning chosen by user*/
       );
 
     protected:
@@ -329,13 +338,15 @@ namespace App {
 
       //! Push an entry on the history for from_PictureOut
       void pushFromPortEntry_PictureOut(
-          U32 path /*!< path of picture*/
+          Fw::ComBuffer &data, /*!< Buffer containing packet data*/
+          U32 context /*!< Call context value; meaning chosen by user*/
       );
 
       //! A history entry for from_PictureOut
       //!
       typedef struct {
-          U32 path;
+          Fw::ComBuffer data;
+          U32 context;
       } FromPortEntry_PictureOut;
 
       //! The history for from_PictureOut
@@ -391,6 +402,13 @@ namespace App {
           NATIVE_UINT_TYPE context /*!< The call order*/
       );
 
+      //! Invoke the to port connected to SendFrame
+      //!
+      void invoke_to_SendFrame(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          U32 frame /*!< frame value*/
+      );
+
     public:
 
       // ----------------------------------------------------------------------
@@ -438,6 +456,12 @@ namespace App {
       //! \return The number of from_PictureOut ports
       //!
       NATIVE_INT_TYPE getNum_from_PictureOut(void) const;
+
+      //! Get the number of to_SendFrame ports
+      //!
+      //! \return The number of to_SendFrame ports
+      //!
+      NATIVE_INT_TYPE getNum_to_SendFrame(void) const;
 
       //! Get the number of to_CmdDisp ports
       //!
@@ -531,6 +555,14 @@ namespace App {
 
       //! Check whether port is connected
       //!
+      //! Whether to_SendFrame[portNum] is connected
+      //!
+      bool isConnected_to_SendFrame(
+          const NATIVE_INT_TYPE portNum /*!< The port number*/
+      );
+
+      //! Check whether port is connected
+      //!
       //! Whether to_CmdDisp[portNum] is connected
       //!
       bool isConnected_to_CmdDisp(
@@ -549,6 +581,13 @@ namespace App {
       //! Send a PiCam_TakePicture command
       //!
       void sendCmd_PiCam_TakePicture(
+          const NATIVE_INT_TYPE instance, /*!< The instance number*/
+          const U32 cmdSeq /*!< The command sequence number*/
+      );
+
+      //! Send a PiCam_SendLast command
+      //!
+      void sendCmd_PiCam_SendLast(
           const NATIVE_INT_TYPE instance, /*!< The instance number*/
           const U32 cmdSeq /*!< The command sequence number*/
       );
@@ -927,6 +966,10 @@ namespace App {
       //!
       Svc::OutputSchedPort m_to_Schedin[1];
 
+      //! To port connected to SendFrame
+      //!
+      App::OutputPiCameraFramePortPort m_to_SendFrame[1];
+
       //! To port connected to CmdDisp
       //!
       Fw::OutputCmdPort m_to_CmdDisp[1];
@@ -943,7 +986,7 @@ namespace App {
 
       //! From port connected to PictureOut
       //!
-      App::InputPiCameraPicturePortPort m_from_PictureOut[1];
+      Fw::InputComPort m_from_PictureOut[1];
 
       //! From port connected to CmdStatus
       //!
@@ -990,7 +1033,8 @@ namespace App {
       static void from_PictureOut_static(
           Fw::PassiveComponentBase *const callComp, /*!< The component instance*/
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          U32 path /*!< path of picture*/
+          Fw::ComBuffer &data, /*!< Buffer containing packet data*/
+          U32 context /*!< Call context value; meaning chosen by user*/
       );
 
       //! Static function for port from_CmdStatus

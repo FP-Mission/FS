@@ -447,6 +447,29 @@ namespace App {
 
     }
 
+    // Initialize output port SendFrame
+
+    for (
+        NATIVE_INT_TYPE _port = 0;
+        _port < this->getNum_to_SendFrame();
+        ++_port
+    ) {
+      this->m_to_SendFrame[_port].init();
+
+#if FW_OBJECT_NAMES == 1
+      char _portName[120];
+      snprintf(
+          _portName,
+          sizeof(_portName),
+          "%s_to_SendFrame[%d]",
+          this->m_objName,
+          _port
+      );
+      this->m_to_SendFrame[_port].setObjName(_portName);
+#endif
+
+    }
+
   }
 
   // ----------------------------------------------------------------------
@@ -493,6 +516,12 @@ namespace App {
     getNum_from_PictureOut(void) const
   {
     return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(this->m_from_PictureOut);
+  }
+
+  NATIVE_INT_TYPE PiCameraTesterBase ::
+    getNum_to_SendFrame(void) const
+  {
+    return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(this->m_to_SendFrame);
   }
 
   NATIVE_INT_TYPE PiCameraTesterBase ::
@@ -594,6 +623,16 @@ namespace App {
   }
 
   void PiCameraTesterBase ::
+    connect_to_SendFrame(
+        const NATIVE_INT_TYPE portNum,
+        App::InputPiCameraFramePortPort *const SendFrame
+    )
+  {
+    FW_ASSERT(portNum < this->getNum_to_SendFrame(),static_cast<AssertArg>(portNum));
+    this->m_to_SendFrame[portNum].addCallPort(SendFrame);
+  }
+
+  void PiCameraTesterBase ::
     connect_to_CmdDisp(
         const NATIVE_INT_TYPE portNum,
         Fw::InputCmdPort *const CmdDisp
@@ -680,6 +719,19 @@ namespace App {
     );
   }
 
+  void PiCameraTesterBase ::
+    invoke_to_SendFrame(
+        const NATIVE_INT_TYPE portNum,
+        U32 frame
+    )
+  {
+    FW_ASSERT(portNum < this->getNum_to_SendFrame(),static_cast<AssertArg>(portNum));
+    FW_ASSERT(portNum < this->getNum_to_SendFrame(),static_cast<AssertArg>(portNum));
+    this->m_to_SendFrame[portNum].invoke(
+        frame
+    );
+  }
+
   // ----------------------------------------------------------------------
   // Connection status for to ports
   // ----------------------------------------------------------------------
@@ -720,6 +772,13 @@ namespace App {
   }
 
   bool PiCameraTesterBase ::
+    isConnected_to_SendFrame(const NATIVE_INT_TYPE portNum)
+  {
+    FW_ASSERT(portNum < this->getNum_to_SendFrame(), static_cast<AssertArg>(portNum));
+    return this->m_to_SendFrame[portNum].isConnected();
+  }
+
+  bool PiCameraTesterBase ::
     isConnected_to_CmdDisp(const NATIVE_INT_TYPE portNum)
   {
     FW_ASSERT(portNum < this->getNum_to_CmdDisp(), static_cast<AssertArg>(portNum));
@@ -737,7 +796,7 @@ namespace App {
     return &this->m_from_PingOut[portNum];
   }
 
-  App::InputPiCameraPicturePortPort *PiCameraTesterBase ::
+  Fw::InputComPort *PiCameraTesterBase ::
     get_from_PictureOut(const NATIVE_INT_TYPE portNum)
   {
     FW_ASSERT(portNum < this->getNum_from_PictureOut(),static_cast<AssertArg>(portNum));
@@ -812,7 +871,8 @@ namespace App {
     from_PictureOut_static(
         Fw::PassiveComponentBase *const callComp,
         const NATIVE_INT_TYPE portNum,
-        U32 path
+        Fw::ComBuffer &data,
+        U32 context
     )
   {
     FW_ASSERT(callComp);
@@ -820,7 +880,7 @@ namespace App {
       static_cast<PiCameraTesterBase*>(callComp);
     _testerBase->from_PictureOut_handlerBase(
         portNum,
-        path
+        data, context
     );
   }
 
@@ -940,11 +1000,12 @@ namespace App {
 
   void PiCameraTesterBase ::
     pushFromPortEntry_PictureOut(
-        U32 path
+        Fw::ComBuffer &data,
+        U32 context
     )
   {
     FromPortEntry_PictureOut _e = {
-      path
+      data, context
     };
     this->fromPortHistory_PictureOut->push_back(_e);
     ++this->fromPortHistorySize;
@@ -970,13 +1031,14 @@ namespace App {
   void PiCameraTesterBase ::
     from_PictureOut_handlerBase(
         const NATIVE_INT_TYPE portNum,
-        U32 path
+        Fw::ComBuffer &data,
+        U32 context
     )
   {
     FW_ASSERT(portNum < this->getNum_from_PictureOut(),static_cast<AssertArg>(portNum));
     this->from_PictureOut_handler(
         portNum,
-        path
+        data, context
     );
   }
 
@@ -1015,6 +1077,40 @@ namespace App {
     FwOpcodeType _opcode;
     const U32 idBase = this->getIdBase();
     _opcode = PiCameraComponentBase::OPCODE_PICAM_TAKEPICTURE + idBase;
+
+    if (this->m_to_CmdDisp[0].isConnected()) {
+      this->m_to_CmdDisp[0].invoke(
+          _opcode,
+          cmdSeq,
+          buff
+      );
+    }
+    else {
+      printf("Test Command Output port not connected!\n");
+    }
+
+  }
+
+  // ----------------------------------------------------------------------
+  // Command: PiCam_SendLast
+  // ----------------------------------------------------------------------
+
+  void PiCameraTesterBase ::
+    sendCmd_PiCam_SendLast(
+        const NATIVE_INT_TYPE instance,
+        const U32 cmdSeq
+    )
+  {
+
+    // Serialize arguments
+
+    Fw::CmdArgBuffer buff;
+
+    // Call output command port
+
+    FwOpcodeType _opcode;
+    const U32 idBase = this->getIdBase();
+    _opcode = PiCameraComponentBase::OPCODE_PICAM_SENDLAST + idBase;
 
     if (this->m_to_CmdDisp[0].isConnected()) {
       this->m_to_CmdDisp[0].invoke(

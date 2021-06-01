@@ -66,7 +66,8 @@ namespace App {
       //!
       void from_PictureOut_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          U32 path /*!< path of picture*/
+          Fw::ComBuffer &data, /*!< Buffer containing packet data*/
+          U32 context /*!< Call context value; meaning chosen by user*/
       );
 
     private:

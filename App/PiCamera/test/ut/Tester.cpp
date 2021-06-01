@@ -140,10 +140,11 @@ namespace App {
   void Tester ::
     from_PictureOut_handler(
         const NATIVE_INT_TYPE portNum,
-        U32 path
+        Fw::ComBuffer &data,
+        U32 context
     )
   {
-    this->pushFromPortEntry_PictureOut(path);
+    this->pushFromPortEntry_PictureOut(data, context);
   }
 
   // ----------------------------------------------------------------------
@@ -182,6 +183,12 @@ namespace App {
     this->connect_to_Schedin(
         0,
         this->component.get_Schedin_InputPort(0)
+    );
+
+    // SendFrame
+    this->connect_to_SendFrame(
+        0,
+        this->component.get_SendFrame_InputPort(0)
     );
 
     // CmdDisp

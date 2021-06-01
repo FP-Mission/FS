@@ -124,7 +124,7 @@
 #define ASSERT_from_PictureOut_SIZE(size) \
   this->assert_from_PictureOut_size(__FILE__, __LINE__, size)
 
-#define ASSERT_from_PictureOut(index, _path) \
+#define ASSERT_from_PictureOut(index, _data, _context) \
   { \
     ASSERT_GT(this->fromPortHistory_PictureOut->size(), static_cast<U32>(index)) \
     << "\n" \
@@ -136,15 +136,24 @@
     << "  Actual:   " << index << "\n"; \
     const FromPortEntry_PictureOut& _e = \
       this->fromPortHistory_PictureOut->at(index); \
-    ASSERT_EQ(_path, _e.path) \
+    ASSERT_EQ(_data, _e.data) \
     << "\n" \
     << "  File:     " << __FILE__ << "\n" \
     << "  Line:     " << __LINE__ << "\n" \
-    << "  Value:    Value of argument path at index " \
+    << "  Value:    Value of argument data at index " \
     << index \
     << " in history of from_PictureOut\n" \
-    << "  Expected: " << _path << "\n" \
-    << "  Actual:   " << _e.path << "\n"; \
+    << "  Expected: " << _data << "\n" \
+    << "  Actual:   " << _e.data << "\n"; \
+    ASSERT_EQ(_context, _e.context) \
+    << "\n" \
+    << "  File:     " << __FILE__ << "\n" \
+    << "  Line:     " << __LINE__ << "\n" \
+    << "  Value:    Value of argument context at index " \
+    << index \
+    << " in history of from_PictureOut\n" \
+    << "  Expected: " << _context << "\n" \
+    << "  Actual:   " << _e.context << "\n"; \
   }
 
 namespace App {
