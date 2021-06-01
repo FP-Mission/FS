@@ -99,6 +99,16 @@
                 </arg>                   
              </args>
         </command>
+         <command kind="async" opcode="4" mnemonic="PiCam_SendFrame">
+            <comment>
+            Send frame of current picture
+            </comment>
+             <args>
+                <arg name="frameId" type="U16">
+                    <comment>Frame id</comment>
+                </arg>                
+             </args>
+        </command>
     </commands>
 
     <telemetry>

@@ -135,6 +135,12 @@ namespace App {
           U32 height
       );
 
+      void PiCam_SendFrame_cmdHandler(
+          const FwOpcodeType opCode, /*!< The opcode*/
+          const U32 cmdSeq, /*!< The command sequence number*/
+          U16 wframeIdidth
+      );
+
       bool takePicture();
       void manageTelemetry();
       void managePpm(raspicam::RaspiCam &camera ,unsigned char* data);

@@ -248,6 +248,26 @@ namespace App {
         this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
       }
 
+      void PiCameraComponentImpl::PiCam_SendFrame_cmdHandler(
+          const FwOpcodeType opCode, /*!< The opcode*/
+          const U32 cmdSeq, /*!< The command sequence number*/
+          U16 frameId
+      ){
+         if(nbPicture == 0){
+          this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
+          return;
+        }
+          m_picturePacket.setData(binaryData, frameId, SIZE_PACKET, fileSize);
+          m_picturePacket.setFrameId(frameId);
+          m_picturePacket.setPictureId(pictureId);
+          m_comBuffer.resetSer();
+          Fw::SerializeStatus stat = this->m_picturePacket.serialize(this->m_comBuffer);
+          FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
+          this->PictureOut_out(0,this->m_comBuffer,0);
+          
+          this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+      }
+
   bool PiCameraComponentImpl::takePicture(){
     raspicam::RaspiCam Camera; //Camera object
     Camera.setWidth(width);
