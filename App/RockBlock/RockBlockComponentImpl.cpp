@@ -130,8 +130,7 @@ bool RockBlockComponentImpl:: sendRockBlockCommand(std::string command) {
         this->log_DIAGNOSTIC_RckBlck_CommandSent(arg);
         sent = true;
     } else {
-        // @todo Replace by queue
-        DEBUG_PRINT("RockBlock is not ok, abord command %s\n", command.c_str());
+        DEBUG_PRINT("RockBlock is not ok, delay command %s\n", command.c_str());
     }
     serialMutex.unLock();
     return sent;
@@ -163,15 +162,18 @@ void RockBlockComponentImpl ::RckBlck_SendCommand_cmdHandler(
 ) {
     switch(AT_Command) {
         case 0:
-            this->addCommand("AT+CSQ");
+            this->sendRockBlockCommand("AT");
             break;
         case 1:
-            this->addCommand("AT+SBDIX");
+            this->addCommand("AT+CSQ");
             break;
         case 2:
-            this->addCommand("AT+SBDIXA");
+            this->addCommand("AT+SBDIX");
             break;
         case 3:
+            this->addCommand("AT+SBDIXA");
+            break;
+        case 4:
             this->addCommand("AT+SBDRT");
             break;
     }
