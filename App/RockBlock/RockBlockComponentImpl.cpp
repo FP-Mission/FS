@@ -75,6 +75,7 @@ void RockBlockComponentImpl:: configureHardware() {
     this->addCommand("AT+SBDMTA?");
     //sleep(1);
     this->addCommand("AT+CSQ");
+    this->addCommand("AT+SBDIX");
 }
 
 void RockBlockComponentImpl:: addCommand(std::string command) {
