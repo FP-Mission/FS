@@ -44,6 +44,8 @@ void RockBlockComponentImpl ::init(const NATIVE_INT_TYPE queueDepth,
 //        system runs at steady-state. This allows for initialization code that
 //        invokes working ports.
 void RockBlockComponentImpl::preamble(void) {
+    this->commandInCtn = 0;
+    this->commandOutCtn = 0;
     // RockBlock is considered as available at launch
     this->rockBlockIsOk = true;
     for (NATIVE_INT_TYPE buffer = 0; buffer < DR_MAX_NUM_BUFFERS; buffer++) {
@@ -58,17 +60,61 @@ void RockBlockComponentImpl::preamble(void) {
 
 RockBlockComponentImpl ::~RockBlockComponentImpl(void) {}
 
-void RockBlockComponentImpl:: configureHardware() {
-    char temp[20];
-    this->sendRockBlockCommand("AT");
-    sleep(1);
-    this->sendRockBlockCommand("AT+SBDMTA?");
-    sleep(1);
-    this->sendRockBlockCommand("AT+CSQ");
+void RockBlockComponentImpl::Run_handler(const NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE context) {
+    // Periodically send next command
+    // When a command responds ("OK" or "ERROR"), the next pending command in the CommandBuffer
+    // is automatically sent
+    // However, if a command has been added to the queue and no command is supposed to respond soon,
+    // the run scheduler empty the queue
+    this->sendNextCommand();
 }
 
-void RockBlockComponentImpl:: sendRockBlockCommand(std::string command) {
+void RockBlockComponentImpl:: configureHardware() {
+    this->sendRockBlockCommand("AT"); // Send first command to receive OK response
+    //sleep(1);
+    this->addCommand("AT+SBDMTA?");
+    //sleep(1);
+    this->addCommand("AT+CSQ");
+}
+
+void RockBlockComponentImpl:: addCommand(std::string command) {
+    this->commandMutex.lock();
+    U8 commandLength = command.size();
+    if(commandLength > ROCKBLOCK_COMMAND_SIZE) {
+        Fw::Logger::logMsg("[ERROR] RockBlock too long command: %d\n",
+                           commandLength);
+    } else {
+        U8 newCtn = (this->commandInCtn + 1) % ROCKBLOCK_COMMAND_BUFFER;
+        if(newCtn == this->commandOutCtn) {
+            Fw::Logger::logMsg("[ERROR] RockBlock sending queue full\n");
+        } else {
+            // ! If data are not read, they will be overriden
+            sprintf(&commandBuffer[this->commandInCtn][0], command.c_str(), commandLength);
+            this->commandInCtn = (this->commandInCtn + 1) % ROCKBLOCK_COMMAND_BUFFER;
+            DEBUG_PRINT("Add RockBlock command %s\n", command.c_str());
+        }
+    }
+    this->commandMutex.unLock();
+}
+
+void RockBlockComponentImpl:: sendNextCommand() {
+    this->commandMutex.lock();
+    // Send command if a new one has been stored
+    if(this->commandInCtn != this->commandOutCtn) {
+        std::string cmd(&commandBuffer[this->commandOutCtn][0]);
+        // Increment out counter if command has been sent
+        if(this->sendRockBlockCommand(cmd)) {
+            this->commandOutCtn = (this->commandOutCtn + 1) % ROCKBLOCK_COMMAND_BUFFER;
+        }
+    } else {
+        // DEBUG_PRINT("No pending command\n");
+    }
+    this->commandMutex.unLock();
+}
+
+bool RockBlockComponentImpl:: sendRockBlockCommand(std::string command) {
     serialMutex.lock();
+    bool sent = false;
     if(this->rockBlockIsOk) {
         this->rockBlockIsOk = false;    // @todo Check concurrency, mutex ?
         char commandToSend[30]; 
@@ -82,11 +128,13 @@ void RockBlockComponentImpl:: sendRockBlockCommand(std::string command) {
 
         Fw::LogStringArg arg(command.c_str());
         this->log_DIAGNOSTIC_RckBlck_CommandSent(arg);
+        sent = true;
     } else {
         // @todo Replace by queue
         DEBUG_PRINT("RockBlock is not ok, abord command %s\n", command.c_str());
     }
     serialMutex.unLock();
+    return sent;
 }
 
 bool RockBlockComponentImpl ::detectCommand(const char* command, const char* line) {
@@ -115,16 +163,16 @@ void RockBlockComponentImpl ::RckBlck_SendCommand_cmdHandler(
 ) {
     switch(AT_Command) {
         case 0:
-            this->sendRockBlockCommand("AT+CSQ");
+            this->addCommand("AT+CSQ");
             break;
         case 1:
-            this->sendRockBlockCommand("AT+SBDIX");
+            this->addCommand("AT+SBDIX");
             break;
         case 2:
-            this->sendRockBlockCommand("AT+SBDIXA");
+            this->addCommand("AT+SBDIXA");
             break;
         case 3:
-            this->sendRockBlockCommand("AT+SBDRT");
+            this->addCommand("AT+SBDRT");
             break;
     }
     //std::string str(AT_Command.toChar());
@@ -163,6 +211,14 @@ void RockBlockComponentImpl ::serialRecv_handler(
             this->rockBlockIsOk = true;
             Fw::LogStringArg arg("OK");
             this->log_DIAGNOSTIC_RckBlck_Response(arg);
+            // Send next command when last command ack received
+            this->sendNextCommand();
+            //this->addCommand("AT+CSQ"); // @todo send CSQ request in loop, debug purpose
+        } else if(detectCommand("ERROR", pointer)) {
+            Fw::LogStringArg arg("ERROR");
+            this->log_DIAGNOSTIC_RckBlck_Response(arg);
+            // Send next command when last command ack received
+            this->sendNextCommand();
         } else if(detectCommand("+CSQ:", pointer)) {
             U8 signalQuality = atoi(pointer + 5);
             this->log_ACTIVITY_LO_RckBlck_CSQ(signalQuality);
@@ -206,7 +262,7 @@ void RockBlockComponentImpl ::serialRecv_handler(
                     case 1:
                         // SBD message successfully received from the GSS.
                         this->log_ACTIVITY_HI_RckBlck_MessageReceived(SBDIX.mtMsn, SBDIX.mtQueued);
-                        this->sendRockBlockCommand("AT+SBDRT");
+                        this->addCommand("AT+SBDRT");
                         break;
                     case 2:
                         this->log_WARNING_HI_RckBlck_MailboxCheckFail();
@@ -220,7 +276,7 @@ void RockBlockComponentImpl ::serialRecv_handler(
             printf("[RockBlock] %s\n", pointer);
         } else if (detectCommand("SBDRING", pointer)) {
             this->log_ACTIVITY_HI_RckBlck_RingAlert();
-            this->sendRockBlockCommand("AT+SBDIXA");
+            this->addCommand("AT+SBDIXA");
         } else if(detectCommand("\r\n", pointer) && buffsize == 2) {
             // Empty line
             //DEBUG_PRINT("[RockBlock] Emtpy\n", pointer);
@@ -231,7 +287,6 @@ void RockBlockComponentImpl ::serialRecv_handler(
     } catch (...) {
         Fw::Logger::logMsg("[ERROR] Unable to decode frame received from RockBlock\n");
     }
-
 
     // Return buffer (see above note)
     serBuffer.setSize(UART_READ_BUFF_SIZE);

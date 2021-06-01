@@ -20,6 +20,9 @@
 
 #include <string>
 
+#define ROCKBLOCK_COMMAND_SIZE 16
+#define ROCKBLOCK_COMMAND_BUFFER 10
+
 namespace App {
 
 class RockBlockComponentImpl : public RockBlockComponentBase {
@@ -55,6 +58,14 @@ class RockBlockComponentImpl : public RockBlockComponentBase {
     // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------
 
+    //!  \brief run handler
+    //!
+    //!  Handler implementation for run
+    //!
+    //!  \param portNum Port number
+    //!  \param context Port Context
+    void Run_handler(const NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE context);
+
     //! Handler implementation for PingIn
     //!
     void
@@ -70,7 +81,9 @@ class RockBlockComponentImpl : public RockBlockComponentBase {
         Drv::SerialReadStatus &status  /*!< Status of read*/
     );
 
-    void sendRockBlockCommand(std::string command);
+    void addCommand(std::string command);
+    void sendNextCommand();
+    bool sendRockBlockCommand(std::string command);
     bool detectCommand(const char* command, const char* line);
 
     // ----------------------------------------------------------------------
@@ -91,8 +104,12 @@ class RockBlockComponentImpl : public RockBlockComponentBase {
     BYTE m_uartBuffers[DR_MAX_NUM_BUFFERS][UART_READ_BUFF_SIZE];
 
     Os::Mutex serialMutex;    //<! Lock when serial line is used
+    Os::Mutex commandMutex;   //<! Protec command buffer is used
     bool rockBlockIsOk;
 
+    char commandBuffer[ROCKBLOCK_COMMAND_BUFFER][ROCKBLOCK_COMMAND_SIZE];
+    U8 commandInCtn;
+    U8 commandOutCtn;
 };
 
 }  // end namespace App

@@ -666,8 +666,12 @@
          <target component="health" port="Run" type="Sched" num="0"/>
     </connection>
     <connection name="Rg3BlkDrv">
-         <source component="rateGroup3" port="RateGroupMemberOut" type="Sched" num="2"/>
+         <source component="rateGroup3" port="RateGroupMemberOut" type="Sched" num="1"/>
          <target component="blockDrv" port="Sched" type="Sched" num="0"/>
+    </connection>
+    <connection name="Rg3BlkDrv">
+         <source component="rateGroup3" port="RateGroupMemberOut" type="Sched" num="2"/>
+         <target component="rockBlock" port="Run" type="Sched" num="0"/>
     </connection>
     
     
