@@ -39,11 +39,14 @@
     <commands>
         <command kind="async" opcode="0" mnemonic="RckBlck_SendCommand">
             <comment>
-                Sample command
+                Allow to send command to RockBlock
             </comment>
             <args>
-                <arg type="U8" name="AT_Command"> <!-- string size="16"> -->
+                <arg name="AT_Command" type="string" size="16">
                     <comment>AT command to send</comment>
+                </arg>
+                <arg name="mode" type="U8">
+                    <comment>Mode (0: send command, 1: add command)</comment>
                 </arg>
             </args>
         </command>

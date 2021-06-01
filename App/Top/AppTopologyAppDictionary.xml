@@ -243,7 +243,8 @@
     </command>
     <command component="rockBlock" mnemonic="RckBlck_SendCommand" opcode="0x96">
       <args>
-        <arg name="AT_Command" type="U8"/>
+        <arg name="AT_Command" len="16" type="string"/>
+        <arg name="mode" type="U8"/>
       </args>
     </command>
     <command component="temperatureProbes" mnemonic="TempProb_SetInternalLevel" opcode="0xa0">

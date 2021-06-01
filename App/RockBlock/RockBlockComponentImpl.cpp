@@ -157,29 +157,21 @@ void RockBlockComponentImpl ::PingIn_handler(const NATIVE_INT_TYPE portNum,
 void RockBlockComponentImpl ::RckBlck_SendCommand_cmdHandler(
     const FwOpcodeType opCode,
     const U32 cmdSeq,
-    //const Fw::CmdStringArg& AT_Command
-    const U8 AT_Command
+    const Fw::CmdStringArg& AT_Command,
+    const U8 mode
 ) {
-    switch(AT_Command) {
-        case 0:
-            this->sendRockBlockCommand("AT");
-            break;
-        case 1:
-            this->addCommand("AT+CSQ");
-            break;
-        case 2:
-            this->addCommand("AT+SBDIX");
-            break;
-        case 3:
-            this->addCommand("AT+SBDIXA");
-            break;
-        case 4:
-            this->addCommand("AT+SBDRT");
-            break;
+    if(mode == 0) { // directly send command
+        if(this->sendRockBlockCommand(AT_Command.toChar())) {
+            this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
+        } else {
+            this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_EXECUTION_ERROR);
+        }
+    } else if (mode == 1) { // add command to command buffer
+        this->addCommand(AT_Command.toChar());
+        this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
+    } else {
+        this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_VALIDATION_ERROR);
     }
-    //std::string str(AT_Command.toChar());
-    //printf("Send %s\n", str.c_str());
-    this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
 }
 
 void RockBlockComponentImpl ::serialRecv_handler(
@@ -226,6 +218,7 @@ void RockBlockComponentImpl ::serialRecv_handler(
             this->log_ACTIVITY_LO_RckBlck_CSQ(signalQuality);
         } else if(detectCommand("+SBDMTA:", pointer)) {
             U8 ringAllertEnabled = atoi(pointer + 8);
+            // @todo Replace by event ?
             if(ringAllertEnabled) {
                 DEBUG_PRINT("[RockBlock] Ring alert enabled\n");
             } else {
