@@ -1,5 +1,20 @@
 <dictionary topology="App">
   <enums>
+    <enum type="CommandDispatcher::error::ErrorResponse">
+      <item name="ERR_INVALID_OPCODE" value="0" description="Invalid opcode dispatched"/>
+      <item name="ERR_VALIDATION_ERROR" value="1" description="Command failed validation"/>
+      <item name="ERR_FORMAT_ERROR" value="2" description="Command failed to deserialize"/>
+      <item name="ERR_EXECUTION_ERROR" value="3" description="Command had execution error"/>
+      <item name="ERR_BUSY" value="4" description="Component busy"/>
+      <item name="ERR_UNEXP" value="5" description="Unexpected response"/>
+    </enum>
+    <enum type="CommandDispatcher::Status::CmdSerError">
+      <item name="ERR_BUFFER_TOO_SMALL" value="0" description="Buffer too small"/>
+      <item name="ERR_BUFFER_FORMAT" value="1" description="Buffer wrong format"/>
+      <item name="ERR_SIZE_MISMATCH" value="2" description="Buffer size mismatch"/>
+      <item name="ERR_TYPE_MISMATCH" value="3" description="Buffer type mismatch"/>
+      <item name="ERR_UNEXP_STAT" value="4" description="Unexpected status"/>
+    </enum>
     <enum type="Health::enable::HealthEnabled">
       <item name="HLTH_CHK_DISABLED" value="0"/>
       <item name="HLTH_CHK_ENABLED" value="1"/>
@@ -44,6 +59,24 @@
   <serializables/>
   <arrays/>
   <commands>
+    <command component="cmdDisp" mnemonic="CMD_NO_OP" opcode="0x1">
+      <args/>
+    </command>
+    <command component="cmdDisp" mnemonic="CMD_NO_OP_STRING" opcode="0x2">
+      <args>
+        <arg name="arg1" len="40" type="string"/>
+      </args>
+    </command>
+    <command component="cmdDisp" mnemonic="CMD_TEST_CMD_1" opcode="0x3">
+      <args>
+        <arg name="arg1" type="I32"/>
+        <arg name="arg2" type="F32"/>
+        <arg name="arg3" type="U8"/>
+      </args>
+    </command>
+    <command component="cmdDisp" mnemonic="CMD_CLEAR_TRACKING" opcode="0x4">
+      <args/>
+    </command>
     <command component="health" mnemonic="HLTH_ENABLE" opcode="0x1b">
       <args>
         <arg name="enable" type="Health::enable::HealthEnabled"/>
@@ -82,6 +115,130 @@
     </command>
   </commands>
   <events>
+    <event component="cmdDisp" name="OpCodeRegistered" id="0x1" severity="DIAGNOSTIC" format_string="Opcode 0x%04X registered to port %d slot %d">
+      <args>
+        <arg name="Opcode" type="U8"/>
+        <arg name="port" type="I32"/>
+        <arg name="slot" type="I32"/>
+      </args>
+    </event>
+    <event component="cmdDisp" name="OpCodeDispatched" id="0x2" severity="COMMAND" format_string="Opcode 0x%04X dispatched to port %d">
+      <args>
+        <arg name="Opcode" type="U8"/>
+        <arg name="port" type="I32"/>
+      </args>
+    </event>
+    <event component="cmdDisp" name="OpCodeCompleted" id="0x3" severity="COMMAND" format_string="Opcode 0x%04X completed">
+      <args>
+        <arg name="Opcode" type="U8"/>
+      </args>
+    </event>
+    <event component="cmdDisp" name="OpCodeError" id="0x4" severity="WARNING_HI" format_string="Opcode 0x%04X completed with error %s ">
+      <args>
+        <arg name="Opcode" type="U8"/>
+        <arg name="error" type="CommandDispatcher::error::ErrorResponse"/>
+      </args>
+    </event>
+    <event component="cmdDisp" name="MalformedCommand" id="0x5" severity="WARNING_HI" format_string="Received malformed command packet. Status: %s">
+      <args>
+        <arg name="Status" type="CommandDispatcher::Status::CmdSerError"/>
+      </args>
+    </event>
+    <event component="cmdDisp" name="InvalidCommand" id="0x6" severity="WARNING_HI" format_string="Invalid opcode 0x%04X received.">
+      <args>
+        <arg name="Opcode" type="U8"/>
+      </args>
+    </event>
+    <event component="cmdDisp" name="TooManyCommands" id="0x7" severity="WARNING_HI" format_string="Too many outstanding commands. opcode=0x%04X">
+      <args>
+        <arg name="Opcode" type="U8"/>
+      </args>
+    </event>
+    <event component="cmdDisp" name="NoOpReceived" id="0x8" severity="ACTIVITY_HI" format_string="Received a NO-OP command">
+      <args/>
+    </event>
+    <event component="cmdDisp" name="NoOpStringReceived" id="0x9" severity="ACTIVITY_HI" format_string="Received a NO-OP string=%s">
+      <args>
+        <arg name="message" len="40" type="string"/>
+      </args>
+    </event>
+    <event component="cmdDisp" name="TestCmd1Args" id="0xa" severity="ACTIVITY_HI" format_string="TEST_CMD_1 args: I32: %d, F32: %f, U8: %d">
+      <args>
+        <arg name="arg1" type="I32"/>
+        <arg name="arg2" type="F32"/>
+        <arg name="arg3" type="U8"/>
+      </args>
+    </event>
+    <event component="fatalAdapter" name="AF_ASSERT_0" id="0x13" severity="FATAL" format_string="Assert in file %s, line %d">
+      <args>
+        <arg name="file" len="80" type="string"/>
+        <arg name="line" type="U32"/>
+      </args>
+    </event>
+    <event component="fatalAdapter" name="AF_ASSERT_1" id="0x14" severity="FATAL" format_string="Assert in file %s, line %d: %d">
+      <args>
+        <arg name="file" len="80" type="string"/>
+        <arg name="line" type="U32"/>
+        <arg name="arg1" type="U32"/>
+      </args>
+    </event>
+    <event component="fatalAdapter" name="AF_ASSERT_2" id="0x15" severity="FATAL" format_string="Assert in file %s, line %d: %d %d">
+      <args>
+        <arg name="file" len="80" type="string"/>
+        <arg name="line" type="U32"/>
+        <arg name="arg1" type="U32"/>
+        <arg name="arg2" type="U32"/>
+      </args>
+    </event>
+    <event component="fatalAdapter" name="AF_ASSERT_3" id="0x16" severity="FATAL" format_string="Assert in file %s, line %d: %d %d %d">
+      <args>
+        <arg name="file" len="80" type="string"/>
+        <arg name="line" type="U32"/>
+        <arg name="arg1" type="U32"/>
+        <arg name="arg2" type="U32"/>
+        <arg name="arg3" type="U32"/>
+      </args>
+    </event>
+    <event component="fatalAdapter" name="AF_ASSERT_4" id="0x17" severity="FATAL" format_string="Assert in file %s, line %d: %d %d %d %d">
+      <args>
+        <arg name="file" len="80" type="string"/>
+        <arg name="line" type="U32"/>
+        <arg name="arg1" type="U32"/>
+        <arg name="arg2" type="U32"/>
+        <arg name="arg3" type="U32"/>
+        <arg name="arg4" type="U32"/>
+      </args>
+    </event>
+    <event component="fatalAdapter" name="AF_ASSERT_5" id="0x18" severity="FATAL" format_string="Assert in file %s, line %d: %d %d %d %d %d">
+      <args>
+        <arg name="file" len="80" type="string"/>
+        <arg name="line" type="U32"/>
+        <arg name="arg1" type="U32"/>
+        <arg name="arg2" type="U32"/>
+        <arg name="arg3" type="U32"/>
+        <arg name="arg4" type="U32"/>
+        <arg name="arg5" type="U32"/>
+      </args>
+    </event>
+    <event component="fatalAdapter" name="AF_ASSERT_6" id="0x19" severity="FATAL" format_string="Assert in file %s, line %d: %d %d %d %d %d %d">
+      <args>
+        <arg name="file" len="80" type="string"/>
+        <arg name="line" type="U32"/>
+        <arg name="arg1" type="U32"/>
+        <arg name="arg2" type="U32"/>
+        <arg name="arg3" type="U32"/>
+        <arg name="arg4" type="U32"/>
+        <arg name="arg5" type="U32"/>
+        <arg name="arg6" type="U32"/>
+      </args>
+    </event>
+    <event component="fatalAdapter" name="AF_UNEXPECTED_ASSERT" id="0x1a" severity="FATAL" format_string="Unexpected assert in file %s, line %d, args %d">
+      <args>
+        <arg name="file" len="80" type="string"/>
+        <arg name="line" type="U32"/>
+        <arg name="numArgs" type="U32"/>
+      </args>
+    </event>
     <event component="health" name="HLTH_PING_WARN" id="0x1b" severity="WARNING_HI" format_string="Ping entry %s late warning">
       <args>
         <arg name="entry" len="40" type="string"/>
@@ -128,6 +285,9 @@
         <arg name="fatal" type="U32"/>
       </args>
     </event>
+    <event component="groundIf" name="GroundInterfaceError" id="0x23" severity="WARNING_HI" format_string="Ground interface encountered an error">
+      <args/>
+    </event>
     <event component="eventLogger" name="SEVERITY_FILTER_STATE" id="0x24" severity="ACTIVITY_LO" format_string="%s filter state. %d">
       <args>
         <arg name="severity" type="ActiveLogger::severity::EventFilterState"/>
@@ -154,6 +314,14 @@
         <arg name="ID" type="U32"/>
       </args>
     </event>
+    <event component="rateGroup1" name="RateGroupStarted" id="0x40" severity="DIAGNOSTIC" format_string="Rate group started.">
+      <args/>
+    </event>
+    <event component="rateGroup1" name="RateGroupCycleSlip" id="0x41" severity="WARNING_HI" format_string="Rate group cycle slipped on cycle %d">
+      <args>
+        <arg name="cycle" type="U32"/>
+      </args>
+    </event>
     <event component="rateGroup3" name="RateGroupStarted" id="0x44" severity="DIAGNOSTIC" format_string="Rate group started.">
       <args/>
     </event>
@@ -172,7 +340,11 @@
     </event>
   </events>
   <channels>
+    <channel component="cmdDisp" name="CommandsDispatched" id="0x1" description="Number of commands dispatched" type="U32"/>
+    <channel component="cmdDisp" name="CommandErrors" id="0x2" description="Number of command errors" type="U32"/>
     <channel component="health" name="PingLateWarnings" id="0x1b" description="Number of overrun warnings" type="U32"/>
+    <channel component="rateGroup1" name="RgMaxTime" id="0x40" format_string="%u us" description="Max execution time rate group" type="U32"/>
+    <channel component="rateGroup1" name="RgCycleSlips" id="0x41" description="Cycle slips for rate group" type="U32"/>
     <channel component="rateGroup3" name="RgMaxTime" id="0x44" format_string="%u us" description="Max execution time rate group" type="U32"/>
     <channel component="rateGroup3" name="RgCycleSlips" id="0x45" description="Cycle slips for rate group" type="U32"/>
     <channel component="pingRcvr" name="PR_NumPings" id="0x46" description="Number of pings received" type="U32"/>
