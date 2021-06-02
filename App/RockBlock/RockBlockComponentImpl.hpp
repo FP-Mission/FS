@@ -21,7 +21,8 @@
 #include <string>
 
 #define ROCKBLOCK_COMMAND_SIZE 16
-#define ROCKBLOCK_COMMAND_BUFFER 10
+#define ROCKBLOCK_COMMAND_BUFFER_SIZE 10    // Maximum allocation size for RockBlock AT commands
+#define COMMAND_BUFFER_SIZE 128 // Maximum allocation size of the recv buffer for F' commands
 
 namespace App {
 
@@ -85,6 +86,7 @@ class RockBlockComponentImpl : public RockBlockComponentBase {
     void sendNextCommand();
     bool sendRockBlockCommand(std::string command);
     bool detectCommand(const char* command, const char* line);
+    U8 HexToByte(char hex);
 
     // ----------------------------------------------------------------------
     // Command handler implementations
@@ -100,16 +102,30 @@ class RockBlockComponentImpl : public RockBlockComponentBase {
     );
 
     // Serial buffer provider to LinuxSerialDriver
-    Fw::Buffer m_recvBuffers[DR_MAX_NUM_BUFFERS];
-    BYTE m_uartBuffers[DR_MAX_NUM_BUFFERS][UART_READ_BUFF_SIZE];
+    Fw::Buffer m_serialRecvBuffers[DR_MAX_NUM_BUFFERS];
+    BYTE m_serialRecvData[DR_MAX_NUM_BUFFERS][UART_READ_BUFF_SIZE];
 
     Os::Mutex serialMutex;    //<! Lock when serial line is used
     Os::Mutex commandMutex;   //<! Protec command buffer is used
     bool rockBlockIsOk;
 
-    char commandBuffer[ROCKBLOCK_COMMAND_BUFFER][ROCKBLOCK_COMMAND_SIZE];
+    char commandBuffer[ROCKBLOCK_COMMAND_BUFFER_SIZE][ROCKBLOCK_COMMAND_SIZE];
     U8 commandInCtn;
     U8 commandOutCtn;
+
+    Fw::Buffer m_commandBuffer;           //!< Buffer used to pass commands received by RockBlock
+    U8 m_commandData[COMMAND_BUFFER_SIZE]; //!< Data for above buffer
+
+    bool dataReceived; //!< Set to True when next line is RX data
+
+    struct SBDIX_t {
+        U8 moStatus;
+        U16 moMsn;
+        U8 mtStatus;
+        U16 mtMsn;
+        U16 mtLength;
+        U16 mtQueued;
+    } SBDIX;
 };
 
 }  // end namespace App

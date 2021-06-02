@@ -28,8 +28,11 @@ namespace App {
 // Construction, initialization, and destruction
 // ----------------------------------------------------------------------
 
-RockBlockComponentImpl ::RockBlockComponentImpl(const char *const compName)
-    : RockBlockComponentBase(compName) {}
+RockBlockComponentImpl ::RockBlockComponentImpl(const char *const compName) 
+    : RockBlockComponentBase(compName) {
+        this->m_commandBuffer.setData(this->m_commandData);
+        this->m_commandBuffer.setSize(COMMAND_BUFFER_SIZE);
+}
 
 void RockBlockComponentImpl ::init(const NATIVE_INT_TYPE queueDepth,
                                    const NATIVE_INT_TYPE instance) {
@@ -46,15 +49,16 @@ void RockBlockComponentImpl ::init(const NATIVE_INT_TYPE queueDepth,
 void RockBlockComponentImpl::preamble(void) {
     this->commandInCtn = 0;
     this->commandOutCtn = 0;
+    this->dataReceived = false;
     // RockBlock is considered as available at launch
     this->rockBlockIsOk = true;
     for (NATIVE_INT_TYPE buffer = 0; buffer < DR_MAX_NUM_BUFFERS; buffer++) {
         // Assign the raw data to the buffer. Make sure to include the side of
         // the region assigned.
-        this->m_recvBuffers[buffer].setData(this->m_uartBuffers[buffer]);
-        this->m_recvBuffers[buffer].setSize(UART_READ_BUFF_SIZE);
+        this->m_serialRecvBuffers[buffer].setData(this->m_serialRecvData[buffer]);
+        this->m_serialRecvBuffers[buffer].setSize(UART_READ_BUFF_SIZE);
         // Invoke the port to send the buffer out.
-        this->serialBufferOut_out(0, this->m_recvBuffers[buffer]);
+        this->serialBufferOut_out(0, this->m_serialRecvBuffers[buffer]);
     }
 }
 
@@ -71,11 +75,9 @@ void RockBlockComponentImpl::Run_handler(const NATIVE_INT_TYPE portNum, NATIVE_U
 
 void RockBlockComponentImpl:: configureHardware() {
     this->sendRockBlockCommand("AT"); // Send first command to receive OK response
-    //sleep(1);
     this->addCommand("AT+SBDMTA?");
-    //sleep(1);
     this->addCommand("AT+CSQ");
-    this->addCommand("AT+SBDIX");
+    //this->addCommand("AT+SBDIX");
 }
 
 void RockBlockComponentImpl:: addCommand(std::string command) {
@@ -85,13 +87,13 @@ void RockBlockComponentImpl:: addCommand(std::string command) {
         Fw::Logger::logMsg("[ERROR] RockBlock too long command: %d\n",
                            commandLength);
     } else {
-        U8 newCtn = (this->commandInCtn + 1) % ROCKBLOCK_COMMAND_BUFFER;
+        U8 newCtn = (this->commandInCtn + 1) % ROCKBLOCK_COMMAND_BUFFER_SIZE;
         if(newCtn == this->commandOutCtn) {
             Fw::Logger::logMsg("[ERROR] RockBlock sending queue full\n");
         } else {
             // ! If data are not read, they will be overriden
             sprintf(&commandBuffer[this->commandInCtn][0], command.c_str(), commandLength);
-            this->commandInCtn = (this->commandInCtn + 1) % ROCKBLOCK_COMMAND_BUFFER;
+            this->commandInCtn = (this->commandInCtn + 1) % ROCKBLOCK_COMMAND_BUFFER_SIZE;
             DEBUG_PRINT("Add RockBlock command %s\n", command.c_str());
         }
     }
@@ -105,7 +107,7 @@ void RockBlockComponentImpl:: sendNextCommand() {
         std::string cmd(&commandBuffer[this->commandOutCtn][0]);
         // Increment out counter if command has been sent
         if(this->sendRockBlockCommand(cmd)) {
-            this->commandOutCtn = (this->commandOutCtn + 1) % ROCKBLOCK_COMMAND_BUFFER;
+            this->commandOutCtn = (this->commandOutCtn + 1) % ROCKBLOCK_COMMAND_BUFFER_SIZE;
         }
     } else {
         // DEBUG_PRINT("No pending command\n");
@@ -217,24 +219,19 @@ void RockBlockComponentImpl ::serialRecv_handler(
         } else if(detectCommand("+CSQ:", pointer)) {
             U8 signalQuality = atoi(pointer + 5);
             this->log_ACTIVITY_LO_RckBlck_CSQ(signalQuality);
-        } else if(detectCommand("+SBDMTA:", pointer)) {
+        }  else if(detectCommand("+SBDMTA:", pointer)) {
+            Fw::LogStringArg arg(pointer);
+            this->log_DIAGNOSTIC_RckBlck_Response(arg);
+            // @todo Replace by custom event ?
+            /*/
             U8 ringAllertEnabled = atoi(pointer + 8);
-            // @todo Replace by event ?
             if(ringAllertEnabled) {
                 DEBUG_PRINT("[RockBlock] Ring alert enabled\n");
             } else {
                 DEBUG_PRINT("[RockBlock] Ring alert disabled\n");
             }
+            //*/
         } else if(detectCommand("+SBDIX:", pointer)) {
-            struct SBDIX_t {
-                U8 moStatus;
-                U16 moMsn;
-                U8 mtStatus;
-                U16 mtMsn;
-                U16 mtLength;
-                U16 mtQueued;
-            } SBDIX;
-
             U8 res = 0;
             res = sscanf(pointer + 8, "%u, %u, %u, %u, %u, %u", 
                                         &SBDIX.moStatus, &SBDIX.moMsn,
@@ -268,8 +265,9 @@ void RockBlockComponentImpl ::serialRecv_handler(
                 Fw::Logger::logMsg("[ERROR] Unable to parse SBDIX RockBlock response, res=%u\n", res);
             }
         } else if(detectCommand("+SBDRT:", pointer)) {
-            // @todo process rx data
-            printf("[RockBlock] %s\n", pointer);
+            this->dataReceived = true;
+            // Data received are received on next line and will be processed below
+            printf("[RockBlock] +SBDRT:\n");
         } else if (detectCommand("SBDRING", pointer)) {
             this->log_ACTIVITY_HI_RckBlck_RingAlert();
             this->addCommand("AT+SBDIXA");
@@ -277,8 +275,23 @@ void RockBlockComponentImpl ::serialRecv_handler(
             // Empty line
             //DEBUG_PRINT("[RockBlock] Emtpy\n", pointer);
         } else {
-            Fw::LogStringArg arg(pointer);
-            this->log_DIAGNOSTIC_RckBlck_Response(arg);
+            if(this->dataReceived) {
+                DEBUG_PRINT("[RockBlock] %s\n", pointer);
+                if(SBDIX.mtQueued > 0) {
+                    // @todo send next SBDIX request (or SBDRT ?) to get remaining messages
+                    continue;
+                }
+                /*/ @todo process rx data
+                U8* data = this->m_buffer.getData();
+                FW_ASSERT(data);
+
+                this->m_buffer.setSize(size);
+                this->recvData(this->m_buffer);
+                //*/ 
+            } else {
+                Fw::LogStringArg arg(pointer);
+                this->log_DIAGNOSTIC_RckBlck_Response(arg);
+            }
         }
     } catch (...) {
         Fw::Logger::logMsg("[ERROR] Unable to decode frame received from RockBlock\n");
@@ -287,6 +300,17 @@ void RockBlockComponentImpl ::serialRecv_handler(
     // Return buffer (see above note)
     serBuffer.setSize(UART_READ_BUFF_SIZE);
     this->serialBufferOut_out(0, serBuffer);
+}
+
+U8 RockBlockComponentImpl::HexToByte(char hex) { 
+    if (hex>='0' && hex<='9') {
+        return hex - '0';
+    } else if (hex>='A' && hex<='F') {
+        return hex + 10 - 'A';
+    } else if (hex>='a' && hex<='f') {
+        return hex + 10 - 'a';
+    }
+    return 0;
 }
 
 }  // end namespace App
