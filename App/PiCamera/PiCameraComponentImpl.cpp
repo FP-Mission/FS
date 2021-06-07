@@ -191,7 +191,7 @@ namespace App {
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq /*!< The command sequence number*/
       ){
-        if(nbPicture == 0){
+        if(nbPicture == 0 || pictureId == nbPicture){
           this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
           return;
         }
