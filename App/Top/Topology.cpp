@@ -12,6 +12,8 @@
 #include <stdlib.h>
 #endif
 
+#define ROCKBLOCK_SIMULATOR
+
 // List of context IDs
 enum {
     DOWNLINK_PACKET_SIZE = 500,
@@ -179,6 +181,21 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     // read parameters
     // prmDb.readParamFile();
 
+#ifdef ROCKBLOCK_SIMULATOR
+    // ttyUSB0 BAUD_19200 for real module, ttyAMA0 BAUD_38400 for simulator
+    // ! Usage of the simulator requires to disable FlexTrak
+    if (!serialDriver2.open("/dev/ttyAMA0", 
+                   Drv::LinuxSerialDriverComponentImpl::BAUD_38400,
+                   Drv::LinuxSerialDriverComponentImpl::NO_FLOW, 
+                   Drv::LinuxSerialDriverComponentImpl::PARITY_NONE,
+                   true))
+    {
+        Fw::Logger::logMsg("[ERROR] Failed to open RockBlock UART\n");
+    } else {
+        Fw::Logger::logMsg("[INFO] Opened RockBlock UART\n");
+        rockblock_connected = true;
+    }
+#else
     if (!serialDriver1.open("/dev/ttyAMA0",
                    Drv::LinuxSerialDriverComponentImpl::BAUD_38400,
                    Drv::LinuxSerialDriverComponentImpl::NO_FLOW, 
@@ -191,7 +208,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
         flextrak_connected = true;
     }
 
-    if (!serialDriver2.open("/dev/ttyUSB0",
+    if (!serialDriver2.open("/dev/ttyUSB0", 
                    Drv::LinuxSerialDriverComponentImpl::BAUD_19200,
                    Drv::LinuxSerialDriverComponentImpl::NO_FLOW, 
                    Drv::LinuxSerialDriverComponentImpl::PARITY_NONE,
@@ -202,6 +219,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
         Fw::Logger::logMsg("[INFO] Opened RockBlock UART\n");
         rockblock_connected = true;
     }
+#endif // ROCKBLOCK_SIMULATOR
 
     // Active component startup
     // start rate groups
@@ -225,7 +243,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     if (flextrak_connected) {
         flexTrak.start(0, 100, 10 * 1024);
         serialDriver1.startReadThread(90, 20 * 1024);
-        //flexTrak.configureHardware(); // todo UNCOMMENT - Remove during rockBlock dev !!!!!!
+        flexTrak.configureHardware();
     }
 
     if (rockblock_connected) {
@@ -262,10 +280,12 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
         {3, 5, getHealthName(rockBlock)},    // 12
     };
 
+#ifndef ROCKBLOCK_SIMULATOR
     // register ping table
     health.setPingEntries(pingEntries, FW_NUM_ARRAY_ELEMENTS(pingEntries),
                           0x123);
-    
+#endif
+
     return false;
 }
 

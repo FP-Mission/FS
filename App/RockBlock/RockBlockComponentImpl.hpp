@@ -22,7 +22,7 @@
 
 #define ROCKBLOCK_COMMAND_SIZE 16
 #define ROCKBLOCK_COMMAND_BUFFER_SIZE 10    // Maximum allocation size for RockBlock AT commands
-#define COMMAND_BUFFER_SIZE 128 // Maximum allocation size of the recv buffer for F' commands
+#define FP_COMMAND_BUFFER_SIZE 128 // Maximum allocation size of the recv buffer for F' commands
 
 namespace App {
 
@@ -105,18 +105,26 @@ class RockBlockComponentImpl : public RockBlockComponentBase {
     Fw::Buffer m_serialRecvBuffers[DR_MAX_NUM_BUFFERS];
     BYTE m_serialRecvData[DR_MAX_NUM_BUFFERS][UART_READ_BUFF_SIZE];
 
-    Os::Mutex serialMutex;    //<! Lock when serial line is used
-    Os::Mutex commandMutex;   //<! Protec command buffer is used
-    bool rockBlockIsOk;
+    Os::Mutex serialMutex;      //<! Locked when serial line is used
+    Os::Mutex rbCommandMutex;   //<! Protect rbCommandBuffer when used
+    bool rockBlockIsOk;         //<! Indicates when RockBlock can receive new AT command
 
-    char commandBuffer[ROCKBLOCK_COMMAND_BUFFER_SIZE][ROCKBLOCK_COMMAND_SIZE];
-    U8 commandInCtn;
-    U8 commandOutCtn;
+    // Circual buffer to store AT commands to send to the RockBlock module
+    char rbCommandBuffer[ROCKBLOCK_COMMAND_BUFFER_SIZE][ROCKBLOCK_COMMAND_SIZE];
+    U8 rbCommandInCtn;
+    U8 rbCommandOutCtn;
 
-    Fw::Buffer m_commandBuffer;           //!< Buffer used to pass commands received by RockBlock
-    U8 m_commandData[COMMAND_BUFFER_SIZE]; //!< Data for above buffer
+    Fw::Buffer fpCommandBuffer;                 //!< Buffer used to pass F' commands received by RockBlock
+    U8 fpCommandData[FP_COMMAND_BUFFER_SIZE];   //!< Data for above buffer
 
-    bool dataReceived; //!< Set to True when next line is RX data
+    enum binaryModeSteps {binaryOff, binaryReadSize, binaryReadMessage, binaryReadChecksum};
+    struct binaryData {
+        U16 size;
+        U16 checksum;
+    } binaryData;
+
+    bool textDataReceived; //!< Set to True when next line is RX text data
+    binaryModeSteps binaryDataReceived; //!< Set to True when next line is RX binary data
 
     struct SBDIX_t {
         U8 moStatus;

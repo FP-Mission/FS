@@ -81,13 +81,21 @@
     <!-- Connections -->
     <!-- ########### -->
 
-    <!-- Communications driver connections -->
+    <!-- GROUND INTERFACE UPLINK - CHOSE BETWEEN IP OR ROCKBLOCK -->
+    <!-- Receive data through Ip
     <connection name="CommunicationRecv">
         <source component="socketIpDriver" port="recv" type="Fw::BufferSend" num="0"/>
         <target component="groundIf" port="readCallback" type="Fw::BufferSend" num="0"/>
     </connection>
-    
+    -->
 
+    <!-- Receive data through RockBlock -->
+    <connection name="CommunicationRecv">
+        <source component="rockBlock" port="recvData" type="Fw::BufferSend" num="0"/>
+        <target component="groundIf" port="readCallback" type="Fw::BufferSend" num="0"/>
+    </connection>
+    <!-- -->
+    
     <!-- GROUND INTERFACE DOWNLINK - CHOSE BETWEEN IP OR FLEXTRAK -->
     <!-- Send data to Ip -->
     <connection name="CommunicationSend">
@@ -855,6 +863,10 @@
      <connection name="serialDriver2Send">
         <source component="rockBlock" port="serialSend" type="SerialWrite" num="0"/>
         <target component="serialDriver2" port="serialSend" type="SerialWrite" num="0"/>
+     </connection>
+     <connection name="serialDriver2BinaryMode">
+        <source component="rockBlock" port="binaryMode" type="Drv::BinaryMode" num="0"/>
+        <target component="serialDriver2" port="binaryMode" type="Drv::BinaryMode" num="0"/>
      </connection>
         <!-- GPS -->
      <connection name="gpsPiCamera">

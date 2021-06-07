@@ -8,6 +8,7 @@
     <import_port_type>Drv/SerialDriverPorts/SerialWritePortAi.xml</import_port_type>
     <import_port_type>Fw/Buffer/BufferSendPortAi.xml</import_port_type>
     <import_port_type>Svc/Ping/PingPortAi.xml</import_port_type>
+    <import_port_type>Drv/LinuxSerialDriver/BinaryModePort/BinaryModePortAi.xml</import_port_type>
 
     <ports>
         <port name="PingIn" data_type="Svc::Ping" kind="async_input" max_number="1">
@@ -30,6 +31,8 @@
         <port name="serialRecv" data_type="Drv::SerialRead" kind="sync_input"  max_number="1">
         </port>
         <port name="recvData" data_type="Fw::BufferSend" kind="output" max_number="1">
+        </port>
+        <port name="binaryMode" data_type="Drv::BinaryMode" kind="output" max_number="1">
         </port>
         <!-- Used at startup to supply buffers to the serial driver -->
         <port name="serialBufferOut" data_type="Fw::BufferSend"  kind="output"  max_number="1">
