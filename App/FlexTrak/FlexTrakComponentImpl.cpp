@@ -290,7 +290,10 @@ void FlexTrakComponentImpl::downlinkQueue_internalInterfaceHandler(U8 packetType
             //printf("%c", data[4 + i]);
         }
         //printf("END\n");
-        data[packetSize + 4] = '\r';
+        data[packetSize + 4] = '\r';    
+        // @todo Should not be necessary, but current binary mode in FlexTrak use \r after binary data receiption
+        // to process command. Incorrect way to deal with it but it works, so .... u know
+
         U8 commandSize = packetSize + 5;
         //*/
 
