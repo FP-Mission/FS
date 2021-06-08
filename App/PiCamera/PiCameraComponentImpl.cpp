@@ -35,8 +35,8 @@ namespace App {
     PiCameraComponentImpl(
         const char *const compName
     ) : PiCameraComponentBase(compName), nbPicture(0) ,width(BASE_WIDTH),
-     height(BASE_HEIGHT), indexSSDV(0), timeInterval(6), timeCpt(0), sendingPicture(0), pictureId(0)
-     ,fileSize(0), currentTime(0), nbPacket(-1)
+     height(BASE_HEIGHT), indexSSDV(0), timeInterval(6), timeCpt(0), sendingPicture(0), pictureId(-1)
+     ,fileSize(0), currentTime(0), nbPacket(0)
   {
     std::ostringstream osTelemetry;
     osTelemetry << TELEMETRY_DIRECTORY << "telemetry.csv";
@@ -137,10 +137,7 @@ namespace App {
         NATIVE_UINT_TYPE context
     )
   {
-      tlmWrite_PiCam_Timeinterval(this->timeInterval);
-      PictureSize pictureSize(this->width,this->height);
-      tlmWrite_PiCam_PictureSize(pictureSize);
-      if(timeInterval == 0){
+      /*if(timeInterval == 0){
         return;
       }
       if(timeCpt < timeInterval){
@@ -154,7 +151,7 @@ namespace App {
           timeCpt=1;
           return;
       }
-      log_WARNING_LO_PiCam_PictureError(0);
+      log_WARNING_LO_PiCam_PictureError(0);*/
   }
 
       void PiCameraComponentImpl::SendFrame_handler(
@@ -254,13 +251,19 @@ namespace App {
           const U32 cmdSeq, /*!< The command sequence number*/
           U16 frameId
       ){
-         if(pictureId == -1 || frameId < 0 || frameId > nbPacket){
+         if(pictureId == -1 || frameId < -1 || frameId > nbPacket){
           this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
           return;
         }
-         frameSend[frameId] = false;
+        if(frameId == -1){
+          delete frameSend;
+          frameSend = new bool[nbPacket]{false};
+        }else{
+            frameSend[frameId] = false;
+        }
+         
           
-          this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+        this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
       }
 
   bool PiCameraComponentImpl::takePicture(){
@@ -386,9 +389,6 @@ namespace App {
       binaryData = new U8[fileSize];
       nbPacket = fileSize/SIZE_PACKET;
       frameSend = new bool[nbPacket]{ false};
-      for(U32 i = 0; i< nbPacket;i++){
-        printf("%d\n",frameSend[i]);
-      }
       char* dataChar = reinterpret_cast<char*>(binaryData);
       in.read(dataChar ,fileSize);
 
