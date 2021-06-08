@@ -271,7 +271,7 @@
         <arg name="temperature" type="I16"/>
       </args>
     </command>
-    <command component="senseHat" mnemonic="MS_GET_TM" opcode="0x9c">
+    <command component="senseHat" mnemonic="MS_GET_TM" opcode="0xaa">
       <args/>
     </command>
   </commands>
@@ -849,35 +849,35 @@
         <arg name="temperature" type="I16"/>
       </args>
     </event>
-    <event component="senseHat" name="MS_DATA" id="0x9c" severity="ACTIVITY_LO" format_string="Sense hat data update">
+    <event component="senseHat" name="MS_DATA" id="0xaa" severity="ACTIVITY_LO" format_string="Sense hat data update">
       <args/>
     </event>
-    <event component="senseHat" name="MS_ERROR" id="0x9d" severity="WARNING_HI" format_string="Sense update data error">
+    <event component="senseHat" name="MS_ERROR" id="0xab" severity="WARNING_HI" format_string="Sense update data error">
       <args/>
     </event>
-    <event component="thermometer" name="MS_DATA" id="0xa6" severity="ACTIVITY_LO" format_string="Data Receive from Sense Hat: temperature: %.2f C&#176;, humidity:  %.2f %%">
+    <event component="thermometer" name="MS_DATA" id="0xb4" severity="ACTIVITY_LO" format_string="Data Receive from Sense Hat: temperature: %.2f C&#176;, humidity:  %.2f %%">
       <args>
         <arg name="temp" type="F32"/>
         <arg name="humi" type="F32"/>
       </args>
     </event>
-    <event component="thermometer" name="MS_ERROR" id="0xa7" severity="WARNING_HI" format_string="Thermometer error">
+    <event component="thermometer" name="MS_ERROR" id="0xb5" severity="WARNING_HI" format_string="Thermometer error">
       <args/>
     </event>
-    <event component="motionTracking" name="MS_DATA" id="0xb0" severity="ACTIVITY_LO" format_string="Data Receive from Sense Hat">
+    <event component="motionTracking" name="MS_DATA" id="0xbe" severity="ACTIVITY_LO" format_string="Data Receive from Sense Hat">
       <args/>
     </event>
-    <event component="motionTracking" name="MS_ERROR" id="0xb1" severity="WARNING_HI" format_string="Motion Tracking error">
+    <event component="motionTracking" name="MS_ERROR" id="0xbf" severity="WARNING_HI" format_string="Motion Tracking error">
       <args/>
     </event>
-    <event component="barometer" name="MS_DATA" id="0xba" severity="ACTIVITY_LO" format_string="Data Receive from Sense Hat: temperature: %.2f C&#176;, pressure:  %.2f hPa, Altitude: %d m">
+    <event component="barometer" name="MS_DATA" id="0xc8" severity="ACTIVITY_LO" format_string="Data Receive from Sense Hat: temperature: %.2f C&#176;, pressure:  %.2f hPa, Altitude: %d m">
       <args>
         <arg name="temp" type="F32"/>
         <arg name="pres" type="F32"/>
         <arg name="alt" type="U16"/>
       </args>
     </event>
-    <event component="barometer" name="MS_ERROR" id="0xbb" severity="WARNING_HI" format_string="Barometer error">
+    <event component="barometer" name="MS_ERROR" id="0xc9" severity="WARNING_HI" format_string="Barometer error">
       <args/>
     </event>
   </events>
@@ -900,22 +900,6 @@
     <channel component="blockDrv" name="BD_Cycles" id="0x4e" description="Driver cycle count" type="U32"/>
     <channel component="serialDriver1" name="DR_BytesSent" id="0x4f" description="Bytes Sent" type="U32"/>
     <channel component="serialDriver1" name="DR_BytesRecv" id="0x50" description="Bytes Received" type="U32"/>
-    <channel component="eps" name="Eps_BatteryVoltage" id="0x56" description="Battery level in mV" type="U16"/>
-    <channel component="flexTrak" name="FT_SSDVBufferLength" id="0x60" description="Used length of SSDV buffer" type="U16"/>
-    <channel component="gps" name="Gps_Position" id="0x6a" description="GPS position" type="App::PositionSer"/>
-    <channel component="piCamera" name="PiCam_PictureCnt" id="0x74" description="Number of pictures taken" type="U32"/>
-    <channel component="predictor" name="Predi_LandingPosition" id="0x7e" description="Predicted landing position" type="App::PositionSer"/>
-    <channel component="temperatureProbes" name="TempProb_InternalTemperature" id="0x92" description="Internal temperature in &#176;C" type="I16"/>
-    <channel component="temperatureProbes" name="TempProb_ExternalTemperature" id="0x93" description="External temperature in &#176;C" type="I16"/>
-    <channel component="thermometer" name="THERMOMETER_TEMP" id="0xa6" description="Temperature value" type="F32"/>
-    <channel component="thermometer" name="THERMOMETER_HUMI" id="0xa7" description="Humidtiy value" type="F32"/>
-    <channel component="motionTracking" name="MOTIONTRACKING_ANGLES" id="0xb0" description="Angles values" type="App::AnglesTlm"/>
-    <channel component="motionTracking" name="MOTIONTRACKING_GYRO" id="0xb1" description="Gyroscope values" type="App::VectorTlm"/>
-    <channel component="motionTracking" name="MOTIONTRACKING_ACCEL" id="0xb2" description="Acceleration values" type="App::VectorTlm"/>
-    <channel component="motionTracking" name="MOTIONTRACKING_MAGN" id="0xb3" description="Magnetique field values" type="App::VectorTlm"/>
-    <channel component="barometer" name="BAROMETER_TEMP" id="0xba" description="Temperature value" type="F32"/>
-    <channel component="barometer" name="BAROMETER_PRESS" id="0xbb" description="Pressure value" type="F32"/>
-    <channel component="barometer" name="BAROMETER_ALT" id="0xbc" description="Altitude value" type="U16"/>
     <channel component="serialDriver2" name="DR_BytesSent" id="0x59" description="Bytes Sent" type="U32"/>
     <channel component="serialDriver2" name="DR_BytesRecv" id="0x5a" description="Bytes Received" type="U32"/>
     <channel component="eps" name="Eps_BatteryVoltage" id="0x64" description="Battery level in mV" type="U16"/>
@@ -926,6 +910,15 @@
     <channel component="rockBlock" name="RckBlck_Ch" id="0x96" description="Sample channel" type="U16"/>
     <channel component="temperatureProbes" name="TempProb_InternalTemperature" id="0xa0" description="Internal temperature in &#176;C" type="I16"/>
     <channel component="temperatureProbes" name="TempProb_ExternalTemperature" id="0xa1" description="External temperature in &#176;C" type="I16"/>
+    <channel component="thermometer" name="THERMOMETER_TEMP" id="0xb4" description="Temperature value" type="F32"/>
+    <channel component="thermometer" name="THERMOMETER_HUMI" id="0xb5" description="Humidtiy value" type="F32"/>
+    <channel component="motionTracking" name="MOTIONTRACKING_ANGLES" id="0xbe" description="Angles values" type="App::AnglesTlm"/>
+    <channel component="motionTracking" name="MOTIONTRACKING_GYRO" id="0xbf" description="Gyroscope values" type="App::VectorTlm"/>
+    <channel component="motionTracking" name="MOTIONTRACKING_ACCEL" id="0xc0" description="Acceleration values" type="App::VectorTlm"/>
+    <channel component="motionTracking" name="MOTIONTRACKING_MAGN" id="0xc1" description="Magnetique field values" type="App::VectorTlm"/>
+    <channel component="barometer" name="BAROMETER_TEMP" id="0xc8" description="Temperature value" type="F32"/>
+    <channel component="barometer" name="BAROMETER_PRESS" id="0xc9" description="Pressure value" type="F32"/>
+    <channel component="barometer" name="BAROMETER_ALT" id="0xca" description="Altitude value" type="U16"/>
   </channels>
   <parameters/>
 </dictionary>

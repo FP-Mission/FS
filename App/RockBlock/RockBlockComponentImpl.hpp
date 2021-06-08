@@ -117,15 +117,8 @@ class RockBlockComponentImpl : public RockBlockComponentBase {
     Fw::Buffer fpCommandBuffer;                 //!< Buffer used to pass F' commands received by RockBlock
     U8 fpCommandData[FP_COMMAND_BUFFER_SIZE];   //!< Data for above buffer
 
-    enum binaryModeSteps {binaryOff, binaryReadSize, binaryReadMessage, binaryReadChecksum};
-    struct binaryData {
-        U16 size;
-        U16 checksum;
-    } binaryData;
-
-    bool textDataReceived; //!< Set to True when next line is RX text data
-    binaryModeSteps binaryDataReceived; //!< Set to True when next line is RX binary data
-
+    bool textDataReceived;  //!< Set to True when next line is RX text data
+    
     struct SBDIX_t {
         U8 moStatus;
         U16 moMsn;
@@ -134,6 +127,9 @@ class RockBlockComponentImpl : public RockBlockComponentBase {
         U16 mtLength;
         U16 mtQueued;
     } SBDIX;
+
+    U32 pingKey;            //<! Save pingKey on pingIn
+    Os::Mutex pingMutex;    //<! Mutual exclusion between PingIn_handler and serialRecv_handler
 
     public:
         bool simulatorMode;

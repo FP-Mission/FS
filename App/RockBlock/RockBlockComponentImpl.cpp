@@ -38,6 +38,14 @@ void RockBlockComponentImpl ::init(const NATIVE_INT_TYPE queueDepth,
                                    const NATIVE_INT_TYPE instance) {
     RockBlockComponentBase::init(queueDepth, instance);
     this->simulatorMode = false;
+    // RockBlock is considered as available at launch
+    this->rockBlockIsOk = true;
+    // Default ping key value
+    this->pingKey = 0;
+    this->rbCommandInCtn = 0;
+    this->rbCommandOutCtn = 0;
+    this->textDataReceived = false;
+    this->SBDIX.mtQueued = 0;
 }
 
 // Step 0: The linux serial driver keeps its storage externally. This means that
@@ -48,13 +56,6 @@ void RockBlockComponentImpl ::init(const NATIVE_INT_TYPE queueDepth,
 //        system runs at steady-state. This allows for initialization code that
 //        invokes working ports.
 void RockBlockComponentImpl::preamble(void) {
-    this->rbCommandInCtn = 0;
-    this->rbCommandOutCtn = 0;
-    this->binaryDataReceived = binaryOff;
-    this->textDataReceived = false;
-    this->SBDIX.mtQueued = 0;
-    // RockBlock is considered as available at launch
-    this->rockBlockIsOk = true;
     for (NATIVE_INT_TYPE buffer = 0; buffer < DR_MAX_NUM_BUFFERS; buffer++) {
         // Assign the raw data to the buffer. Make sure to include the side of
         // the region assigned.
@@ -174,8 +175,10 @@ bool RockBlockComponentImpl ::detectCommand(const char* command, const char* lin
 
 void RockBlockComponentImpl ::PingIn_handler(const NATIVE_INT_TYPE portNum,
                                              U32 key) {
-    // @todo Implement Ping logic
-    PingOut_out(0, key);
+    // Save ping key to allow response in serialRecv_handler
+    pingMutex.lock();
+    this->pingKey = key;
+    pingMutex.unLock();
 }
 
 void RockBlockComponentImpl ::RckBlck_SendCommand_cmdHandler(
@@ -229,6 +232,17 @@ void RockBlockComponentImpl ::serialRecv_handler(
             this->rockBlockIsOk = true;
             Fw::LogStringArg arg("OK");
             this->log_DIAGNOSTIC_RckBlck_Response(arg);
+
+            // Ping response sent each time ping request was received
+            // and RockBlock responds OK
+            pingMutex.lock();
+            if(this->pingKey != 0) {
+                PingOut_out(0, this->pingKey);
+                this->pingKey = 0;
+
+            }
+            pingMutex.unLock();
+
             // Send next command when last command ack received
             this->sendNextCommand();
         } else if(detectCommand("ERROR", pointer)) {
@@ -293,27 +307,27 @@ void RockBlockComponentImpl ::serialRecv_handler(
             // {2-byte message length} + {binary SBD message} + {2-byte checksum}
             // Frame response : AT+SBDRB\r<2 bytes length><x bytes data><2 bytes checksum>\r\n
             char *framePointer = pointer + 9;
-            binaryData.size = (*framePointer << 8) + *(framePointer+1);
+            U16 dataSize = (*framePointer << 8) + *(framePointer+1);
             // Data size indicated in received frame corresponds to buffer size returned (15 bytes overhead)
-            if(binaryData.size == buffsize - 15) {
-                DEBUG_PRINT("Binary message received: 0x%04X\n", binaryData.size);
+            if(dataSize == buffsize - 15) {
+                DEBUG_PRINT("Binary message received: 0x%04X\n", dataSize);
 
                 /*/ Print frame
                 DEBUG_PRINT("Message:\n", buffsize - 15);  // 15 bytes overhead
-                for(int i = 0; i < binaryData.size; i++) {
+                for(int i = 0; i < dataSize; i++) {
                     printf("%.2X", *(framePointer + 2 + i));
                 }
                 printf("\n");
                 //*/
 
                 // @todo Check checksum ?
-                binaryData.checksum = (*(pointer + 2 + binaryData.size) << 8) + *(pointer + 3 + binaryData.size);
-                DEBUG_PRINT("Checksum: %4X\n", binaryData.checksum);
+                U16 checksum = (*(pointer + 2 + dataSize) << 8) + *(pointer + 3 + dataSize);
+                DEBUG_PRINT("Checksum: %4X\n", checksum);
 
                 // @todo check size !
                 FW_ASSERT(this->fpCommandBuffer.getData());
-                memcpy(this->fpCommandBuffer.getData(), framePointer + 2, binaryData.size);
-                this->fpCommandBuffer.setSize(binaryData.size);
+                memcpy(this->fpCommandBuffer.getData(), framePointer + 2, dataSize);
+                this->fpCommandBuffer.setSize(dataSize);
                 this->recvData_out(0, this->fpCommandBuffer);
                 //*/ 
 

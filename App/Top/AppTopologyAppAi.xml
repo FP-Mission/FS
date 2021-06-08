@@ -62,11 +62,12 @@
     <!-- Socket IP Communications driver -->
     <instance namespace="Drv" name="socketIpDriver" type="SocketIpDriver"       base_id="75"   base_id_window="0" />
 
-    <!-- Reference Example Components -->
+    <!-- App Components -->
     <instance namespace="Ref" name="pingRcvr"       type="PingReceiver"         base_id="76"   base_id_window="2" />
     <instance namespace="Drv" name="blockDrv"       type="BlockDriver"          base_id="78"   base_id_window="1" />
     <instance namespace="Drv" name="serialDriver1"  type="LinuxSerialDriver"    base_id="79"   base_id_window="7" />
     <instance namespace="Drv" name="serialDriver2"  type="LinuxSerialDriver"    base_id="89"   base_id_window="7" />
+
     <instance namespace="App" name="eps"                type="Eps"                  base_id="100"   base_id_window="10" />
     <instance namespace="App" name="flexTrak"           type="FlexTrak"             base_id="110"   base_id_window="10" />
     <instance namespace="App" name="gps"                type="Gps"                  base_id="120"   base_id_window="10" />
@@ -684,7 +685,8 @@
         <target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
     </connection>
     <connection name="rockBlockTime">
-        <source component="rockBlock" port="Time" type="Time" num="0"/><target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
+        <source component="rockBlock" port="Time" type="Time" num="0"/>
+        <target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
     </connection>
     <connection name="temperatureProbesTime">
         <source component="temperatureProbes" port="Time" type="Time" num="0"/>
@@ -972,5 +974,4 @@
         <source component = "senseHat" port = "LPS" type = "App::LPSPort" num = "0"/>
         <target component = "barometer" port = "DataIn" type = "App::LPSPort" num = "0"/>
     </connection>
-     </connection>
 </assembly>

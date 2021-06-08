@@ -10,11 +10,11 @@
 #define DICT_Eps_BatteryVoltage 0x64
 #define DICT_TempProb_InternalTemperature 0xa0
 #define DICT_TempProb_ExternalTemperature 0xa1
-// !!!!! TODO Adapt for dev deployment
-#define DICT_THERMOMETER_TEMP 0xa6
-#define DICT_THERMOMETER_HUMI 0xa7
-#define DICT_BAROMETER_TEMP 0xba
-#define DICT_BAROMETER_PRESS 0xbb
-#define DICT_BAROMETER_ALT 0xbc
+#define DICT_Gps_Position 0x78
+#define DICT_THERMOMETER_TEMP 0xb4
+#define DICT_THERMOMETER_HUMI 0xb5
+#define DICT_BAROMETER_TEMP 0xc8
+#define DICT_BAROMETER_PRESS 0xc9
+#define DICT_BAROMETER_ALT 0xca
 
 #endif
