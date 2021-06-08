@@ -22,7 +22,7 @@
 
 #define ROCKBLOCK_COMMAND_SIZE 16
 #define ROCKBLOCK_COMMAND_BUFFER_SIZE 10    // Maximum allocation size for RockBlock AT commands
-#define FP_COMMAND_BUFFER_SIZE 128 // Maximum allocation size of the recv buffer for F' commands
+#define FP_COMMAND_BUFFER_SIZE 128          // Maximum allocation size of the recv buffer for F' commands
 
 namespace App {
 
@@ -134,6 +134,9 @@ class RockBlockComponentImpl : public RockBlockComponentBase {
         U16 mtLength;
         U16 mtQueued;
     } SBDIX;
+
+    public:
+        bool simulatorMode;
 };
 
 }  // end namespace App

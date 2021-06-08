@@ -12,7 +12,9 @@
 #include <stdlib.h>
 #endif
 
-#define ROCKBLOCK_SIMULATOR
+// Uncomment to use FlexTrak as a RockBlock simulator
+// To this day, only a few command are supported
+// #define ROCKBLOCK_SIMULATOR
 
 // List of context IDs
 enum {
@@ -184,6 +186,8 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
 #ifdef ROCKBLOCK_SIMULATOR
     // ttyUSB0 BAUD_19200 for real module, ttyAMA0 BAUD_38400 for simulator
     // ! Usage of the simulator requires to disable FlexTrak
+    rockBlock.simulatorMode = true;
+    Fw::Logger::logMsg("[WARNING] Simulator is enabled for RockBlock\n");
     if (!serialDriver2.open("/dev/ttyAMA0", 
                    Drv::LinuxSerialDriverComponentImpl::BAUD_38400,
                    Drv::LinuxSerialDriverComponentImpl::NO_FLOW, 
@@ -284,6 +288,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     // register ping table
     health.setPingEntries(pingEntries, FW_NUM_ARRAY_ELEMENTS(pingEntries),
                           0x123);
+    //*/
 #endif
 
     return false;

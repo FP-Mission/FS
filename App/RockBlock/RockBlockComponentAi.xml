@@ -102,7 +102,7 @@
                 An error occurred while attempting to perform a mailbox check or receive a message from the GSS.
             </comment>
         </event>
-        <event id="5" name="RckBlck_RingAlert" severity="ACTIVITY_HI" format_string = "Ring altert received" >
+        <event id="5" name="RckBlck_RingAlert" severity="ACTIVITY_HI" format_string = "Ring alert received" >
             <comment>
                 Ring alert received
             </comment>

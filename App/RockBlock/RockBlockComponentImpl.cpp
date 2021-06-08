@@ -19,8 +19,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define SIMULATED_ROCKBLOCK 1
-
 #define DEBUG_PRINT(x, ...)  printf(x, ##__VA_ARGS__); fflush(stdout)
 //#define DEBUG_PRINT(x,...)
 
@@ -39,6 +37,7 @@ RockBlockComponentImpl ::RockBlockComponentImpl(const char *const compName)
 void RockBlockComponentImpl ::init(const NATIVE_INT_TYPE queueDepth,
                                    const NATIVE_INT_TYPE instance) {
     RockBlockComponentBase::init(queueDepth, instance);
+    this->simulatorMode = false;
 }
 
 // Step 0: The linux serial driver keeps its storage externally. This means that
@@ -53,6 +52,7 @@ void RockBlockComponentImpl::preamble(void) {
     this->rbCommandOutCtn = 0;
     this->binaryDataReceived = binaryOff;
     this->textDataReceived = false;
+    this->SBDIX.mtQueued = 0;
     // RockBlock is considered as available at launch
     this->rockBlockIsOk = true;
     for (NATIVE_INT_TYPE buffer = 0; buffer < DR_MAX_NUM_BUFFERS; buffer++) {
@@ -80,8 +80,6 @@ void RockBlockComponentImpl:: configureHardware() {
     this->sendRockBlockCommand("AT"); // Send first command to receive OK response
     this->addCommand("AT+SBDMTA?");
     this->addCommand("AT+CSQ");
-    //this->addCommand("AT+SBDIX");
-    this->addCommand("AT+SBDRB");
 }
 
 void RockBlockComponentImpl:: addCommand(std::string command) {
@@ -109,6 +107,18 @@ void RockBlockComponentImpl:: sendNextCommand() {
     // Send command if a new one has been stored
     if(this->rbCommandInCtn != this->rbCommandOutCtn) {
         std::string cmd(&rbCommandBuffer[this->rbCommandOutCtn][0]);
+
+        // When command sent is AT+SBDRB, the module will directly responds with 
+        // the binary data in the following frame :
+        // AT+SBDRB\r<2 bytes length><x bytes data><2 bytes checksum>\r\n
+        // We need to pass the driver in binary mode to avoid returning on end character (\n)
+        // instead of at the end of the binary data
+        if(detectCommand("AT+SBDRB", &rbCommandBuffer[this->rbCommandOutCtn][0])) {
+            DEBUG_PRINT("Send SBDRB to receive %u bytes\n", SBDIX.mtLength);
+            // 15 bytes overhead, see frame above:
+            this->binaryMode_out(0, SBDIX.mtLength + 15);
+        }
+
         // Increment out counter if command has been sent
         if(this->sendRockBlockCommand(cmd)) {
             this->rbCommandOutCtn = (this->rbCommandOutCtn + 1) % ROCKBLOCK_COMMAND_BUFFER_SIZE;
@@ -128,13 +138,14 @@ bool RockBlockComponentImpl:: sendRockBlockCommand(std::string command) {
         Fw::Buffer buffer;
         U16 size;
 
-#if SIMULATED_ROCKBLOCK == 1
-        size = command.size() + 2;
-        sprintf(commandToSend, "~%s\r", command.c_str());
-#else
-        size = command.size() + 1;
-        sprintf(commandToSend, "%s\r", command.c_str());
-#endif
+        if (this->simulatorMode) {
+            size = command.size() + 2;
+            sprintf(commandToSend, "~%s\r", command.c_str());
+        } else {
+            size = command.size() + 1;
+            sprintf(commandToSend, "%s\r", command.c_str());
+        }
+
         buffer.setData((U8*)commandToSend);
         buffer.setSize(size);
         this->serialSend_out(0, buffer);
@@ -220,7 +231,6 @@ void RockBlockComponentImpl ::serialRecv_handler(
             this->log_DIAGNOSTIC_RckBlck_Response(arg);
             // Send next command when last command ack received
             this->sendNextCommand();
-            //this->addCommand("AT+CSQ"); // @todo send CSQ request in loop, debug purpose
         } else if(detectCommand("ERROR", pointer)) {
             Fw::LogStringArg arg("ERROR");
             this->log_DIAGNOSTIC_RckBlck_Response(arg);
@@ -276,11 +286,44 @@ void RockBlockComponentImpl ::serialRecv_handler(
             } else {
                 Fw::Logger::logMsg("[ERROR] Unable to parse SBDIX RockBlock response, res=%u\n", res);
             }
-        } else if(detectCommand("+SBDRB:", pointer)) {
-            printf("[RockBlock] +SBDRB:\n");
-            // Data received are received on next line and will be processed below
-            this->binaryDataReceived = binaryReadSize;
-            this->binaryMode_out(0, 2); // ask driver to read 2 first bytes that represents data size
+        } else if(detectCommand("AT+SBDRB", pointer)) {
+            DEBUG_PRINT("[RockBlock] AT+SBDRB: %u \n", buffsize);
+
+            // The SBD message is transferred formatted as follows:
+            // {2-byte message length} + {binary SBD message} + {2-byte checksum}
+            // Frame response : AT+SBDRB\r<2 bytes length><x bytes data><2 bytes checksum>\r\n
+            char *framePointer = pointer + 9;
+            binaryData.size = (*framePointer << 8) + *(framePointer+1);
+            // Data size indicated in received frame corresponds to buffer size returned (15 bytes overhead)
+            if(binaryData.size == buffsize - 15) {
+                DEBUG_PRINT("Binary message received: 0x%04X\n", binaryData.size);
+
+                /*/ Print frame
+                DEBUG_PRINT("Message:\n", buffsize - 15);  // 15 bytes overhead
+                for(int i = 0; i < binaryData.size; i++) {
+                    printf("%.2X", *(framePointer + 2 + i));
+                }
+                printf("\n");
+                //*/
+
+                // @todo Check checksum ?
+                binaryData.checksum = (*(pointer + 2 + binaryData.size) << 8) + *(pointer + 3 + binaryData.size);
+                DEBUG_PRINT("Checksum: %4X\n", binaryData.checksum);
+
+                // @todo check size !
+                FW_ASSERT(this->fpCommandBuffer.getData());
+                memcpy(this->fpCommandBuffer.getData(), framePointer + 2, binaryData.size);
+                this->fpCommandBuffer.setSize(binaryData.size);
+                this->recvData_out(0, this->fpCommandBuffer);
+                //*/ 
+
+            }
+
+            // If messages are queued, get them
+            if(SBDIX.mtQueued > 0) {
+                this->addCommand("AT+SBDIX");
+            }
+
         } else if(detectCommand("+SBDRT:", pointer)) {
             this->textDataReceived = true;
             // Data received are received on next line and will be processed below
@@ -292,58 +335,12 @@ void RockBlockComponentImpl ::serialRecv_handler(
             // Empty line
             //DEBUG_PRINT("[RockBlock] Emtpy\n", pointer);
         } else {
-            if(this->binaryDataReceived) {  // currenty receiving binary frame
-            // The SBD message is transferred formatted as follows:
-            // {2-byte message length} + {binary SBD message} + {2-byte checksum}
-                switch(this->binaryDataReceived) {
-                    case binaryReadSize:
-                        FW_ASSERT(buffsize == 2, static_cast<AssertArg>(buffsize));
-                        // MSB send first, LSB then
-                        binaryData.size = (*pointer << 8) + *(pointer+1);
-                        printf("Message size: 0x%04X\n", binaryData.size);
-                        this->binaryDataReceived = binaryReadMessage;
-                        this->binaryMode_out(0, binaryData.size); // read message
-                        break;
-                    case binaryReadMessage:
-                        FW_ASSERT(buffsize == binaryData.size, static_cast<AssertArg>(buffsize));
-                        this->binaryDataReceived = binaryReadChecksum;
-                        this->binaryMode_out(0, 2); // checksum is 2 bytes long
-
-                        DEBUG_PRINT("Message (%u):\n", buffsize);
-                        /*/ Print frame
-                        for(int i = 0; i < binaryData.size; i++) {
-                            printf("%.2X", *(pointer + i));
-                        }
-                        printf("\n");
-                        //*/
-
-                        // @todo Check checksum ?
-                        FW_ASSERT(this->fpCommandBuffer.getData());
-                        // @todo check size !
-                        memcpy(this->fpCommandBuffer.getData(), pointer, binaryData.size);
-                        this->fpCommandBuffer.setSize(binaryData.size);
-                        this->recvData_out(0, this->fpCommandBuffer);
-                        //*/ 
-
-                        break;
-                    case binaryReadChecksum:
-                        FW_ASSERT(buffsize == 2,static_cast<AssertArg>(buffsize));
-                        binaryData.checksum = (*pointer << 8) + *(pointer+1);
-                        printf("Checksum: %4X\n", binaryData.checksum);
-                        this->binaryDataReceived = binaryOff;
-                        this->binaryMode_out(0, 0);    // disable binary mode
-
-                        if(SBDIX.mtQueued > 0) {
-                            // @todo send next SBDIX request (or SBDRT ?) to get remaining messages
-                        }
-                        break;
-                }
-            } else if(this->textDataReceived) {
-                DEBUG_PRINT("[RockBlock] %s\n", pointer);
+            if(this->textDataReceived) {
+                Fw::Logger::logMsg("[RockBlock] %s\n", reinterpret_cast<POINTER_CAST>(pointer));
+                // If messages are queued, get them
                 if(SBDIX.mtQueued > 0) {
-                    // @todo send next SBDIX request (or SBDRT ?) to get remaining messages
+                    this->addCommand("AT+SBDIX");
                 }
-                
             } else {
                 Fw::LogStringArg arg(pointer);
                 this->log_DIAGNOSTIC_RckBlck_Response(arg);
