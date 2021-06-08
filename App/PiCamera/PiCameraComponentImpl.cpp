@@ -36,7 +36,7 @@ namespace App {
         const char *const compName
     ) : PiCameraComponentBase(compName), nbPicture(0) ,width(BASE_WIDTH),
      height(BASE_HEIGHT), indexSSDV(0), timeInterval(6), timeCpt(0), sendingPicture(0), pictureId(0)
-     ,fileSize(0), currentTime(0)
+     ,fileSize(0), currentTime(0), nbPacket(-1)
   {
     std::ostringstream osTelemetry;
     osTelemetry << TELEMETRY_DIRECTORY << "telemetry.csv";
@@ -159,11 +159,18 @@ namespace App {
 
       void PiCameraComponentImpl::SendFrame_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          U32 frame /*!< The call order*/
+          U32 frame
       ){
-
+          if(pictureId ==-1){
+          return;
+        }
+        for(U32 i = 0; i< nbPacket;i++){
+          if(!frameSend[i]){
+            this->sendFrame(i);
+            frameSend[i] = true;
+          }
+       }
       }
-
 
   // ----------------------------------------------------------------------
   // Command handler implementations
@@ -208,14 +215,8 @@ namespace App {
         loadPicture();
         }
 
-        for(U32 i = 0; i< fileSize/SIZE_PACKET; i++){
-          m_picturePacket.setData(binaryData, i, SIZE_PACKET, fileSize);
-          m_picturePacket.setFrameId(i);
-          m_picturePacket.setPictureId(pictureId);
-          m_comBuffer.resetSer();
-          Fw::SerializeStatus stat = this->m_picturePacket.serialize(this->m_comBuffer);
-          FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
-          this->PictureOut_out(0,this->m_comBuffer,0);
+        for(U32 i = 0; i< nbPacket; i++){
+            this->sendFrame(i);
         }
 
         
@@ -253,17 +254,11 @@ namespace App {
           const U32 cmdSeq, /*!< The command sequence number*/
           U16 frameId
       ){
-         if(nbPicture == 0){
+         if(pictureId == -1 || frameId < 0 || frameId > nbPacket){
           this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
           return;
         }
-          m_picturePacket.setData(binaryData, frameId, SIZE_PACKET, fileSize);
-          m_picturePacket.setFrameId(frameId);
-          m_picturePacket.setPictureId(pictureId);
-          m_comBuffer.resetSer();
-          Fw::SerializeStatus stat = this->m_picturePacket.serialize(this->m_comBuffer);
-          FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
-          this->PictureOut_out(0,this->m_comBuffer,0);
+         frameSend[frameId] = false;
           
           this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
       }
@@ -379,6 +374,7 @@ namespace App {
 
   void PiCameraComponentImpl::loadPicture(){
     delete binaryData;
+    delete frameSend;
       std::ostringstream osPictureSsdv;
       osPictureSsdv << BIN_DIRECTORY << sendingPicture <<".bin";
       std::ifstream in(osPictureSsdv.str().c_str(),std::ios::binary | std::ios::ate);
@@ -388,6 +384,11 @@ namespace App {
       fileSize = in.tellg();
       in.seekg (0, std::ios::beg);
       binaryData = new U8[fileSize];
+      nbPacket = fileSize/SIZE_PACKET;
+      frameSend = new bool[nbPacket]{ false};
+      for(U32 i = 0; i< nbPacket;i++){
+        printf("%d\n",frameSend[i]);
+      }
       char* dataChar = reinterpret_cast<char*>(binaryData);
       in.read(dataChar ,fileSize);
 
@@ -410,6 +411,15 @@ namespace App {
       indata.close();
 
       loadPicture();
+  }
+  void PiCameraComponentImpl::sendFrame(U16 frameId){
+        m_picturePacket.setData(binaryData, frameId, SIZE_PACKET, fileSize);
+        m_picturePacket.setFrameId(frameId);
+        m_picturePacket.setPictureId(pictureId);
+        m_comBuffer.resetSer();
+        Fw::SerializeStatus stat = this->m_picturePacket.serialize(this->m_comBuffer);
+        FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
+        this->PictureOut_out(0,this->m_comBuffer,0);
   }
 
 } // end namespace App

@@ -153,7 +153,8 @@ namespace App {
 
       void loadPicture();
       void loadData();
-
+      void sendFrame(U16 frameId);     
+     
       F32 temperature;
       F32 pressure;
       U16 altitudeBaro;
@@ -178,10 +179,13 @@ namespace App {
       U32 sendingPicture;
       U32 pictureId;
       U32 fileSize;
+      U32 nbPacket;
 
      Fw::ComBuffer m_comBuffer;
      Fw::PicturePacket m_picturePacket;
      U8* binaryData;
+     bool* frameSend;
+
     };
 
 } // end namespace App

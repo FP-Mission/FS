@@ -57,7 +57,7 @@
             Port out for the last picture path;
             </comment>
         </port>
-        <port name="SendFrame" data_type="PiCameraFramePort" kind="sync_input">
+        <port name="SendFrame" data_type="PiCameraFramePort" kind="async_input">
             <comment>
             Port out for the last picture path;
             </comment>
