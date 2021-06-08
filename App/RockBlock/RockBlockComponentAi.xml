@@ -3,10 +3,12 @@
 <component name="RockBlock" kind="active" namespace="App">
     <comment>Component handling the RockBlock module for uplink communication</comment>
     
-    <import_port_type>Svc/Ping/PingPortAi.xml</import_port_type>
-    <import_port_type>Fw/Buffer/BufferSendPortAi.xml</import_port_type>
+    <import_port_type>Svc/Sched/SchedPortAi.xml</import_port_type>
     <import_port_type>Drv/SerialDriverPorts/SerialReadPortAi.xml</import_port_type>
     <import_port_type>Drv/SerialDriverPorts/SerialWritePortAi.xml</import_port_type>
+    <import_port_type>Fw/Buffer/BufferSendPortAi.xml</import_port_type>
+    <import_port_type>Svc/Ping/PingPortAi.xml</import_port_type>
+    <import_port_type>Drv/LinuxSerialDriver/BinaryModePort/BinaryModePortAi.xml</import_port_type>
 
     <ports>
         <port name="PingIn" data_type="Svc::Ping" kind="async_input" max_number="1">
@@ -19,67 +21,111 @@
                 Ping response port
             </comment>
         </port>
+        <port name="Run" data_type="Svc::Sched" kind="sync_input" max_number="1">
+            <comment>
+            Run port
+            </comment>
+        </port>
         <port name="serialSend" data_type="Drv::SerialWrite" kind="output" max_number="1">
         </port>
         <port name="serialRecv" data_type="Drv::SerialRead" kind="sync_input"  max_number="1">
         </port>
         <port name="recvData" data_type="Fw::BufferSend" kind="output" max_number="1">
         </port>
+        <port name="binaryMode" data_type="Drv::BinaryMode" kind="output" max_number="1">
+        </port>
+        <!-- Used at startup to supply buffers to the serial driver -->
+        <port name="serialBufferOut" data_type="Fw::BufferSend"  kind="output"  max_number="1">
+        </port>
     </ports>
 
-    <!--
     <commands>
-        <command kind="async" opcode="0" mnemonic="Eps_SetWarningLevel">
+        <command kind="async" opcode="0" mnemonic="RckBlck_SendCommand">
             <comment>
-                Set low battery level
+                Allow to send command to RockBlock
             </comment>
             <args>
-                <arg name="voltage" type="U16">
-                    <comment>Voltage in mV</comment>
-                </arg>          
-            </args>
-        </command>
-        <command kind="async" opcode="1" mnemonic="Eps_SetCriticalLevel">
-            <comment>
-                Set critical low battery level 
-            </comment>
-            <args>
-                <arg name="voltage" type="U16">
-                    <comment>Voltage in mV</comment>
-                </arg>          
+                <arg name="AT_Command" type="string" size="16">
+                    <comment>AT command to send</comment>
+                </arg>
+                <arg name="mode" type="U8">
+                    <comment>Mode (0: send command, 1: add command)</comment>
+                </arg>
             </args>
         </command>
     </commands>
 
     <telemetry>
-        <channel id="0" name="Eps_BatteryVoltage" data_type="U16">
+        <channel id="0" name="RckBlck_Ch" data_type="U16">
             <comment>
-                Battery level in mV
+                Sample channel
             </comment>
         </channel>
     </telemetry>
 
     <events>
-        <event id="0" name="Eps_LowBattery" severity="WARNING_HI" format_string = "Low battery level: %u mV" >
+        <event id="0" name="RckBlck_CSQ" severity="ACTIVITY_LO" format_string = "+CSQ RSSI: %u" >
             <comment>
-                Sent when battery voltage reachs low battery level
+                +CSQ - Signal Quality response. 
             </comment>
             <args>
-                <arg name="voltage" type="U16">
-                    <comment>Current battery level in mV</comment>
-                </arg>          
+                <arg name="rssi" type="U8">
+                    <comment> RSSI level, numbers of bars displayed on the ISU signal strength indicator </comment>
+                </arg>    
             </args>
         </event>
-        <event id="1" name="Eps_CriticallyLowBattery" severity="FATAL" format_string = "Critically low battery level: %u mV" >
+        <event id="1" name="RckBlck_MessageReceived" severity="ACTIVITY_HI" format_string = "Message %u received (%u pending)" >
             <comment>
-                Sent when battery voltage reachs critically low battery level
+                New message has been received
             </comment>
             <args>
-                <arg name="voltage" type="U16">
-                    <comment>Current battery level in mV</comment>
-                </arg>          
+                <arg name="mtMsn" type="U16">
+                    <comment> Mobile Terminated Message Sequence Number </comment>
+                </arg> 
+                <arg name="mtQueued" type="U16">
+                    <comment> Count of mobile terminated SBD messages waiting at the GSS to be transferred to the ISU </comment>
+                </arg>
+            </args>
+        </event>
+        <event id="2" name="RckBlck_UnableToSend" severity="WARNING_LO" format_string = "Unable to send message (Error %u)" >
+            <comment>
+                Unable to send message
+            </comment>
+            <args>
+                <arg name="error" type="U8">
+                    <comment> MO status error </comment>
+                </arg>    
+            </args>
+        </event>
+        <event id="4" name="RckBlck_MailboxCheckFail" severity="WARNING_HI" format_string = "Unable to check mailbox or receive message from GSS" >
+            <comment>
+                An error occurred while attempting to perform a mailbox check or receive a message from the GSS.
+            </comment>
+        </event>
+        <event id="5" name="RckBlck_RingAlert" severity="ACTIVITY_HI" format_string = "Ring alert received" >
+            <comment>
+                Ring alert received
+            </comment>
+        </event>
+        <event id="6" name="RckBlck_CommandSent" severity="DIAGNOSTIC" format_string = "AT command sent: %s" >
+            <comment>
+                Command sent to the RockBlock module
+            </comment>
+            <args>
+                <arg name="command" type="string" size="16">
+                    <comment>AT command sent</comment>
+                </arg>
+            </args>
+        </event>
+        <event id="7" name="RckBlck_Response" severity="DIAGNOSTIC" format_string = "Response: %s" >
+            <comment>
+                Log RockBlock response
+            </comment>
+            <args>
+                <arg name="data" type="string" size="32">
+                    <comment>Data received</comment>
+                </arg>
             </args>
         </event>
      </events>
-     -->
 </component>

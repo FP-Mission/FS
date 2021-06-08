@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="../../Autocoders/Python/schema/ISF/component_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
-<component name="FlexTrak" kind="active" namespace="App" modeler="true">
+<component name="FlexTrak" kind="active" namespace="App">
     <comment>Component handling the FlexTrak board</comment>
 
-    <import_port_type>Svc/Ping/PingPortAi.xml</import_port_type>   
-    <import_port_type>Svc/Sched/SchedPortAi.xml</import_port_type>
     <import_port_type>Drv/SerialDriverPorts/SerialReadPortAi.xml</import_port_type>
+    <import_port_type>Fw/Buffer/BufferSendPortAi.xml</import_port_type>
+    <import_port_type>Svc/Sched/SchedPortAi.xml</import_port_type>
+    <import_port_type>Svc/Ping/PingPortAi.xml</import_port_type>   
     <import_port_type>Drv/SerialDriverPorts/SerialWritePortAi.xml</import_port_type>
     <import_port_type>App/FlexTrak/TemperaturePort/TemperaturePortAi.xml</import_port_type>
     <import_port_type>App/FlexTrak/BatteryLevelPort/BatteryLevelPortAi.xml</import_port_type>
-    <import_port_type>Fw/Buffer/BufferSendPortAi.xml</import_port_type>
     <import_port_type>App/FlexTrak/Position/PositionPortAi.xml</import_port_type>
 
     <internal_interfaces>
@@ -54,15 +54,6 @@
         <port name="serialBufferOut" data_type="Fw::BufferSend"  kind="output"  max_number="1">
         </port>
 
-
-        <!--
-        <port name="pictureTaken" data_type="U8" kind="async_input" max_number="1">
-            <comment>
-                Picture taken by the Pi Camera
-            </comment>
-        </port>
-        -->
-        
         <port name="batteryVoltage" data_type="App::BatteryLevel" kind="output" max_number="1">
             <comment>
                 Battery votlage level in mV

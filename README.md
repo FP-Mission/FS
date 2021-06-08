@@ -16,6 +16,11 @@ Follow this guide to start with CHESS FS development : [Quick start guide](https
 - CMake 3.5 or newer (3.10.2 used)
 - Python 3.5+, PIP and Python Virtual Environment
 
+## Python dependencies 
+```pip, wheel, setuptools, requests, PyYAML, pyserial```
+
+See [next chapter](#Installing) for installation
+
 ### Installing
 
 See [Quick start guide](https://hackmd.io/@jonathanmichel/SyKt6xV9v) for details.
@@ -25,7 +30,7 @@ F' tools installation
 ```
 python3 -m venv ./fprime-venv
 . ./fprime-venv/bin/activate
-python3 -m pip install --upgrade wheel setuptools pip
+python3 -m pip install --upgrade wheel setuptools pip requests PyYAML pyserial
 cd fprime
 python3 -m pip install ./Fw/Python ./Gds
 ```
