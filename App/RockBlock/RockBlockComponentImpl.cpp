@@ -107,7 +107,6 @@ void RockBlockComponentImpl:: sendNextCommand() {
     this->rbCommandMutex.lock();
     // Send command if a new one has been stored
     if(this->rbCommandInCtn != this->rbCommandOutCtn) {
-        std::string cmd(&rbCommandBuffer[this->rbCommandOutCtn][0]);
 
         // When command sent is AT+SBDRB, the module will directly responds with 
         // the binary data in the following frame :
@@ -120,6 +119,7 @@ void RockBlockComponentImpl:: sendNextCommand() {
             this->binaryMode_out(0, SBDIX.mtLength + 15);
         }
 
+        std::string cmd(&rbCommandBuffer[this->rbCommandOutCtn][0]);
         // Increment out counter if command has been sent
         if(this->sendRockBlockCommand(cmd)) {
             this->rbCommandOutCtn = (this->rbCommandOutCtn + 1) % ROCKBLOCK_COMMAND_BUFFER_SIZE;
@@ -131,6 +131,10 @@ void RockBlockComponentImpl:: sendNextCommand() {
 }
 
 bool RockBlockComponentImpl:: sendRockBlockCommand(std::string command) {
+    return this->sendRockBlockCommand(command, true);
+}
+
+bool RockBlockComponentImpl:: sendRockBlockCommand(std::string command, bool log) {
     serialMutex.lock();
     bool sent = false;
     if(this->rockBlockIsOk) {
@@ -151,8 +155,10 @@ bool RockBlockComponentImpl:: sendRockBlockCommand(std::string command) {
         buffer.setSize(size);
         this->serialSend_out(0, buffer);
 
-        Fw::LogStringArg arg(commandToSend);
-        this->log_DIAGNOSTIC_RckBlck_CommandSent(arg);
+        if(log) {
+            Fw::LogStringArg arg(commandToSend);
+            this->log_DIAGNOSTIC_RckBlck_CommandSent(arg);
+        }
         sent = true;
     } else {
         DEBUG_PRINT("RockBlock is not ok, delay command %s\n", command.c_str());
@@ -177,6 +183,9 @@ void RockBlockComponentImpl ::PingIn_handler(const NATIVE_INT_TYPE portNum,
                                              U32 key) {
     // Save ping key to allow response in serialRecv_handler
     pingMutex.lock();
+    // Try to directly send an AT command
+    // If RockBlock is busy, next OK received will respond to the ping request
+    this->sendRockBlockCommand("AT", false);
     this->pingKey = key;
     pingMutex.unLock();
 }
@@ -230,16 +239,18 @@ void RockBlockComponentImpl ::serialRecv_handler(
     try {
         if(detectCommand("OK", pointer)) {
             this->rockBlockIsOk = true;
-            Fw::LogStringArg arg("OK");
-            this->log_DIAGNOSTIC_RckBlck_Response(arg);
 
             // Ping response sent each time ping request was received
             // and RockBlock responds OK
             pingMutex.lock();
             if(this->pingKey != 0) {
+                // OK is a response from the ping request
+                // Do not overload logs
                 PingOut_out(0, this->pingKey);
                 this->pingKey = 0;
-
+            } else {
+                Fw::LogStringArg arg("OK");
+                this->log_DIAGNOSTIC_RckBlck_Response(arg);
             }
             pingMutex.unLock();
 
@@ -328,9 +339,12 @@ void RockBlockComponentImpl ::serialRecv_handler(
                 FW_ASSERT(this->fpCommandBuffer.getData());
                 memcpy(this->fpCommandBuffer.getData(), framePointer + 2, dataSize);
                 this->fpCommandBuffer.setSize(dataSize);
-                this->recvData_out(0, this->fpCommandBuffer);
-                //*/ 
 
+                if(this->isConnected_recvData_OutputPort(0)) {
+                    this->recvData_out(0, this->fpCommandBuffer);
+                } else {
+                    Fw::Logger::logMsg("[WARNING] RockBlock component is not connected for uplink\n");
+                }
             }
 
             // If messages are queued, get them
@@ -341,7 +355,7 @@ void RockBlockComponentImpl ::serialRecv_handler(
         } else if(detectCommand("+SBDRT:", pointer)) {
             this->textDataReceived = true;
             // Data received are received on next line and will be processed below
-            printf("[RockBlock] +SBDRT:\n");
+            DEBUG_PRINT("[RockBlock] +SBDRT:\n");
         } else if (detectCommand("SBDRING", pointer)) {
             this->log_ACTIVITY_HI_RckBlck_RingAlert();
             this->addCommand("AT+SBDIXA");
@@ -356,8 +370,12 @@ void RockBlockComponentImpl ::serialRecv_handler(
                     this->addCommand("AT+SBDIX");
                 }
             } else {
-                Fw::LogStringArg arg(pointer);
-                this->log_DIAGNOSTIC_RckBlck_Response(arg);
+                if(buffsize == 5 && detectCommand("AT", pointer)) {
+                    // do not print "AT" echo, sent by ping request
+                } else {
+                    Fw::LogStringArg arg(pointer);
+                    this->log_DIAGNOSTIC_RckBlck_Response(arg);
+                }
             }
         }
     } catch (...) {

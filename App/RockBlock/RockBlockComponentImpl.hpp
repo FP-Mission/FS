@@ -84,6 +84,7 @@ class RockBlockComponentImpl : public RockBlockComponentBase {
 
     void addCommand(std::string command);
     void sendNextCommand();
+    bool sendRockBlockCommand(std::string command, bool log);
     bool sendRockBlockCommand(std::string command);
     bool detectCommand(const char* command, const char* line);
     U8 HexToByte(char hex);
