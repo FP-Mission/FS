@@ -19,10 +19,9 @@
 #include <Os/Queue.hpp>
 
 #include <string>
-#include <sstream>
-#include <iostream>
 
-#define FLEXAVR_PING_RESPONSE_LIMIT 5
+#define LORA_MIN_FREQUENCY (F32)434.040 
+#define LORA_MAX_FREQUENCY (F32)434.790
 
 namespace App {
 
@@ -88,17 +87,25 @@ class FlexTrakComponentImpl : public FlexTrakComponentBase {
 
     PRIVATE :
 
-        // ----------------------------------------------------------------------
-        // Command handler implementations
-        // ----------------------------------------------------------------------
+    // ----------------------------------------------------------------------
+    // Command handler implementations
+    // ----------------------------------------------------------------------
 
-        //! Implementation for FT_CHANGE_MODe command handler
-        //! Change LoRa mode (0 or 1)
-        void FT_CHANGE_MODE_cmdHandler(
-            const FwOpcodeType opCode,
-            const U32 cmdSeq,
-            U8 mode
-        );
+    //! Implementation for FT_CHANGE_MODE command handler
+    //! Change LoRa mode (0 or 1)
+    void FT_CHANGE_MODE_cmdHandler(
+        const FwOpcodeType opCode,
+        const U32 cmdSeq,
+        U8 mode
+    );
+
+    //! Implementation for FT_CHANGE_FREQ command handler
+    //! Change FlexTrak LoRa frequency
+    void FT_CHANGE_FREQ_cmdHandler(
+        const FwOpcodeType opCode, /*!< The opcode*/
+        const U32 cmdSeq, /*!< The command sequence number*/
+        F32 frequency /*!< Frequency in MHz*/
+    );
 
     // Serial buffer provider to LinuxSerialDriver
     Fw::Buffer m_recvBuffers[DR_MAX_NUM_BUFFERS];
@@ -117,7 +124,7 @@ class FlexTrakComponentImpl : public FlexTrakComponentBase {
     F32 frequency;
 
     bool loRaIsFree;
-    Os::Mutex loRaMutex;
+    Os::Mutex serialMutex;    //<! Lock when serial line is used
 
     U32 pingKey; //<! Save pingKey on pingIn
     Os::Mutex pingMutex; //<! Mutual exclusion between PingIn_handler and serialRecv_handler

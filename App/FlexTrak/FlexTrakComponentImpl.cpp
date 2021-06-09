@@ -21,7 +21,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 #define DEBUG_PRINT(x, ...)  printf(x, ##__VA_ARGS__); fflush(stdout)
 //#define DEBUG_PRINT(x,...)
@@ -88,7 +87,6 @@ void FlexTrakComponentImpl::preamble(void) {
         // Invoke the port to send the buffer out.
         this->serialBufferOut_out(0, this->m_recvBuffers[buffer]);
     }
-
 }
 
 FlexTrakComponentImpl ::~FlexTrakComponentImpl(void) {}
@@ -123,7 +121,7 @@ void FlexTrakComponentImpl ::serialRecv_handler(const NATIVE_INT_TYPE portNum,
     // Check for invalid read status, log an error, return buffer and abort if
     // there is a problem
     if (status != Drv::SER_OK) {
-        Fw::Logger::logMsg("[WARNING] Serial received error: %d\n",
+        Fw::Logger::logMsg("[WARNING] FlexTrak serial received error: %d\n",
                            status);
 
         serBuffer.setSize(UART_READ_BUFF_SIZE);
@@ -165,12 +163,12 @@ void FlexTrakComponentImpl ::serialRecv_handler(const NATIVE_INT_TYPE portNum,
                                         &GPS.satellites);
 
             if(res == 10) {
-                //printf("%u:%u:%u le %d.%d.%d à (%f, %f, %u) : %u\n", GPS.hours, GPS.minutes, GPS.seconds, GPS.day, GPS.month, GPS.year, GPS.latitude, GPS.longitude, GPS.altitude, GPS.satellites);
+                //DEBUG_PRINT("%u:%u:%u le %d.%d.%d à (%f, %f, %u) : %u\n", GPS.hours, GPS.minutes, GPS.seconds, GPS.day, GPS.month, GPS.year, GPS.latitude, GPS.longitude, GPS.altitude, GPS.satellites);
                 // @todo Set FS time with received data
                 Fw::Time time = getTime();
                 this->gps_out(0, time, GPS.latitude, GPS.longitude, GPS.altitude, GPS.satellites);
             } else {
-                printf("sscanf res=%u\n", res);
+                Fw::Logger::logMsg("[ERROR] Unable to parse GPS FlexTrak response, res=%u\n", res);
             }
         } else if(detectCommand("Batt=", pointer)) {
             I16 batteryVoltage = atoi(pointer + 5);
@@ -182,9 +180,9 @@ void FlexTrakComponentImpl ::serialRecv_handler(const NATIVE_INT_TYPE portNum,
             I16 temp1 = atoi(pointer + 6);
             externalTemp_out(0, temp1);
         } else if(detectCommand("LoRaIsFree=", pointer)) {
-            loRaMutex.lock();
+            serialMutex.lock();
             loRaIsFree = atoi(pointer + 11) == 1 ? true : false;
-            loRaMutex.unLock();
+            serialMutex.unLock();
             if(loRaIsFree) {
                 DEBUG_PRINT("[FlexAvr] LoRa freed\n");
             } else {
@@ -205,7 +203,6 @@ void FlexTrakComponentImpl ::serialRecv_handler(const NATIVE_INT_TYPE portNum,
 }
 
 bool FlexTrakComponentImpl ::detectCommand(const char* command, const char* line) {
-    
     bool found = true;
     for (int i = 0; i < strlen(command); i++) {
         found &= (command[i] == line[i]);
@@ -264,7 +261,10 @@ void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
         }
         //*/
     } else if (packetType == Fw::ComPacket::FW_PACKET_TLM_REPORT) {
-        printf("Downlink TlmReport %u\n", buffer.getSize());
+        printf("Downlink TlmReportPacket %u\n", buffer.getSize());
+        this->downlinkQueue_internalInterfaceInvoke(0,buffer);
+    } else if (packetType == Fw::ComPacket::FW_PACKET_TELEM) {
+        printf("Downlink TlmPacket %u\n", buffer.getSize());
         this->downlinkQueue_internalInterfaceInvoke(0,buffer);
     }
 }
@@ -277,7 +277,7 @@ void FlexTrakComponentImpl::downlinkQueue_internalInterfaceHandler(U8 packetType
     char *pointer = reinterpret_cast<char *>(buffer.getData());
     U16 packetSize = buffer.getSize();
 
-    loRaMutex.lock();
+    serialMutex.lock();
     if(loRaIsFree) {
         sendFlexTrakCommand("CH1");
 
@@ -293,7 +293,10 @@ void FlexTrakComponentImpl::downlinkQueue_internalInterfaceHandler(U8 packetType
             //printf("%c", data[4 + i]);
         }
         //printf("END\n");
-        data[packetSize + 4] = '\r';
+        data[packetSize + 4] = '\r';    
+        // @todo Should not be necessary, but current binary mode in FlexTrak use \r after binary data receiption
+        // to process command. Incorrect way to deal with it but it works, so .... u know
+
         U8 commandSize = packetSize + 5;
         //*/
 
@@ -309,11 +312,11 @@ void FlexTrakComponentImpl::downlinkQueue_internalInterfaceHandler(U8 packetType
         printf("LoRa is not free - Abord downlink\n");
     }
 
-    loRaMutex.unLock();
+    serialMutex.unLock();
 }
 
 void FlexTrakComponentImpl:: sendFlexTrak(Fw::Buffer &buffer) {
-    DEBUG_PRINT("Tx (%u) %.3s\n", buffer.getSize(), buffer.getData());
+    DEBUG_PRINT("FlexTrak Tx (%u) %.3s\n", buffer.getSize(), buffer.getData());
     this->serialSend_out(0, buffer);
 }
 
@@ -327,14 +330,14 @@ void FlexTrakComponentImpl:: sendFlexTrakCommand(std::string command) {
     buffer.setSize(size);
     // sendFlexTrak(buf); // directly call serialSend_out() to avoid sendFlexTrak() log
     this->serialSend_out(0, buffer);
-    DEBUG_PRINT("Tx (%u) ~%s\n", size, command.c_str());
+    DEBUG_PRINT("FlexTrak Tx (%u) ~%s\n", size, command.c_str());
 }
 
 void FlexTrakComponentImpl:: configureHardware() {
     char temp[20]; 
     // ensure array is big enough to contain command, parameters and additional 
     // '\r' added by sendFlexTrakCommand()
-    loRaMutex.lock();
+    serialMutex.lock();
     sendFlexTrakCommand("CH0"); // Low priority mode
     sendFlexTrakCommand("CV");  // Ask version
     sendFlexTrakCommand("CPFP1");   // Set payload name to FP1
@@ -352,7 +355,7 @@ void FlexTrakComponentImpl:: configureHardware() {
     sprintf(temp, "LF%.3f", frequency);
     sendFlexTrakCommand(temp);
     sendFlexTrakCommand("CS");  // Save settings
-    loRaMutex.unLock();
+    serialMutex.unLock();
 }
 
 // ----------------------------------------------------------------------
@@ -372,7 +375,24 @@ void FlexTrakComponentImpl :: FT_CHANGE_MODE_cmdHandler(
         this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
         return;
     }
-    Fw::Logger::logMsg("[ERROR] Invalid mode for LoRa - Please use 0 or 1");
+    Fw::Logger::logMsg("[ERROR] Invalid mode for LoRa: %u - Please use 0 or 1\n", mode);
+    this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_EXECUTION_ERROR);
+}
+
+void FlexTrakComponentImpl :: FT_CHANGE_FREQ_cmdHandler(
+    const FwOpcodeType opCode,
+    const U32 cmdSeq,
+    F32 frequency 
+){
+    if(frequency >= LORA_MIN_FREQUENCY && frequency <= LORA_MAX_FREQUENCY) {
+        this->frequency = frequency;
+        this->configureHardware();
+        this->log_ACTIVITY_HI_FT_Frequency(frequency);
+        this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+        return;
+    }
+    Fw::Logger::logMsg("[ERROR] Invalid frequency for LoRa : %f\n", 
+                        frequency);
     this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_EXECUTION_ERROR);
 }
 

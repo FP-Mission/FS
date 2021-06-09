@@ -60,8 +60,8 @@ namespace App {
     tlmWrite_BAROMETER_TEMP(temperature);
     tlmWrite_BAROMETER_PRESS(pressure);
     tlmWrite_BAROMETER_ALT(altitude);
-    log_ACTIVITY_LO_MS_DATA(temperature,pressure,altitude);
     DataOut_out(0,altitude,pressure,temperature);
+    //log_ACTIVITY_LO_MS_DATA(temperature,pressure,altitude);
   }
 
   void BarometerComponentImpl ::

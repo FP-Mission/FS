@@ -110,6 +110,12 @@
         <member name="satellite" format_specifier="%u" type="U8"/>
       </members>
     </serializable>
+    <serializable type="App::PictureSize">
+      <members>
+        <member name="width" format_specifier="%u" type="U32"/>
+        <member name="height" format_specifier="%u" type="U32"/>
+      </members>
+    </serializable>
     <serializable type="App::PositionSer">
       <members>
         <member name="latitude" format_specifier="%lf" type="F64"/>
@@ -135,6 +141,11 @@
   </serializables>
   <arrays/>
   <commands>
+    <command component="tlmChan" mnemonic="DUMP_CHANNEL" opcode="0x2">
+      <args>
+        <arg name="id" type="U8"/>
+      </args>
+    </command>
     <command component="cmdDisp" mnemonic="CMD_NO_OP" opcode="0x3">
       <args/>
     </command>
@@ -217,49 +228,84 @@
     <command component="pingRcvr" mnemonic="PR_StopPings" opcode="0x4c">
       <args/>
     </command>
-    <command component="eps" mnemonic="Eps_SetWarningLevel" opcode="0x56">
+    <command component="eps" mnemonic="Eps_SetWarningLevel" opcode="0x64">
       <args>
         <arg name="voltage" type="U16"/>
       </args>
     </command>
-    <command component="eps" mnemonic="Eps_SetCriticalLevel" opcode="0x57">
+    <command component="eps" mnemonic="Eps_SetCriticalLevel" opcode="0x65">
       <args>
         <arg name="voltage" type="U16"/>
       </args>
     </command>
-    <command component="flexTrak" mnemonic="FT_CHANGE_MODE" opcode="0x60">
+    <command component="flexTrak" mnemonic="FT_CHANGE_MODE" opcode="0x6e">
       <args>
         <arg name="mode" type="U8"/>
       </args>
     </command>
-    <command component="gps" mnemonic="Gps_SetFlightModeAltitude" opcode="0x6a">
+    <command component="flexTrak" mnemonic="FT_CHANGE_FREQ" opcode="0x6f">
+      <args>
+        <arg name="frequency" type="F32"/>
+      </args>
+    </command>
+    <command component="gps" mnemonic="Gps_SetFlightModeAltitude" opcode="0x78">
       <args>
         <arg name="altitude" type="U16"/>
       </args>
     </command>
-    <command component="piCamera" mnemonic="PiCam_TakePicture" opcode="0x74">
+    <command component="piCamera" mnemonic="PiCam_TakePicture" opcode="0x82">
       <args/>
     </command>
-    <command component="predictor" mnemonic="Predi_SetPredictionRate" opcode="0x7e">
+    <command component="piCamera" mnemonic="PiCam_SendLast" opcode="0x83">
+      <args/>
+    </command>
+    <command component="piCamera" mnemonic="PiCam_SetTimeInterval" opcode="0x84">
+      <args>
+        <arg name="timeInterval" type="U8"/>
+      </args>
+    </command>
+    <command component="piCamera" mnemonic="PiCam_SetSize" opcode="0x85">
+      <args>
+        <arg name="width" type="U32"/>
+        <arg name="height" type="U32"/>
+      </args>
+    </command>
+    <command component="piCamera" mnemonic="PiCam_SendFrame" opcode="0x86">
+      <args>
+        <arg name="frameId" type="U16"/>
+      </args>
+    </command>
+    <command component="predictor" mnemonic="Predi_SetPredictionRate" opcode="0x8c">
       <args>
         <arg name="rate" type="U8"/>
       </args>
     </command>
-    <command component="temperatureProbes" mnemonic="TempProb_SetInternalLevel" opcode="0x92">
+    <command component="rockBlock" mnemonic="RckBlck_SendCommand" opcode="0x96">
+      <args>
+        <arg name="AT_Command" len="16" type="string"/>
+        <arg name="mode" type="U8"/>
+      </args>
+    </command>
+    <command component="temperatureProbes" mnemonic="TempProb_SetInternalLevel" opcode="0xa0">
       <args>
         <arg name="temperature" type="I16"/>
       </args>
     </command>
-    <command component="temperatureProbes" mnemonic="TempProb_SetExternalLevel" opcode="0x93">
+    <command component="temperatureProbes" mnemonic="TempProb_SetExternalLevel" opcode="0xa1">
       <args>
         <arg name="temperature" type="I16"/>
       </args>
     </command>
-    <command component="senseHat" mnemonic="MS_GET_TM" opcode="0x9c">
+    <command component="senseHat" mnemonic="MS_GET_TM" opcode="0xaa">
       <args/>
     </command>
   </commands>
   <events>
+    <event component="tlmChan" name="TLM_NOT_UPDATED" id="0x2" severity="WARNING_LO" format_string="Channel 0x%.2X has never been updated">
+      <args>
+        <arg name="id" type="U8"/>
+      </args>
+    </event>
     <event component="cmdDisp" name="OpCodeRegistered" id="0x3" severity="DIAGNOSTIC" format_string="Opcode 0x%04X registered to port %d slot %d">
       <args>
         <arg name="Opcode" type="U8"/>
@@ -658,6 +704,14 @@
         <arg name="cycle" type="U32"/>
       </args>
     </event>
+    <event component="rateGroup4" name="RateGroupStarted" id="0xd2" severity="DIAGNOSTIC" format_string="Rate group started.">
+      <args/>
+    </event>
+    <event component="rateGroup4" name="RateGroupCycleSlip" id="0xd3" severity="WARNING_HI" format_string="Rate group cycle slipped on cycle %d">
+      <args>
+        <arg name="cycle" type="U32"/>
+      </args>
+    </event>
     <event component="pingRcvr" name="PR_PingsDisabled" id="0x4c" severity="ACTIVITY_HI" format_string="PingReceiver ping responses disabled">
       <args/>
     </event>
@@ -708,76 +762,176 @@
         <arg name="needed" type="U32"/>
       </args>
     </event>
-    <event component="eps" name="Eps_LowBattery" id="0x56" severity="WARNING_HI" format_string="Low battery level: %u mV">
+    <event component="serialDriver2" name="DR_OpenError" id="0x59" severity="WARNING_HI" format_string="Error opening UART device %s: %d %s">
+      <args>
+        <arg name="device" len="40" type="string"/>
+        <arg name="error" type="I32"/>
+        <arg name="name" len="40" type="string"/>
+      </args>
+    </event>
+    <event component="serialDriver2" name="DR_ConfigError" id="0x5a" severity="WARNING_HI" format_string="Error configuring UART device %s: %d">
+      <args>
+        <arg name="device" len="40" type="string"/>
+        <arg name="error" type="I32"/>
+      </args>
+    </event>
+    <event component="serialDriver2" name="DR_WriteError" id="0x5b" severity="WARNING_HI" format_string="Error writing UART device %s: %d">
+      <args>
+        <arg name="device" len="40" type="string"/>
+        <arg name="error" type="I32"/>
+      </args>
+    </event>
+    <event component="serialDriver2" name="DR_ReadError" id="0x5c" severity="WARNING_HI" format_string="Error reading UART device %s: %d">
+      <args>
+        <arg name="device" len="40" type="string"/>
+        <arg name="error" type="I32"/>
+      </args>
+    </event>
+    <event component="serialDriver2" name="DR_PortOpened" id="0x5d" severity="ACTIVITY_HI" format_string="UART Device %s configured">
+      <args>
+        <arg name="device" len="40" type="string"/>
+      </args>
+    </event>
+    <event component="serialDriver2" name="DR_NoBuffers" id="0x5e" severity="WARNING_HI" format_string="UART Device %s ran out of buffers">
+      <args>
+        <arg name="device" len="40" type="string"/>
+      </args>
+    </event>
+    <event component="serialDriver2" name="DR_BufferTooSmall" id="0x5f" severity="WARNING_HI" format_string="UART Device %s target buffer too small. Size: %d Needs: %d">
+      <args>
+        <arg name="device" len="40" type="string"/>
+        <arg name="size" type="U32"/>
+        <arg name="needed" type="U32"/>
+      </args>
+    </event>
+    <event component="eps" name="Eps_LowBattery" id="0x64" severity="WARNING_HI" format_string="Low battery level: %u mV">
       <args>
         <arg name="voltage" type="U16"/>
       </args>
     </event>
-    <event component="eps" name="Eps_CriticallyLowBattery" id="0x57" severity="FATAL" format_string="Critically low battery level: %u mV">
+    <event component="eps" name="Eps_CriticallyLowBattery" id="0x65" severity="FATAL" format_string="Critically low battery level: %u mV">
       <args>
         <arg name="voltage" type="U16"/>
       </args>
     </event>
-    <event component="flexTrak" name="FT_Mode" id="0x60" severity="ACTIVITY_HI" format_string="Current FlexTrak mode : %u">
+    <event component="flexTrak" name="FT_Mode" id="0x6e" severity="ACTIVITY_HI" format_string="Current FlexTrak mode : %u">
       <args>
         <arg name="mode" type="U8"/>
       </args>
     </event>
-    <event component="gps" name="Gps_Error" id="0x6a" severity="ACTIVITY_HI" format_string="Error">
+    <event component="flexTrak" name="FT_Frequency" id="0x6f" severity="ACTIVITY_HI" format_string="Current FlexTrak frequency : %f MHz">
+      <args>
+        <arg name="frequency" type="F32"/>
+      </args>
+    </event>
+    <event component="gps" name="Gps_Error" id="0x78" severity="ACTIVITY_HI" format_string="Error">
       <args/>
     </event>
-    <event component="piCamera" name="PiCam_PictureTaken" id="0x74" severity="ACTIVITY_LO" format_string="Picture was taken">
+    <event component="piCamera" name="PiCam_PictureTaken" id="0x82" severity="ACTIVITY_LO" format_string="Picture was taken">
       <args/>
     </event>
-    <event component="piCamera" name="PiCam_PictureError" id="0x75" severity="WARNING_LO" format_string="Unable to take picture, error code %u">
+    <event component="piCamera" name="PiCam_PositionUpdate" id="0x83" severity="ACTIVITY_LO" format_string="Position update">
+      <args/>
+    </event>
+    <event component="piCamera" name="PiCam_BarometerDataUpdate" id="0x84" severity="ACTIVITY_LO" format_string="Data Update : temperature: %.2f C&#176;, pressure:  %.2f hPa, Altitude: %d m">
+      <args>
+        <arg name="temp" type="F32"/>
+        <arg name="pressure" type="F32"/>
+        <arg name="altitude" type="U16"/>
+      </args>
+    </event>
+    <event component="piCamera" name="PiCam_PictureError" id="0x85" severity="WARNING_LO" format_string="Unable to take picture, error code %u">
       <args>
         <arg name="code" type="U32"/>
       </args>
     </event>
-    <event component="predictor" name="Predi_FlightMode" id="0x7e" severity="ACTIVITY_HI" format_string="New flight mode: %s">
+    <event component="piCamera" name="PiCam_SetTimeInterval" id="0x86" severity="ACTIVITY_LO" format_string="Time interval of 10sec set to : %hu">
+      <args>
+        <arg name="timeInterval" type="U8"/>
+      </args>
+    </event>
+    <event component="piCamera" name="PiCam_SetPictureSize" id="0x87" severity="ACTIVITY_LO" format_string="Picture size set to : width : %u, height : %u">
+      <args>
+        <arg name="width" type="U32"/>
+        <arg name="height" type="U32"/>
+      </args>
+    </event>
+    <event component="predictor" name="Predi_FlightMode" id="0x8c" severity="ACTIVITY_HI" format_string="New flight mode: %s">
       <args>
         <arg name="flightMode" type="App::FlightMode"/>
       </args>
     </event>
-    <event component="temperatureProbes" name="TempPro_LowInternalWarning" id="0x92" severity="WARNING_HI" format_string="Low internal temperature: %d">
+    <event component="rockBlock" name="RckBlck_CSQ" id="0x96" severity="ACTIVITY_LO" format_string="+CSQ RSSI: %u">
+      <args>
+        <arg name="rssi" type="U8"/>
+      </args>
+    </event>
+    <event component="rockBlock" name="RckBlck_MessageReceived" id="0x97" severity="ACTIVITY_HI" format_string="Message %u received (%u pending)">
+      <args>
+        <arg name="mtMsn" type="U16"/>
+        <arg name="mtQueued" type="U16"/>
+      </args>
+    </event>
+    <event component="rockBlock" name="RckBlck_UnableToSend" id="0x98" severity="WARNING_LO" format_string="Unable to send message (Error %u)">
+      <args>
+        <arg name="error" type="U8"/>
+      </args>
+    </event>
+    <event component="rockBlock" name="RckBlck_MailboxCheckFail" id="0x9a" severity="WARNING_HI" format_string="Unable to check mailbox or receive message from GSS">
+      <args/>
+    </event>
+    <event component="rockBlock" name="RckBlck_RingAlert" id="0x9b" severity="ACTIVITY_HI" format_string="Ring alert received">
+      <args/>
+    </event>
+    <event component="rockBlock" name="RckBlck_CommandSent" id="0x9c" severity="DIAGNOSTIC" format_string="AT command sent: %s">
+      <args>
+        <arg name="command" len="16" type="string"/>
+      </args>
+    </event>
+    <event component="rockBlock" name="RckBlck_Response" id="0x9d" severity="DIAGNOSTIC" format_string="Response: %s">
+      <args>
+        <arg name="data" len="32" type="string"/>
+      </args>
+    </event>
+    <event component="temperatureProbes" name="TempPro_LowInternalWarning" id="0xa0" severity="WARNING_HI" format_string="Low internal temperature: %d">
       <args>
         <arg name="temperature" type="I16"/>
       </args>
     </event>
-    <event component="temperatureProbes" name="TempPro_LowExternalWarning" id="0x93" severity="WARNING_HI" format_string="Low external temperature: %d">
+    <event component="temperatureProbes" name="TempPro_LowExternalWarning" id="0xa1" severity="WARNING_HI" format_string="Low external temperature: %d">
       <args>
         <arg name="temperature" type="I16"/>
       </args>
     </event>
-    <event component="senseHat" name="MS_DATA" id="0x9c" severity="ACTIVITY_LO" format_string="Sense hat data update">
+    <event component="senseHat" name="MS_DATA" id="0xaa" severity="ACTIVITY_LO" format_string="Sense hat data update">
       <args/>
     </event>
-    <event component="senseHat" name="MS_ERROR" id="0x9d" severity="WARNING_HI" format_string="Sense update data error">
+    <event component="senseHat" name="MS_ERROR" id="0xab" severity="WARNING_HI" format_string="Sense update data error">
       <args/>
     </event>
-    <event component="thermometer" name="MS_DATA" id="0xa6" severity="ACTIVITY_LO" format_string="Data Receive from Sense Hat: temperature: %.2f C&#176;, humidity:  %.2f %%">
+    <event component="thermometer" name="MS_DATA" id="0xb4" severity="ACTIVITY_LO" format_string="Data Receive from Sense Hat: temperature: %.2f C&#176;, humidity:  %.2f %%">
       <args>
         <arg name="temp" type="F32"/>
         <arg name="humi" type="F32"/>
       </args>
     </event>
-    <event component="thermometer" name="MS_ERROR" id="0xa7" severity="WARNING_HI" format_string="Thermometer error">
+    <event component="thermometer" name="MS_ERROR" id="0xb5" severity="WARNING_HI" format_string="Thermometer error">
       <args/>
     </event>
-    <event component="motionTracking" name="MS_DATA" id="0xb0" severity="ACTIVITY_LO" format_string="Data Receive from Sense Hat">
+    <event component="motionTracking" name="MS_DATA" id="0xbe" severity="ACTIVITY_LO" format_string="Data Receive from Sense Hat">
       <args/>
     </event>
-    <event component="motionTracking" name="MS_ERROR" id="0xb1" severity="WARNING_HI" format_string="Motion Tracking error">
+    <event component="motionTracking" name="MS_ERROR" id="0xbf" severity="WARNING_HI" format_string="Motion Tracking error">
       <args/>
     </event>
-    <event component="barometer" name="MS_DATA" id="0xba" severity="ACTIVITY_LO" format_string="Data Receive from Sense Hat: temperature: %.2f C&#176;, pressure:  %.2f hPa, Altitude: %d m">
+    <event component="barometer" name="MS_DATA" id="0xc8" severity="ACTIVITY_LO" format_string="Data Receive from Sense Hat: temperature: %.2f C&#176;, pressure:  %.2f hPa, Altitude: %d m">
       <args>
         <arg name="temp" type="F32"/>
         <arg name="pres" type="F32"/>
         <arg name="alt" type="U16"/>
       </args>
     </event>
-    <event component="barometer" name="MS_ERROR" id="0xbb" severity="WARNING_HI" format_string="Barometer error">
+    <event component="barometer" name="MS_ERROR" id="0xc9" severity="WARNING_HI" format_string="Barometer error">
       <args/>
     </event>
   </events>
@@ -796,26 +950,33 @@
     <channel component="rateGroup2" name="RgCycleSlips" id="0x48" description="Cycle slips for rate group" type="U32"/>
     <channel component="rateGroup3" name="RgMaxTime" id="0x49" format_string="%u us" description="Max execution time rate group" type="U32"/>
     <channel component="rateGroup3" name="RgCycleSlips" id="0x4a" description="Cycle slips for rate group" type="U32"/>
+    <channel component="rateGroup4" name="RgMaxTime" id="0xd2" format_string="%u us" description="Max execution time rate group" type="U32"/>
+    <channel component="rateGroup4" name="RgCycleSlips" id="0xd3" description="Cycle slips for rate group" type="U32"/>
     <channel component="pingRcvr" name="PR_NumPings" id="0x4c" description="Number of pings received" type="U32"/>
     <channel component="blockDrv" name="BD_Cycles" id="0x4e" description="Driver cycle count" type="U32"/>
     <channel component="serialDriver1" name="DR_BytesSent" id="0x4f" description="Bytes Sent" type="U32"/>
     <channel component="serialDriver1" name="DR_BytesRecv" id="0x50" description="Bytes Received" type="U32"/>
-    <channel component="eps" name="Eps_BatteryVoltage" id="0x56" description="Battery level in mV" type="U16"/>
-    <channel component="flexTrak" name="FT_SSDVBufferLength" id="0x60" description="Used length of SSDV buffer" type="U16"/>
-    <channel component="gps" name="Gps_Position" id="0x6a" description="GPS position" type="App::PositionSer"/>
-    <channel component="piCamera" name="PiCam_PictureCnt" id="0x74" description="Number of pictures taken" type="U32"/>
-    <channel component="predictor" name="Predi_LandingPosition" id="0x7e" description="Predicted landing position" type="App::PositionSer"/>
-    <channel component="temperatureProbes" name="TempProb_InternalTemperature" id="0x92" description="Internal temperature in &#176;C" type="I16"/>
-    <channel component="temperatureProbes" name="TempProb_ExternalTemperature" id="0x93" description="External temperature in &#176;C" type="I16"/>
-    <channel component="thermometer" name="THERMOMETER_TEMP" id="0xa6" description="Temperature value" type="F32"/>
-    <channel component="thermometer" name="THERMOMETER_HUMI" id="0xa7" description="Humidtiy value" type="F32"/>
-    <channel component="motionTracking" name="MOTIONTRACKING_ANGLES" id="0xb0" description="Angles values" type="App::AnglesTlm"/>
-    <channel component="motionTracking" name="MOTIONTRACKING_GYRO" id="0xb1" description="Gyroscope values" type="App::VectorTlm"/>
-    <channel component="motionTracking" name="MOTIONTRACKING_ACCEL" id="0xb2" description="Acceleration values" type="App::VectorTlm"/>
-    <channel component="motionTracking" name="MOTIONTRACKING_MAGN" id="0xb3" description="Magnetique field values" type="App::VectorTlm"/>
-    <channel component="barometer" name="BAROMETER_TEMP" id="0xba" description="Temperature value" type="F32"/>
-    <channel component="barometer" name="BAROMETER_PRESS" id="0xbb" description="Pressure value" type="F32"/>
-    <channel component="barometer" name="BAROMETER_ALT" id="0xbc" description="Altitude value" type="U16"/>
+    <channel component="serialDriver2" name="DR_BytesSent" id="0x59" description="Bytes Sent" type="U32"/>
+    <channel component="serialDriver2" name="DR_BytesRecv" id="0x5a" description="Bytes Received" type="U32"/>
+    <channel component="eps" name="Eps_BatteryVoltage" id="0x64" description="Battery level in mV" type="U16"/>
+    <channel component="flexTrak" name="FT_SSDVBufferLength" id="0x6e" description="Used length of SSDV buffer" type="U16"/>
+    <channel component="gps" name="Gps_Position" id="0x78" description="GPS position" type="App::PositionSer"/>
+    <channel component="piCamera" name="PiCam_PictureCnt" id="0x82" description="Number of pictures taken" type="U32"/>
+    <channel component="piCamera" name="PiCam_PictureSize" id="0x83" description="Number of pictures taken" type="App::PictureSize"/>
+    <channel component="piCamera" name="PiCam_Timeinterval" id="0x84" description="Time interval of 10 seconds" type="U8"/>
+    <channel component="predictor" name="Predi_LandingPosition" id="0x8c" description="Predicted landing position" type="App::PositionSer"/>
+    <channel component="rockBlock" name="RckBlck_Ch" id="0x96" description="Sample channel" type="U16"/>
+    <channel component="temperatureProbes" name="TempProb_InternalTemperature" id="0xa0" description="Internal temperature in &#176;C" type="I16"/>
+    <channel component="temperatureProbes" name="TempProb_ExternalTemperature" id="0xa1" description="External temperature in &#176;C" type="I16"/>
+    <channel component="thermometer" name="THERMOMETER_TEMP" id="0xb4" description="Temperature value" type="F32"/>
+    <channel component="thermometer" name="THERMOMETER_HUMI" id="0xb5" description="Humidtiy value" type="F32"/>
+    <channel component="motionTracking" name="MOTIONTRACKING_ANGLES" id="0xbe" description="Angles values" type="App::AnglesTlm"/>
+    <channel component="motionTracking" name="MOTIONTRACKING_GYRO" id="0xbf" description="Gyroscope values" type="App::VectorTlm"/>
+    <channel component="motionTracking" name="MOTIONTRACKING_ACCEL" id="0xc0" description="Acceleration values" type="App::VectorTlm"/>
+    <channel component="motionTracking" name="MOTIONTRACKING_MAGN" id="0xc1" description="Magnetique field values" type="App::VectorTlm"/>
+    <channel component="barometer" name="BAROMETER_TEMP" id="0xc8" description="Temperature value" type="F32"/>
+    <channel component="barometer" name="BAROMETER_PRESS" id="0xc9" description="Pressure value" type="F32"/>
+    <channel component="barometer" name="BAROMETER_ALT" id="0xca" description="Altitude value" type="U16"/>
   </channels>
   <parameters/>
 </dictionary>

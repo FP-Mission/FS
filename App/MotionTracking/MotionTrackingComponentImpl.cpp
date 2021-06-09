@@ -64,7 +64,7 @@ namespace App {
     tlmWrite_MOTIONTRACKING_GYRO(gyroTlm);
     tlmWrite_MOTIONTRACKING_ACCEL(accelTlm);
     tlmWrite_MOTIONTRACKING_MAGN(magnTlm);
-    log_ACTIVITY_LO_MS_DATA();
+    //log_ACTIVITY_LO_MS_DATA();
   }
 
   void MotionTrackingComponentImpl ::

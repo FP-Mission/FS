@@ -58,50 +58,45 @@
     <instance namespace="Svc" name="rateGroup1"     type="ActiveRateGroup"      base_id="69"   base_id_window="2" />
     <instance namespace="Svc" name="rateGroup2"     type="ActiveRateGroup"      base_id="71"   base_id_window="2" />
     <instance namespace="Svc" name="rateGroup3"     type="ActiveRateGroup"      base_id="73"   base_id_window="2" />
-    <instance namespace="Svc" name="rateGroup4"     type="ActiveRateGroup"      base_id="196"   base_id_window="2" />
+    <instance namespace="Svc" name="rateGroup4"     type="ActiveRateGroup"      base_id="210"   base_id_window="2" />
     <!-- Socket IP Communications driver -->
     <instance namespace="Drv" name="socketIpDriver" type="SocketIpDriver"       base_id="75"   base_id_window="0" />
 
-    <!-- Reference Example Components -->
+    <!-- App Components -->
     <instance namespace="Ref" name="pingRcvr"       type="PingReceiver"         base_id="76"   base_id_window="2" />
     <instance namespace="Drv" name="blockDrv"       type="BlockDriver"          base_id="78"   base_id_window="1" />
     <instance namespace="Drv" name="serialDriver1"  type="LinuxSerialDriver"    base_id="79"   base_id_window="7" />
-    <instance namespace="App" name="eps"                type="Eps"                  base_id="86"    base_id_window="10" />
-    <instance namespace="App" name="flexTrak"           type="FlexTrak"             base_id="96"    base_id_window="10" />
-    <instance namespace="App" name="gps"                type="Gps"                  base_id="106"   base_id_window="10" />
-    <instance namespace="App" name="piCamera"           type="PiCamera"             base_id="116"   base_id_window="10" />
-    <instance namespace="App" name="predictor"          type="Predictor"            base_id="126"   base_id_window="10" />
-    <instance namespace="App" name="rockBlock"          type="RockBlock"            base_id="136"   base_id_window="10" />
-    <instance namespace="App" name="temperatureProbes"  type="TemperatureProbes"    base_id="146"   base_id_window="10" />
-    <instance namespace="App" name="senseHat"           type ="SenseHat"            base_id="156"   base_id_window="10" />
-    <instance namespace="App" name="thermometer"        type ="Thermometer"         base_id="166"   base_id_window="10" />
-    <instance namespace="App" name="motionTracking"     type ="MotionTracking"      base_id="176"   base_id_window="10" />
-    <instance namespace="App" name="barometer"          type ="Barometer"           base_id="186"   base_id_window="10" />
+    <instance namespace="Drv" name="serialDriver2"  type="LinuxSerialDriver"    base_id="89"   base_id_window="7" />
+
+    <instance namespace="App" name="eps"                type="Eps"                  base_id="100"   base_id_window="10" />
+    <instance namespace="App" name="flexTrak"           type="FlexTrak"             base_id="110"   base_id_window="10" />
+    <instance namespace="App" name="gps"                type="Gps"                  base_id="120"   base_id_window="10" />
+    <instance namespace="App" name="piCamera"           type="PiCamera"             base_id="130"   base_id_window="10" />
+    <instance namespace="App" name="predictor"          type="Predictor"            base_id="140"   base_id_window="10" />
+    <instance namespace="App" name="rockBlock"          type="RockBlock"            base_id="150"   base_id_window="10" />
+    <instance namespace="App" name="temperatureProbes"  type="TemperatureProbes"    base_id="160"   base_id_window="10" />
+    <instance namespace="App" name="senseHat"           type ="SenseHat"            base_id="170"   base_id_window="10" />
+    <instance namespace="App" name="thermometer"        type ="Thermometer"         base_id="180"   base_id_window="10" />
+    <instance namespace="App" name="motionTracking"     type ="MotionTracking"      base_id="190"   base_id_window="10" />
+    <instance namespace="App" name="barometer"          type ="Barometer"           base_id="200"   base_id_window="10" />
 
     <!-- ########### -->
     <!-- Connections -->
     <!-- ########### -->
 
-    <!-- Uplink Connections -->
+    <!-- GROUND INTERFACE UPLINK - CHOSE BETWEEN IP OR ROCKBLOCK -->
+    <!-- Receive data through Ip -->
     <connection name="CommunicationRecv">
         <source component="socketIpDriver" port="recv" type="Fw::BufferSend" num="0"/>
         <target component="groundIf" port="readCallback" type="Fw::BufferSend" num="0"/>
     </connection>
-
-    <connection name="cmdDispPkts">
-        <source component="groundIf" port="uplinkPort" type="Com" num="0"/>
-        <target component="cmdDisp" port="seqCmdBuff" type="Com" num="0"/>
+    <!-- -->
+    <!-- Receive data through RockBlock 
+    <connection name="CommunicationRecv">
+        <source component="rockBlock" port="recvData" type="Fw::BufferSend" num="0"/>
+        <target component="groundIf" port="readCallback" type="Fw::BufferSend" num="0"/>
     </connection>
-
-    <!-- Downlink Connections -->
-    <connection name="eventLoggerPkts">
-        <source component="eventLogger" port="PktSend" type="Com" num="0"/>
-        <target component="groundIf" port="downlinkPort" type="Com" num="0"/>
-    </connection>
-    <connection name="tlmChanPkts">
-        <source component="tlmChan" port="PktSend" type="Com" num="0"/>
-        <target component="groundIf" port="downlinkPort" type="Com" num="0"/>
-    </connection>
+    -->
     
     <!-- GROUND INTERFACE DOWNLINK - CHOSE BETWEEN IP OR FLEXTRAK -->
     <!-- Send data to Ip -->
@@ -117,6 +112,23 @@
     </connection>
      -->
 
+        <!-- Command uplink - Should not conflict with CmdSeq port -->
+    <connection name="cmdDispPkts">
+        <source component="groundIf" port="uplinkPort" type="Com" num="0"/>
+        <target component="cmdDisp" port="seqCmdBuff" type="Com" num="0"/>
+    </connection>
+
+        <!-- Packets downlink -->
+    <connection name="eventLoggerPkts">
+        <source component="eventLogger" port="PktSend" type="Com" num="0"/>
+        <target component="groundIf" port="downlinkPort" type="Com" num="0"/>
+    </connection>
+   
+    <connection name="tlmChanPkts">
+        <source component="tlmChan" port="PktSend" type="Com" num="0"/>
+        <target component="groundIf" port="downlinkPort" type="Com" num="0"/>
+    </connection>
+
     <!-- Fault Connections -->
     <connection name="eventLoggerFatalOut">
         <source component="eventLogger" port="FatalAnnounce" type="FatalEvent" num="0"/>
@@ -124,7 +136,7 @@
     </connection>
 
     <!-- Command Registration/Dispatch/Reply Connections -->
-
+    
         <!-- Command Registration Ports - Registration port number must match dispatch port for each component -->
     <connection name="EventLoggerReg">
         <source component="eventLogger" port="CmdReg" type="CmdReg" num="0"/>
@@ -180,7 +192,11 @@
     </connection>
     <connection name = "SenseHatReg">
         <source component = "senseHat" port = "CmdReg" type = "CmdReg" num = "0"/>
-        <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "25"/>
+        <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "16"/>
+    </connection>
+    <connection name="RockBlockReg">
+         <source component="rockBlock" port="CmdReg" type="CmdReg" num="0"/>
+         <target component="cmdDisp" port="compCmdReg" type="CmdReg" num="17"/>
     </connection>
 
         <!-- Command Dispatch Ports - Dispatch port number must match registration port for each component -->
@@ -237,10 +253,14 @@
         <target component="temperatureProbes" port="CmdDisp" type="Cmd" num="0"/>
     </connection>
     <connection name = "SenseHatDisp">
-        <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "25"/>
+        <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "16"/>
         <target component = "senseHat" port = "CmdDisp" type = "Cmd" num = "0"/>
     </connection>
-
+    <connection name="RockBlockDisp">
+         <source component="cmdDisp" port="compCmdSend" type="Cmd" num="17"/>
+         <target component="rockBlock" port="CmdDisp" type="Cmd" num="0"/>
+    </connection>
+   
         <!-- Command Reply Ports - Go to the same response port on the dispatcher -->
     <connection name="EventLoggerReply">
         <source component="eventLogger" port="CmdStatus" type="CmdResponse" num="0"/>
@@ -297,6 +317,10 @@
     <connection name = "SenseHatReply">
         <source component = "senseHat" port = "CmdStatus" type = "CmdResponse" num = "0"/>
         <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
+    </connection>
+    <connection name="RockBlockStat">
+         <source component="rockBlock" port="CmdStatus" type="CmdResponse" num="0"/>
+         <target component="cmdDisp" port="compCmdStat" type="CmdResponse" num="0"/>
     </connection>
 
     <!-- Sequencer Connections - should not conflict with uplink port -->
@@ -367,6 +391,10 @@
         <source component="serialDriver1" port="Log" type="Log" num="0"/>
         <target component="eventLogger" port="LogRecv" type="Log" num="0"/>
     </connection>
+    <connection name="serialDriver2Evt">
+         <source component="serialDriver2" port="Log" type="Log" num="0"/>
+         <target component="eventLogger" port="LogRecv" type="Log" num="0"/>
+    </connection>
     <connection name="epsEvt">
         <source component="eps" port="Log" type="Log" num="0"/>
         <target component="eventLogger" port="LogRecv" type="Log" num="0"/>
@@ -399,16 +427,15 @@
         <source component = "barometer" port = "Log" type = "Log" num = "0"/>
         <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
     </connection>
-    <!-- @todo Uncomment for RockBlock events report
     <connection name="rockBlockEvt">
-        <source component="rockBlock" port="Log" type="Log" num="0"/><target component="eventLogger" port="LogRecv" type="Log" num="0"/>
+        <source component="rockBlock" port="Log" type="Log" num="0"/>
+        <target component="eventLogger" port="LogRecv" type="Log" num="0"/>
     </connection>
-    -->
     <connection name="temperatureProbesEvt">
         <source component="temperatureProbes" port="Log" type="Log" num="0"/>
         <target component="eventLogger" port="LogRecv" type="Log" num="0"/>
     </connection>
-    <connection name = "SenseHatLog">
+    <connection name = "senseHatLog">
         <source component = "senseHat" port = "Log" type = "Log" num = "0"/>
         <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
     </connection>
@@ -470,6 +497,10 @@
         <source component="serialDriver1" port="LogText" type="LogText" num="0"/>
         <target component="textLogger" port="TextLogger" type="LogText" num="0"/>
     </connection>
+    <connection name="serialDriver2Text">
+         <source component="serialDriver2" port="LogText" type="LogText" num="0"/>
+         <target component="textLogger" port="TextLogger" type="LogText" num="0"/>
+    </connection>
     <connection name="epsText">
         <source component="eps" port="LogText" type="LogText" num="0"/>
         <target component="textLogger" port="TextLogger" type="LogText" num="0"/>
@@ -490,28 +521,27 @@
         <source component="predictor" port="LogText" type="LogText" num="0"/>
         <target component="textLogger" port="TextLogger" type="LogText" num="0"/>
     </connection>
-    <!-- @todo Uncomment for RockBlock text events report
     <connection name="rockBlockText">
-        <source component="rockBlock" port="LogText" type="LogText" num="0"/><target component="textLogger" port="TextLogger" type="LogText" num="0"/>
+        <source component="rockBlock" port="LogText" type="LogText" num="0"/>
+        <target component="textLogger" port="TextLogger" type="LogText" num="0"/>
     </connection>
-    -->
     <connection name="temperatureProbesText">
         <source component="temperatureProbes" port="LogText" type="LogText" num="0"/>
         <target component="textLogger" port="TextLogger" type="LogText" num="0"/>
     </connection>
-    <connection name = "SenseHatTextLog">
+    <connection name = "senseHatText">
         <source component = "senseHat" port = "LogText" type = "LogText" num = "0"/>
         <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
     </connection>
-    <connection name = "ThermometerTextLog">
+    <connection name = "thermometerText">
         <source component = "thermometer" port = "LogText" type = "LogText" num = "0"/>
         <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
     </connection>
-    <connection name = "MotionTrackingTextLog">
+    <connection name = "motionTrackingText">
         <source component = "motionTracking" port = "LogText" type = "LogText" num = "0"/>
         <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
     </connection>
-    <connection name = "BarometerTextLog">
+    <connection name = "barometerText">
         <source component = "barometer" port = "LogText" type = "LogText" num = "0"/>
         <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
     </connection>
@@ -557,6 +587,10 @@
          <source component="serialDriver1" port="Tlm" type="Tlm" num="0"/>
          <target component="tlmChan" port="TlmRecv" type="Tlm" num="0"/>
     </connection>
+    <connection name="serialDriver2Tlm">
+         <source component="serialDriver2" port="Tlm" type="Tlm" num="0"/>
+         <target component="tlmChan" port="TlmRecv" type="Tlm" num="0"/>
+    </connection>
     <connection name="epsTlm">
          <source component="eps" port="Tlm" type="Tlm" num="0"/>
          <target component="tlmChan" port="TlmRecv" type="Tlm" num="0"/>
@@ -577,25 +611,23 @@
          <source component="predictor" port="Tlm" type="Tlm" num="0"/>
          <target component="tlmChan" port="TlmRecv" type="Tlm" num="0"/>
     </connection>
-    <!-- @todo Uncomment for RockBlock telemetry report
     <connection name="rockBlockTlm">
          <source component="rockBlock" port="Tlm" type="Tlm" num="0"/>
          <target component="tlmChan" port="TlmRecv" type="Tlm" num="0"/>
     </connection>
-    -->
     <connection name="temperatureProbesTlm">
          <source component="temperatureProbes" port="Tlm" type="Tlm" num="0"/>
          <target component="tlmChan" port="TlmRecv" type="Tlm" num="0"/>
     </connection>
-    <connection name = "ThermometerTextTlm">
+    <connection name = "thermometerTlm">
         <source component = "thermometer" port = "Tlm" type = "Tlm" num = "0"/>
         <target component = "tlmChan" port = "TlmRecv" type = "Tlm" num = "0"/>
     </connection>
-    <connection name = "BarometerTextTlm">
+    <connection name = "barometerTlm">
         <source component = "barometer" port = "Tlm" type = "Tlm" num = "0"/>
         <target component = "tlmChan" port = "TlmRecv" type = "Tlm" num = "0"/>
     </connection>
-    <connection name = "MotionTrackingTextTlm">
+    <connection name = "motionTrackingTlm">
         <source component = "motionTracking" port = "Tlm" type = "Tlm" num = "0"/>
         <target component = "tlmChan" port = "TlmRecv" type = "Tlm" num = "0"/>
     </connection>
@@ -661,6 +693,10 @@
         <source component="serialDriver1" port="Time" type="Time" num="0"/>
         <target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
     </connection>
+    <connection name="serialDriver2Time">
+         <source component="serialDriver2" port="Time" type="Time" num="0"/>
+         <target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
+    </connection>
     <connection name="epsTime">
         <source component="eps" port="Time" type="Time" num="0"/>
         <target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
@@ -681,16 +717,15 @@
         <source component="predictor" port="Time" type="Time" num="0"/>
         <target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
     </connection>
-    <!-- @todo Uncomment for RockBlock time requests
     <connection name="rockBlockTime">
-        <source component="rockBlock" port="Time" type="Time" num="0"/><target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
+        <source component="rockBlock" port="Time" type="Time" num="0"/>
+        <target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
     </connection>
-    -->
     <connection name="temperatureProbesTime">
         <source component="temperatureProbes" port="Time" type="Time" num="0"/>
         <target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
     </connection>
-    <connection name = "SenseHatTime">
+    <connection name = "senseHatTime">
         <source component = "senseHat" port = "Time" type = "Time" num = "0"/>
         <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
     </connection>
@@ -746,8 +781,8 @@
         <target component="health" port="Run" type="Sched" num="0"/>
     </connection>
     <connection name="Rg3BlkDrv">
-        <source component="rateGroup3" port="RateGroupMemberOut" type="Sched" num="2"/>
-        <target component="blockDrv" port="Sched" type="Sched" num="0"/>
+         <source component="rateGroup3" port="RateGroupMemberOut" type="Sched" num="1"/>
+         <target component="blockDrv" port="Sched" type="Sched" num="0"/>
     </connection>
             <!-- Rate Group 4 -->
     <connection name="rateGroup1DriverComp">
@@ -758,6 +793,12 @@
         <source component="rateGroup4" port="RateGroupMemberOut" type="Sched" num="0"/>
         <target component="piCamera" port="Schedin" type="Sched" num="0"/>
     </connection>
+    <connection name="Rg3RockBlock">
+         <source component="rateGroup3" port="RateGroupMemberOut" type="Sched" num="2"/>
+         <target component="rockBlock" port="Run" type="Sched" num="0"/>
+    </connection>
+    
+    
     <!-- Health Connections -->
     <!-- The PingSend output port number should match the PingReturn input port number -->
     <!-- Each port number pair must be unique -->
@@ -908,37 +949,54 @@
     </connection>
     <!-- App Connections -->
         <!-- Serial Driver 1 - FlexTrak -->
-    <connection name="serialDriverRecv">
-        <source component="serialDriver1" port="serialRecv" type="SerialRead" num="0"/>
-        <target component="flexTrak" port="serialRecv" type="SerialRead" num="0"/>
-    </connection>
-    <connection name = "serialDriverBuff">
+     <connection name = "serialDriver1Buff">
         <source component = "flexTrak" port = "serialBufferOut" type = "BufferSend" num = "0"/>
         <target component = "serialDriver1" port = "readBufferSend" type = "BufferSend" num = "0"/>
-    </connection>
-    <connection name="serialDriverSend">
+     </connection>
+     <connection name="serialDriver1Recv">
+        <source component="serialDriver1" port="serialRecv" type="SerialRead" num="0"/>
+        <target component="flexTrak" port="serialRecv" type="SerialRead" num="0"/>
+     </connection>
+     <connection name="serialDriver1Send">
         <source component="flexTrak" port="serialSend" type="SerialWrite" num="0"/>
         <target component="serialDriver1" port="serialSend" type="SerialWrite" num="0"/>
-    </connection>
+     </connection>
         <!-- FlexTrak - Sensors -->
-    <connection name="flexTrakInternalTemp">
+     <connection name="flexTrakInternalTemp">
         <source component="flexTrak" port="internalTemp" type="Temperature" num="0"/>
         <target component="temperatureProbes" port="internal" type="Temperature" num="0"/>
-    </connection>
-    <connection name="flexTrakExternalTemp">
+     </connection>
+     <connection name="flexTrakExternalTemp">
         <source component="flexTrak" port="externalTemp" type="Temperature" num="0"/>
         <target component="temperatureProbes" port="external" type="Temperature" num="0"/>
-    </connection>
-    <connection name="flexTrakBattery">
+     </connection>
+     <connection name="flexTrakBattery">
         <source component="flexTrak" port="batteryVoltage" type="BatteryLevel" num="0"/>
         <target component="eps" port="batteryVoltage" type="BatteryLevel" num="0"/>
-    </connection>
-    <connection name="flexTrakGps">
+     </connection>
+     <connection name="flexTrakGps">
         <source component="flexTrak" port="gps" type="Position" num="0"/>
         <target component="gps" port="positionIn" type="Position" num="0"/>
-    </connection> 
+     </connection>
+        <!-- Serial Driver 2 - rockBlock -->
+     <connection name = "serialDriver2Buff">
+        <source component = "rockBlock" port = "serialBufferOut" type = "BufferSend" num = "0"/>
+        <target component = "serialDriver2" port = "readBufferSend" type = "BufferSend" num = "0"/>
+     </connection>
+     <connection name="serialDriver2Recv">
+        <source component="serialDriver2" port="serialRecv" type="SerialRead" num="0"/>
+        <target component="rockBlock" port="serialRecv" type="SerialRead" num="0"/>
+     </connection>
+     <connection name="serialDriver2Send">
+        <source component="rockBlock" port="serialSend" type="SerialWrite" num="0"/>
+        <target component="serialDriver2" port="serialSend" type="SerialWrite" num="0"/>
+     </connection>
+     <connection name="serialDriver2BinaryMode">
+        <source component="rockBlock" port="binaryMode" type="Drv::BinaryMode" num="0"/>
+        <target component="serialDriver2" port="binaryMode" type="Drv::BinaryMode" num="0"/>
+     </connection>
         <!-- GPS -->
-    <connection name="gpsPiCamera">
+     <connection name="gpsPiCamera">
         <source component="gps" port="positionOut" type="Position" num="0"/>
         <target component="piCamera" port="position" type="Position" num="0"/>
     </connection> 
