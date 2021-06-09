@@ -365,7 +365,7 @@ namespace App {
     const bool downsample = false; // false = save as YCbCr444 JPEG (better quality), true = YCbCr420 (smaller file)
     const char* comment = "image"; // arbitrary JPEG comment
 
-    TooJpeg::writeJpeg(myOutput, data, 160, 120, isRGB, quality, downsample, comment);
+    TooJpeg::writeJpeg(myOutput, data, width, height, isRGB, quality, downsample, comment);
     PiCameraComponentImpl::jpgFile.close();
     system(osPictureSsdv.str().c_str());
   }
