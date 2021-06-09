@@ -323,7 +323,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     };
 
 #ifndef ROCKBLOCK_SIMULATOR
-    // register ping table
+    /*/ register ping table
     health.setPingEntries(pingEntries, FW_NUM_ARRAY_ELEMENTS(pingEntries),
                           0x123);
     //*/
