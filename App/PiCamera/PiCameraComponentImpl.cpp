@@ -34,8 +34,8 @@ namespace App {
   PiCameraComponentImpl ::
     PiCameraComponentImpl(
         const char *const compName
-    ) : PiCameraComponentBase(compName), nbPicture(0) ,width(BASE_WIDTH),
-     height(BASE_HEIGHT), indexSSDV(0), timeInterval(6), timeCpt(0), sendingPicture(0), pictureId(-1)
+    ) : PiCameraComponentBase(compName), nbPicture(0) ,width(320),
+     height(240), indexSSDV(0), timeInterval(2), timeCpt(0), sendingPicture(0), pictureId(-1)
      ,fileSize(0), currentTime(0), nbPacket(0)
   {
     std::ostringstream osTelemetry;
@@ -137,21 +137,22 @@ namespace App {
         NATIVE_UINT_TYPE context
     )
   {
-      /*if(timeInterval == 0){
+      if(timeInterval == 0){
         return;
       }
       if(timeCpt < timeInterval){
           timeCpt++;
           return;
       }
-      bool sucessPicture = takePicture();
-      if (sucessPicture){
+
+      currentTime = getTime().getSeconds();
+      if(takePicture(BASE_WIDTH,BASE_HEIGHT,false) && takePicture(width,height,true) ){
+          ++nbPicture;
           log_ACTIVITY_LO_PiCam_PictureTaken();
-          //PictureOut_out(0,currentTime);
           timeCpt=1;
           return;
       }
-      log_WARNING_LO_PiCam_PictureError(0);*/
+      log_WARNING_LO_PiCam_PictureError(0);
   }
 
       void PiCameraComponentImpl::SendFrame_handler(
@@ -179,11 +180,12 @@ namespace App {
         const U32 cmdSeq
     )
   {
-    bool sucessPicture = takePicture();
-    if(sucessPicture){
+    currentTime = getTime().getSeconds();
+    if(takePicture(BASE_WIDTH,BASE_HEIGHT,false) && takePicture(width,height,true) ){
+      ++nbPicture;
+      tlmWrite_PiCam_PictureCnt(nbPicture);
       log_ACTIVITY_LO_PiCam_PictureTaken();
       this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
-      //PictureOut_out(0,currentTime);
       return;
     }
     log_WARNING_LO_PiCam_PictureError(0);
@@ -266,7 +268,7 @@ namespace App {
         this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
       }
 
-  bool PiCameraComponentImpl::takePicture(){
+  bool PiCameraComponentImpl::takePicture(U32 width, U32 height, bool ground){
     raspicam::RaspiCam Camera; //Camera object
     Camera.setWidth(width);
     Camera.setHeight(height);
@@ -280,7 +282,6 @@ namespace App {
     //wait a while until camera stabilizes
     std::cout<<"Sleeping for 3 secs"<<std::endl;
     sleep(3);
-    currentTime = getTime().getSeconds();
     
     //capture
     Camera.grab();
@@ -292,14 +293,14 @@ namespace App {
     //extract the image in rgb format
     Camera.retrieve ( data,raspicam::RASPICAM_FORMAT_RGB );//get camera image
 
-    ++nbPicture;
+    if(ground){
+      manageJpg(data, width, height);
+    }
+    else{
     managePpm(Camera,data);
-    managePng(data);
-    manageJpg(data);
+    managePng(data, width, height);
     manageTelemetry();
-   
-    tlmWrite_PiCam_PictureCnt(nbPicture);
-
+    }
     delete data;
     return true;
   }    
@@ -326,7 +327,7 @@ namespace App {
     outFilePpm.close();
   }
 
-  void PiCameraComponentImpl::managePng(unsigned char* data){
+  void PiCameraComponentImpl::managePng(unsigned char* data, U32 width, U32 height){
     std::ostringstream osPicture;
     png::image< png::rgb_pixel > image(width, height);
 
@@ -351,7 +352,7 @@ namespace App {
     --nbPicture;
   }
 
-  void PiCameraComponentImpl::manageJpg(unsigned char* data){
+  void PiCameraComponentImpl::manageJpg(unsigned char* data, U32 width, U32 height){
     std::ostringstream osPicture;
     std::ostringstream osPictureSsdv;
     osPictureSsdv << "ssdv -e -c BALL -i "<< (U32)indexSSDV <<" "<< JPG_DIRECTORY << currentTime <<".jpg " << BIN_DIRECTORY <<currentTime<<".bin";
