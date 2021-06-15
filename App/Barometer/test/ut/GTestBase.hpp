@@ -90,6 +90,50 @@
     << "  Actual:   " << _e.key << "\n"; \
   }
 
+#define ASSERT_from_DataOut_SIZE(size) \
+  this->assert_from_DataOut_size(__FILE__, __LINE__, size)
+
+#define ASSERT_from_DataOut(index, _altitude, _pressure, _temperature) \
+  { \
+    ASSERT_GT(this->fromPortHistory_DataOut->size(), static_cast<U32>(index)) \
+    << "\n" \
+    << "  File:     " << __FILE__ << "\n" \
+    << "  Line:     " << __LINE__ << "\n" \
+    << "  Value:    Index into history of from_DataOut\n" \
+    << "  Expected: Less than size of history (" \
+    << this->fromPortHistory_DataOut->size() << ")\n" \
+    << "  Actual:   " << index << "\n"; \
+    const FromPortEntry_DataOut& _e = \
+      this->fromPortHistory_DataOut->at(index); \
+    ASSERT_EQ(_altitude, _e.altitude) \
+    << "\n" \
+    << "  File:     " << __FILE__ << "\n" \
+    << "  Line:     " << __LINE__ << "\n" \
+    << "  Value:    Value of argument altitude at index " \
+    << index \
+    << " in history of from_DataOut\n" \
+    << "  Expected: " << _altitude << "\n" \
+    << "  Actual:   " << _e.altitude << "\n"; \
+    ASSERT_EQ(_pressure, _e.pressure) \
+    << "\n" \
+    << "  File:     " << __FILE__ << "\n" \
+    << "  Line:     " << __LINE__ << "\n" \
+    << "  Value:    Value of argument pressure at index " \
+    << index \
+    << " in history of from_DataOut\n" \
+    << "  Expected: " << _pressure << "\n" \
+    << "  Actual:   " << _e.pressure << "\n"; \
+    ASSERT_EQ(_temperature, _e.temperature) \
+    << "\n" \
+    << "  File:     " << __FILE__ << "\n" \
+    << "  Line:     " << __LINE__ << "\n" \
+    << "  Value:    Value of argument temperature at index " \
+    << index \
+    << " in history of from_DataOut\n" \
+    << "  Expected: " << _temperature << "\n" \
+    << "  Actual:   " << _e.temperature << "\n"; \
+  }
+
 namespace App {
 
   //! \class BarometerGTestBase
@@ -261,6 +305,18 @@ namespace App {
       // ----------------------------------------------------------------------
 
       void assert_from_PingOut_size(
+          const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
+          const U32 __callSiteLineNumber, /*!< The line number of the call site*/
+          const U32 size /*!< The asserted size*/
+      ) const;
+
+    protected:
+
+      // ----------------------------------------------------------------------
+      // From port: DataOut
+      // ----------------------------------------------------------------------
+
+      void assert_from_DataOut_size(
           const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
           const U32 __callSiteLineNumber, /*!< The line number of the call site*/
           const U32 size /*!< The asserted size*/

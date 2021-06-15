@@ -13,7 +13,7 @@
 
 #include <App/Barometer/BarometerComponentImpl.hpp>
 #include "Fw/Types/BasicTypes.hpp"
-#include "App/Barometer/config/BarometerConfig.hpp"
+#include "App/Config/BarometerConfig.hpp"
 #include <math.h>
 
 namespace App {
@@ -60,6 +60,7 @@ namespace App {
     tlmWrite_BAROMETER_TEMP(temperature);
     tlmWrite_BAROMETER_PRESS(pressure);
     tlmWrite_BAROMETER_ALT(altitude);
+    DataOut_out(0,altitude,pressure,temperature);
     //log_ACTIVITY_LO_MS_DATA(temperature,pressure,altitude);
   }
 

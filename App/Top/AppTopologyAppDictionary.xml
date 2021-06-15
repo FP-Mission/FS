@@ -110,6 +110,12 @@
         <member name="satellite" format_specifier="%u" type="U8"/>
       </members>
     </serializable>
+    <serializable type="App::PictureSize">
+      <members>
+        <member name="width" format_specifier="%u" type="U32"/>
+        <member name="height" format_specifier="%u" type="U32"/>
+      </members>
+    </serializable>
     <serializable type="App::PositionSer">
       <members>
         <member name="latitude" format_specifier="%lf" type="F64"/>
@@ -249,6 +255,25 @@
     </command>
     <command component="piCamera" mnemonic="PiCam_TakePicture" opcode="0x82">
       <args/>
+    </command>
+    <command component="piCamera" mnemonic="PiCam_SendLast" opcode="0x83">
+      <args/>
+    </command>
+    <command component="piCamera" mnemonic="PiCam_SetTimeInterval" opcode="0x84">
+      <args>
+        <arg name="timeInterval" type="U8"/>
+      </args>
+    </command>
+    <command component="piCamera" mnemonic="PiCam_SetSize" opcode="0x85">
+      <args>
+        <arg name="width" type="U32"/>
+        <arg name="height" type="U32"/>
+      </args>
+    </command>
+    <command component="piCamera" mnemonic="PiCam_SendFrame" opcode="0x86">
+      <args>
+        <arg name="frameId" type="U16"/>
+      </args>
     </command>
     <command component="predictor" mnemonic="Predi_SetPredictionRate" opcode="0x8c">
       <args>
@@ -679,6 +704,14 @@
         <arg name="cycle" type="U32"/>
       </args>
     </event>
+    <event component="rateGroup4" name="RateGroupStarted" id="0xd2" severity="DIAGNOSTIC" format_string="Rate group started.">
+      <args/>
+    </event>
+    <event component="rateGroup4" name="RateGroupCycleSlip" id="0xd3" severity="WARNING_HI" format_string="Rate group cycle slipped on cycle %d">
+      <args>
+        <arg name="cycle" type="U32"/>
+      </args>
+    </event>
     <event component="pingRcvr" name="PR_PingsDisabled" id="0x4c" severity="ACTIVITY_HI" format_string="PingReceiver ping responses disabled">
       <args/>
     </event>
@@ -797,9 +830,30 @@
     <event component="piCamera" name="PiCam_PictureTaken" id="0x82" severity="ACTIVITY_LO" format_string="Picture was taken">
       <args/>
     </event>
-    <event component="piCamera" name="PiCam_PictureError" id="0x83" severity="WARNING_LO" format_string="Unable to take picture, error code %u">
+    <event component="piCamera" name="PiCam_PositionUpdate" id="0x83" severity="ACTIVITY_LO" format_string="Position update">
+      <args/>
+    </event>
+    <event component="piCamera" name="PiCam_BarometerDataUpdate" id="0x84" severity="ACTIVITY_LO" format_string="Data Update : temperature: %.2f C&#176;, pressure:  %.2f hPa, Altitude: %d m">
+      <args>
+        <arg name="temp" type="F32"/>
+        <arg name="pressure" type="F32"/>
+        <arg name="altitude" type="U16"/>
+      </args>
+    </event>
+    <event component="piCamera" name="PiCam_PictureError" id="0x85" severity="WARNING_LO" format_string="Unable to take picture, error code %u">
       <args>
         <arg name="code" type="U32"/>
+      </args>
+    </event>
+    <event component="piCamera" name="PiCam_SetTimeInterval" id="0x86" severity="ACTIVITY_LO" format_string="Time interval of 10sec set to : %hu">
+      <args>
+        <arg name="timeInterval" type="U8"/>
+      </args>
+    </event>
+    <event component="piCamera" name="PiCam_SetPictureSize" id="0x87" severity="ACTIVITY_LO" format_string="Picture size set to : width : %u, height : %u">
+      <args>
+        <arg name="width" type="U32"/>
+        <arg name="height" type="U32"/>
       </args>
     </event>
     <event component="predictor" name="Predi_FlightMode" id="0x8c" severity="ACTIVITY_HI" format_string="New flight mode: %s">
@@ -896,6 +950,8 @@
     <channel component="rateGroup2" name="RgCycleSlips" id="0x48" description="Cycle slips for rate group" type="U32"/>
     <channel component="rateGroup3" name="RgMaxTime" id="0x49" format_string="%u us" description="Max execution time rate group" type="U32"/>
     <channel component="rateGroup3" name="RgCycleSlips" id="0x4a" description="Cycle slips for rate group" type="U32"/>
+    <channel component="rateGroup4" name="RgMaxTime" id="0xd2" format_string="%u us" description="Max execution time rate group" type="U32"/>
+    <channel component="rateGroup4" name="RgCycleSlips" id="0xd3" description="Cycle slips for rate group" type="U32"/>
     <channel component="pingRcvr" name="PR_NumPings" id="0x4c" description="Number of pings received" type="U32"/>
     <channel component="blockDrv" name="BD_Cycles" id="0x4e" description="Driver cycle count" type="U32"/>
     <channel component="serialDriver1" name="DR_BytesSent" id="0x4f" description="Bytes Sent" type="U32"/>
@@ -906,6 +962,8 @@
     <channel component="flexTrak" name="FT_SSDVBufferLength" id="0x6e" description="Used length of SSDV buffer" type="U16"/>
     <channel component="gps" name="Gps_Position" id="0x78" description="GPS position" type="App::PositionSer"/>
     <channel component="piCamera" name="PiCam_PictureCnt" id="0x82" description="Number of pictures taken" type="U32"/>
+    <channel component="piCamera" name="PiCam_PictureSize" id="0x83" description="Number of pictures taken" type="App::PictureSize"/>
+    <channel component="piCamera" name="PiCam_Timeinterval" id="0x84" description="Time interval of 10 seconds" type="U8"/>
     <channel component="predictor" name="Predi_LandingPosition" id="0x8c" description="Predicted landing position" type="App::PositionSer"/>
     <channel component="rockBlock" name="RckBlck_Ch" id="0x96" description="Sample channel" type="U16"/>
     <channel component="temperatureProbes" name="TempProb_InternalTemperature" id="0xa0" description="Internal temperature in &#176;C" type="I16"/>

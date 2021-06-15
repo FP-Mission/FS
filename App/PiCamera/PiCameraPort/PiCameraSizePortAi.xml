@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Type_Schema.rnc" type="compact"?>
+<interface name="PiCameraSizePort" namespace="App">
+    <comment>
+    Port for size data
+    </comment>
+    <args>
+        <arg name="width" type="U32">
+            <comment>width value</comment>
+        </arg>
+        <arg name="height" type="U32">
+            <comment>height value</comment>
+        </arg>
+    </args>
+</interface>

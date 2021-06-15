@@ -17,6 +17,7 @@
 #include "Fw/Logger/Logger.hpp"
 #include "Fw/Types/BasicTypes.hpp"
 #include "Fw/Types/EightyCharString.hpp"
+#include "Fw/Com/ComBuffer.hpp"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -97,6 +98,8 @@ FlexTrakComponentImpl ::~FlexTrakComponentImpl(void) {}
 void FlexTrakComponentImpl ::PingIn_handler(const NATIVE_INT_TYPE portNum,
                                             U32 key) {
     // Save ping key to allow response in serialRecv_handler
+    PingOut_out(0, key);
+    return;
     pingMutex.lock();
     this->pingKey = key;
     pingMutex.unLock();
@@ -216,7 +219,7 @@ void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
 
     U16 packetSize = buffer.getSize();
 
-    // DEBUG_PRINT("Tx buffer size %u\n", packetSize);
+    //DEBUG_PRINT("Tx buffer size %u\n", packetSize);
 
     if(packetSize > FW_COM_BUFFER_MAX_SIZE) {
         Fw::Logger::logMsg("Too big packet to downlink %u\n", packetSize);
@@ -224,7 +227,7 @@ void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
         // @todo Implement event (?)
     }
     
-    // Deserialize packet to know if it is events/telemetry/camera
+    //Deserialize packet to know if it is events/telemetry/camera
     Fw::SerializeBufferBase& deserBufferWrapper = buffer.getSerializeRepr();
     deserBufferWrapper.resetDeser();
     deserBufferWrapper.setBuffLen(buffer.getSize());

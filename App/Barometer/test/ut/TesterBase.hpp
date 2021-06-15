@@ -76,6 +76,14 @@ namespace App {
           const NATIVE_INT_TYPE portNum /*!< The port number*/
       );
 
+      //! Get the port that receives input from DataOut
+      //!
+      //! \return from_DataOut[portNum]
+      //!
+      App::InputPiCameraBarometerPortPort* get_from_DataOut(
+          const NATIVE_INT_TYPE portNum /*!< The port number*/
+      );
+
       //! Get the port that receives input from Tlm
       //!
       //! \return from_Tlm[portNum]
@@ -231,6 +239,24 @@ namespace App {
           U32 key /*!< Value to return to pinger*/
       );
 
+      //! Handler prototype for from_DataOut
+      //!
+      virtual void from_DataOut_handler(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          U16 altitude, /*!< Altitude value*/
+          F32 pressure, /*!< Pressure value*/
+          F32 temperature /*!< Temperature value*/
+      ) = 0;
+
+      //! Handler base function for from_DataOut
+      //!
+      void from_DataOut_handlerBase(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          U16 altitude, /*!< Altitude value*/
+          F32 pressure, /*!< Pressure value*/
+          F32 temperature /*!< Temperature value*/
+      );
+
     protected:
 
       // ----------------------------------------------------------------------
@@ -260,6 +286,26 @@ namespace App {
       //!
       History<FromPortEntry_PingOut>
         *fromPortHistory_PingOut;
+
+      //! Push an entry on the history for from_DataOut
+      void pushFromPortEntry_DataOut(
+          U16 altitude, /*!< Altitude value*/
+          F32 pressure, /*!< Pressure value*/
+          F32 temperature /*!< Temperature value*/
+      );
+
+      //! A history entry for from_DataOut
+      //!
+      typedef struct {
+          U16 altitude;
+          F32 pressure;
+          F32 temperature;
+      } FromPortEntry_DataOut;
+
+      //! The history for from_DataOut
+      //!
+      History<FromPortEntry_DataOut>
+        *fromPortHistory_DataOut;
 
     protected:
 
@@ -305,6 +351,12 @@ namespace App {
       //! \return The number of from_PingOut ports
       //!
       NATIVE_INT_TYPE getNum_from_PingOut(void) const;
+
+      //! Get the number of from_DataOut ports
+      //!
+      //! \return The number of from_DataOut ports
+      //!
+      NATIVE_INT_TYPE getNum_from_DataOut(void) const;
 
       //! Get the number of from_Tlm ports
       //!
@@ -596,6 +648,10 @@ namespace App {
       //!
       Svc::InputPingPort m_from_PingOut[1];
 
+      //! From port connected to DataOut
+      //!
+      App::InputPiCameraBarometerPortPort m_from_DataOut[1];
+
       //! From port connected to Tlm
       //!
       Fw::InputTlmPort m_from_Tlm[1];
@@ -626,6 +682,16 @@ namespace App {
           Fw::PassiveComponentBase *const callComp, /*!< The component instance*/
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           U32 key /*!< Value to return to pinger*/
+      );
+
+      //! Static function for port from_DataOut
+      //!
+      static void from_DataOut_static(
+          Fw::PassiveComponentBase *const callComp, /*!< The component instance*/
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          U16 altitude, /*!< Altitude value*/
+          F32 pressure, /*!< Pressure value*/
+          F32 temperature /*!< Temperature value*/
       );
 
       //! Static function for port from_Tlm

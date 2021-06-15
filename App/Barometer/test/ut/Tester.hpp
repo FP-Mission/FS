@@ -59,6 +59,15 @@ namespace App {
           U32 key /*!< Value to return to pinger*/
       );
 
+      //! Handler for from_DataOut
+      //!
+      void from_DataOut_handler(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          U16 altitude, /*!< Altitude value*/
+          F32 pressure, /*!< Pressure value*/
+          F32 temperature /*!< Temperature value*/
+      );
+
     private:
 
       // ----------------------------------------------------------------------

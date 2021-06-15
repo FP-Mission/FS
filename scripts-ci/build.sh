@@ -19,6 +19,17 @@ sudo git clone https://github.com/WiringPi/WiringPi.git
 cd WiringPi
 sudo ./build
 cd ..
+
+#Install raspicam
+git clone https://github.com/rmsalinas/raspicam.git
+cd raspicam
+mkdir build
+cd build
+cmake ..
+make
+sudo make install
+sudo ldconfig
+cd ../..
 fi
 
 

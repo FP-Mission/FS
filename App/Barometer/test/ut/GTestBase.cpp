@@ -362,4 +362,24 @@ namespace App {
       << "  Actual:   " << this->fromPortHistory_PingOut->size() << "\n";
   }
 
+  // ----------------------------------------------------------------------
+  // From port: DataOut
+  // ----------------------------------------------------------------------
+
+  void BarometerGTestBase ::
+    assert_from_DataOut_size(
+        const char *const __callSiteFileName,
+        const U32 __callSiteLineNumber,
+        const U32 size
+    ) const
+  {
+    ASSERT_EQ(size, this->fromPortHistory_DataOut->size())
+      << "\n"
+      << "  File:     " << __callSiteFileName << "\n"
+      << "  Line:     " << __callSiteLineNumber << "\n"
+      << "  Value:    Size of history for from_DataOut\n"
+      << "  Expected: " << size << "\n"
+      << "  Actual:   " << this->fromPortHistory_DataOut->size() << "\n";
+  }
+
 } // end namespace App

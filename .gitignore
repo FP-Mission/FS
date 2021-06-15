@@ -33,7 +33,6 @@ App/Top/AppTopologyAppAi_IDTableLog.txt
 
 App/Top/ISFApp.pdf
 
-# Credentials
+App/Top/AppTopologyAppDictionary.xml
 App/rockblock_creds.yaml
-
 FreeRTOS/

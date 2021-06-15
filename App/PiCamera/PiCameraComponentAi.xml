@@ -5,6 +5,14 @@
 
     <import_port_type>Svc/Ping/PingPortAi.xml</import_port_type>
     <import_port_type>App/FlexTrak/Position/PositionPortAi.xml</import_port_type>
+    <import_port_type>App/PiCamera/PiCameraPort/PiCameraBarometerPortAi.xml</import_port_type>
+    <import_port_type>App/PiCamera/PiCameraPort/PiCameraSizePortAi.xml</import_port_type>
+    <import_port_type>Fw/Com/ComPortAi.xml</import_port_type>
+    <import_port_type>App/PiCamera/PiCameraPort/PiCameraFramePortAi.xml</import_port_type>
+    <import_port_type>Svc/Sched/SchedPortAi.xml</import_port_type>
+    
+    <import_serializable_type>App/PiCamera/PiCameraType/PictureSizeSerializableAi.xml</import_serializable_type>
+
 
     <ports>
         <port name="PingIn" data_type="Svc::Ping" kind="async_input" max_number="1">
@@ -29,6 +37,32 @@
                 Current balloon position
             </comment>
         </port>
+         <port name="barometerDataIn" data_type="App::PiCameraBarometerPort" kind="sync_input" max_number="1">
+            <comment>
+                Current barometer data
+            </comment>
+        </port>
+        <port name="SizeIn" data_type="App::PiCameraSizePort" kind="async_input">
+            <comment>
+                Set the camera size
+            </comment>
+        </port>
+        <port name="Schedin" data_type="Sched" kind="async_input">
+            <comment>
+            The rate groupe scheduler input
+            </comment>
+        </port>
+        <port name="PictureOut" data_type="Fw::Com" kind="output">
+            <comment>
+            Port out for the last picture path;
+            </comment>
+        </port>
+        <port name="SendFrame" data_type="PiCameraFramePort" kind="async_input">
+            <comment>
+            Port out for the last picture path;
+            </comment>
+        </port>
+
     </ports>
 
     <commands>
@@ -37,12 +71,60 @@
             Take picture
             </comment>
         </command>
+        <command kind="async" opcode="1" mnemonic="PiCam_SendLast">
+            <comment>
+            Take picture
+            </comment>
+        </command>
+        <command kind="async" opcode="2" mnemonic="PiCam_SetTimeInterval">
+            <comment>
+            Set time interval
+            </comment>
+            <args>
+                <arg name="timeInterval" type="U8">
+                    <comment>Time interval</comment>
+                </arg>
+            </args>
+        </command>
+        <command kind="async" opcode="3" mnemonic="PiCam_SetSize">
+            <comment>
+            Set the size of picture
+            </comment>
+             <args>
+                <arg name="width" type="U32">
+                    <comment>Image Width</comment>
+                </arg>
+                <arg name="height" type="U32">
+                    <comment>Image Height</comment>
+                </arg>                   
+             </args>
+        </command>
+         <command kind="async" opcode="4" mnemonic="PiCam_SendFrame">
+            <comment>
+            Send frame of current picture
+            </comment>
+             <args>
+                <arg name="frameId" type="U16">
+                    <comment>Frame id</comment>
+                </arg>                
+             </args>
+        </command>
     </commands>
 
     <telemetry>
         <channel id="0" name="PiCam_PictureCnt" data_type="U32">
             <comment>
                 Number of pictures taken
+            </comment>
+        </channel>
+         <channel id="1" name="PiCam_PictureSize" data_type="App::PictureSize">
+            <comment>
+                Number of pictures taken
+            </comment>
+        </channel>
+         <channel id="2" name="PiCam_Timeinterval" data_type="U8">
+            <comment>
+                Time interval of 10 seconds
             </comment>
         </channel>
     </telemetry>
@@ -53,7 +135,28 @@
                 Picture was taken
             </comment>
         </event>
-        <event id="1" name="PiCam_PictureError" severity="WARNING_LO" format_string = "Unable to take picture, error code %u" >
+        <event id="1" name="PiCam_PositionUpdate" severity="ACTIVITY_LO" format_string = "Position update" >
+            <comment>
+                Position update
+            </comment>
+        </event>
+        <event id="2" name="PiCam_BarometerDataUpdate" severity="ACTIVITY_LO" format_string = "Data Update : temperature: %.2f C°, pressure:  %.2f hPa, Altitude: %d m" >
+            <comment>
+                Temperature update
+            </comment>
+            <args>
+                <arg name="temp" type="F32">
+                    <comment>temp</comment>
+                </arg>
+                <arg name="pressure" type="F32">
+                    <comment>temp</comment>
+                </arg> 
+                <arg name="altitude" type="U16">
+                    <comment>temp</comment>
+                </arg> 
+            </args> 
+        </event>
+        <event id="3" name="PiCam_PictureError" severity="WARNING_LO" format_string = "Unable to take picture, error code %u" >
             <comment>
                 Error when taking picture
             </comment>
@@ -62,6 +165,29 @@
                     <comment>Error code</comment>
                 </arg>          
             </args>
+        </event>
+        <event id="4" name="PiCam_SetTimeInterval" severity="ACTIVITY_LO" format_string = "Time interval of 10sec set to : %hu" >
+            <comment>
+                Time interval update
+            </comment>
+            <args>
+                <arg name="timeInterval" type="U8">
+                    <comment>time interval</comment>
+                </arg>
+            </args> 
+        </event>
+        <event id="5" name="PiCam_SetPictureSize" severity="ACTIVITY_LO" format_string = "Picture size set to : width : %u, height : %u" >
+            <comment>
+                Time interval update
+            </comment>
+            <args>
+                <arg name="width" type="U32">
+                    <comment>Picture width</comment>
+                </arg>
+                <arg name="height" type="U32">
+                    <comment>Picture height</comment>
+                </arg>
+            </args> 
         </event>
      </events>
 </component>
