@@ -35,7 +35,7 @@ namespace App {
     PiCameraComponentImpl(
         const char *const compName
     ) : PiCameraComponentBase(compName), nbPicture(0) ,width(320),
-     height(240), indexSSDV(0), timeInterval(2), timeCpt(0), sendingPicture(0), pictureId(-1)
+     height(240), indexSSDV(0), timeInterval(30), timeCpt(0), sendingPicture(0), pictureId(-1)
      ,fileSize(0), currentTime(0), nbPacket(0)
   {
     std::ostringstream osTelemetry;
@@ -201,7 +201,6 @@ namespace App {
           this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
           return;
         }
-        if(currentTime != 0){
         pictureId = nbPicture;
         sendingPicture = currentTime;
         std::ostringstream osData;
@@ -212,11 +211,11 @@ namespace App {
         outFileData.close();
 
         loadPicture();
-        }
+      
 
-        for(U32 i = 0; i< nbPacket; i++){
+        /*for(U32 i = 0; i< nbPacket; i++){
             this->sendFrame(i);
-        }
+        }*/
 
         
         
