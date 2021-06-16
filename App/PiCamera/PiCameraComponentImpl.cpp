@@ -35,7 +35,7 @@ namespace App {
     PiCameraComponentImpl(
         const char *const compName
     ) : PiCameraComponentBase(compName), nbPicture(0) ,width(320),
-     height(240), indexSSDV(0), timeInterval(30), timeCpt(0), sendingPicture(0), pictureId(-1)
+     height(240), indexSSDV(0), timeInterval(0), timeCpt(0), sendingPicture(0), pictureId(-1)
      ,fileSize(0), currentTime(0), nbPacket(0)
   {
     std::ostringstream osTelemetry;

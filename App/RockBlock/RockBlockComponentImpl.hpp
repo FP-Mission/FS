@@ -14,6 +14,7 @@
 #define RockBlock_HPP
 
 #include <Os/Mutex.hpp>
+//#include <Fw/Time.hpp>
 
 #include "App/RockBlock/RockBlockComponentAc.hpp"
 #include "fprime/config/LinuxSerialDriverComponentImplCfg.hpp"
@@ -131,6 +132,8 @@ class RockBlockComponentImpl : public RockBlockComponentBase {
 
     U32 pingKey;            //<! Save pingKey on pingIn
     Os::Mutex pingMutex;    //<! Mutual exclusion between PingIn_handler and serialRecv_handler
+
+    Fw::Time lastMailboxCheck;
 
     public:
         bool simulatorMode;

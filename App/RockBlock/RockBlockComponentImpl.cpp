@@ -46,6 +46,7 @@ void RockBlockComponentImpl ::init(const NATIVE_INT_TYPE queueDepth,
     this->rbCommandOutCtn = 0;
     this->textDataReceived = false;
     this->SBDIX.mtQueued = 0;
+    this->lastMailboxCheck = getTime();
 }
 
 // Step 0: The linux serial driver keeps its storage externally. This means that
@@ -75,6 +76,12 @@ void RockBlockComponentImpl::Run_handler(const NATIVE_INT_TYPE portNum, NATIVE_U
     // However, if a command has been added to the queue and no command is supposed to respond soon,
     // the run scheduler empty the queue
     this->sendNextCommand();
+    /*/
+    Fw::Time currentTime = getTime();
+    Fw::Time delta = Time::sub(currentTime, this->lastMailboxCheck);
+    printf("Last check %u %u", time.getSeconds(), time.getUSeconds());
+    this->lastMailboxCheck = currentTime();
+    //*/
 }
 
 void RockBlockComponentImpl:: configureHardware() {
@@ -277,8 +284,12 @@ void RockBlockComponentImpl ::serialRecv_handler(
                 DEBUG_PRINT("[RockBlock] Ring alert disabled\n");
             }
             //*/
-        } else if(detectCommand("+SBDIX:", pointer)) {
+        } else if(detectCommand("+SBDIX:", pointer)) {            
             U8 res = 0;
+
+            // Save last time the mailbox have been checked
+            this->lastMailboxCheck = getTime();
+
             res = sscanf(pointer + 8, "%u, %u, %u, %u, %u, %u", 
                                         &SBDIX.moStatus, &SBDIX.moMsn,
                                         &SBDIX.mtStatus, &SBDIX.mtMsn,
