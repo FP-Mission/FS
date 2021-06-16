@@ -312,7 +312,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
         {3, 5, getHealthName(prmDb)},        // 7
         {3, 5, getHealthName(pingRcvr)},     // 8
         {3, 5, getHealthName(blockDrv)},     // 9
-        {3, 5, getHealthName(flexTrak)},     // 10
+        {6, 10, getHealthName(flexTrak)},     // 10
         {3, 5, getHealthName(piCamera)},     // 11
         {3, 5, getHealthName(rockBlock)},    // 12
 		{3, 5, getHealthName(senseHat)},        // 13

@@ -18,6 +18,6 @@ static const U32 BASE_WIDTH = 640;
 static const U32 BASE_HEIGHT = 480;
 
 
-static const U32 SIZE_PACKET = 128;
+static const U32 SIZE_PACKET = 64;
 }
 #endif
