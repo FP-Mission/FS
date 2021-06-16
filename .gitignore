@@ -38,3 +38,7 @@ App/rockblock_creds.yaml
 FreeRTOS/
 
 App/deploy.sh
+data/*
+!data/frame
+data/frame/*
+!data/frame/.gitkeep 
