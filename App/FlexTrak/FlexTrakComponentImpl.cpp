@@ -98,8 +98,6 @@ FlexTrakComponentImpl ::~FlexTrakComponentImpl(void) {}
 void FlexTrakComponentImpl ::PingIn_handler(const NATIVE_INT_TYPE portNum,
                                             U32 key) {
     // Save ping key to allow response in serialRecv_handler
-    PingOut_out(0, key);
-    return;
     pingMutex.lock();
     this->pingKey = key;
     pingMutex.unLock();

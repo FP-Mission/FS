@@ -13,6 +13,8 @@
 #ifndef SenseHat_HPP
 #define SenseHat_HPP
 
+#include <Os/Mutex.hpp>
+
 #include "App/SenseHat/SenseHatComponentAc.hpp"
 #include "SHTC3/SHTC3.hpp"
 #include "LPS22/LPS22.hpp"
@@ -96,7 +98,8 @@ namespace App {
       Shtc3 shtc3;
       Lps22 lps22;
 
-
+      U32 pingKey;            //<! Save pingKey on pingIn
+      Os::Mutex pingMutex;    //<! Mutual exclusion for ping handling
       
     };
 

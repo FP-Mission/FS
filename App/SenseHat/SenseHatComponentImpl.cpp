@@ -36,6 +36,8 @@ namespace App {
     )
   {
     SenseHatComponentBase::init(queueDepth, instance);
+    // Default ping key value
+    this->pingKey = 0;
   }
 
   SenseHatComponentImpl ::
@@ -63,7 +65,10 @@ namespace App {
         U32 key
     )
   {
-    PingOut_out(portNum,key);
+    // Save ping key to allow response in serialRecv_handler
+    pingMutex.lock();
+    this->pingKey = key;
+    pingMutex.unLock();  
   }
 
   // ----------------------------------------------------------------------
@@ -81,6 +86,15 @@ namespace App {
   }
 
   void SenseHatComponentImpl :: process(){
+    // Ping response sent each time ping request was received
+    pingMutex.lock();
+    if(this->pingKey != 0) {
+        PingOut_out(0, this->pingKey);
+        this->pingKey = 0;
+
+    }
+    pingMutex.unLock();
+    
     shtc3.cycle();
     lps22.cycle();
     icm.cycle();
