@@ -242,9 +242,10 @@ void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
     stat = deserBufferWrapper.deserialize(packetType);
     FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
 
+    // @todo Enable event and tlm downlink
     if(packetType == Fw::ComPacket::FW_PACKET_LOG) {
-        printf("Downlink LogPacket %u\n", buffer.getSize());
-        this->downlinkQueue_internalInterfaceInvoke(0,buffer);
+        printf("Abord downlink LogPacket %u\n", buffer.getSize());
+        //this->downlinkQueue_internalInterfaceInvoke(0,buffer);
         /*/ @todo Add packet to downlink queue 
         Os::Queue::QueueStatus stat = this->downlinkQueue.send(buffer.getSer, 0, Os::Queue::QUEUE_NONBLOCKING);
         if(stat == Os::Queue::QUEUE_OK) {
@@ -261,16 +262,23 @@ void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
         }
         //*/
     } else if (packetType == Fw::ComPacket::FW_PACKET_TLM_REPORT) {
-        printf("Downlink TlmReportPacket %u\n", buffer.getSize());
-        this->downlinkQueue_internalInterfaceInvoke(0,buffer);
+        printf("Abord downlink TlmReportPacket %u\n", buffer.getSize());
+        //this->downlinkQueue_internalInterfaceInvoke(0,buffer);
     } else if (packetType == Fw::ComPacket::FW_PACKET_TELEM) {
-        printf("Downlink TlmPacket %u\n", buffer.getSize());
+        printf("Abord downlink TlmPacket %u\n", buffer.getSize());
+        //this->downlinkQueue_internalInterfaceInvoke(0,buffer);
+    } else if (packetType == Fw::ComPacket::FW_PACKET_PICTURE) {
+        printf("Downlink PicturePacket %u\n", buffer.getSize());
         this->downlinkQueue_internalInterfaceInvoke(0,buffer);
     }
 }
 
 void FlexTrakComponentImpl::Run_handler(NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE context) {
-
+    serialMutex.lock();
+    if(loRaIsFree) {
+        this->AskPictureFrame_out(0, 0);
+    }
+    serialMutex.unLock();
 }
 
 void FlexTrakComponentImpl::downlinkQueue_internalInterfaceHandler(U8 packetType, Fw::Buffer &buffer) {

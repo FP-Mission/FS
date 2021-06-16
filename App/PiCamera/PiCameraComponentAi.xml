@@ -54,12 +54,12 @@
         </port>
         <port name="PictureOut" data_type="Fw::Com" kind="output">
             <comment>
-            Port out for the last picture path;
+                Port out for the last picture path
             </comment>
         </port>
         <port name="SendFrame" data_type="PiCameraFramePort" kind="async_input">
             <comment>
-            Port out for the last picture path;
+                Ask next packet to send
             </comment>
         </port>
 

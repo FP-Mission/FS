@@ -36,3 +36,5 @@ App/Top/ISFApp.pdf
 App/Top/AppTopologyAppDictionary.xml
 App/rockblock_creds.yaml
 FreeRTOS/
+
+App/deploy.sh

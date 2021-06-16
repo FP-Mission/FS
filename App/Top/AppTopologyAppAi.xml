@@ -99,18 +99,18 @@
     <!-- -->
     
     <!-- GROUND INTERFACE DOWNLINK - CHOSE BETWEEN IP OR FLEXTRAK -->
-    <!-- Send data to Ip
+    <!-- Send data to Ip -->
     <connection name="CommunicationSend">
         <source component="groundIf" port="write" type="Fw::BufferSend" num="0"/>
         <target component="socketIpDriver" port="send" type="Fw::BufferSend" num="0"/>
     </connection>
-    -->
-    <!-- Send data to FlexTrak -->
+    <!-- -->
+    <!-- Send data to FlexTrak
     <connection name="CommunicationSend">
         <source component="groundIf" port="write" type="Fw::BufferSend" num="0"/>
         <target component="flexTrak" port="sendData" type="Fw::BufferSend" num="0"/>
     </connection>
-    <!-- -->
+    -->
 
         <!-- Command uplink - Should not conflict with CmdSeq port -->
     <connection name="cmdDispPkts">
@@ -1028,10 +1028,13 @@
         <source component = "barometer" port = "DataOut" type = "App::PiCameraBarometerPort" num = "0"/>
         <target component = "piCamera" port = "barometerDataIn" type = "App::PiCameraBarometerPort" num = "0"/>
     </connection>
-
     <connection name="groundIfPiCamera">
         <source component="piCamera" port="PictureOut" type="Com" num="0"/>
         <target component="groundIf" port="downlinkPort" type="Com" num="0"/>
+    </connection>
+    <connection name="flexTrakPiCamera">
+        <source component="flexTrak" port="AskPictureFrame" type="App::PiCameraFramePort" num="0"/>
+        <target component="piCamera" port="SendFrame" type="App::PiCameraFramePort" num="0"/>
     </connection>
 
 </assembly>

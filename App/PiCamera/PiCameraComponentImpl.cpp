@@ -117,7 +117,7 @@ namespace App {
     this->altitudeBaro = altitude;
     this->pressure = pressure;
     this->temperature = temperature;
-    this->log_ACTIVITY_LO_PiCam_BarometerDataUpdate(temperature,pressure,altitude);
+    //this->log_ACTIVITY_LO_PiCam_BarometerDataUpdate(temperature,pressure,altitude);
   }
 
     void PiCameraComponentImpl ::
@@ -159,13 +159,15 @@ namespace App {
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           U32 frame
       ){
-          if(pictureId ==-1){
+        if(pictureId ==-1){
           return;
         }
         for(U32 i = 0; i< nbPacket;i++){
           if(!frameSend[i]){
+            printf("Send frame %u\n", i);
             this->sendFrame(i);
             frameSend[i] = true;
+            return;
           }
        }
       }

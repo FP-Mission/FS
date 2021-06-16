@@ -11,6 +11,7 @@
     <import_port_type>App/FlexTrak/TemperaturePort/TemperaturePortAi.xml</import_port_type>
     <import_port_type>App/FlexTrak/BatteryLevelPort/BatteryLevelPortAi.xml</import_port_type>
     <import_port_type>App/FlexTrak/Position/PositionPortAi.xml</import_port_type>
+    <import_port_type>App/PiCamera/PiCameraPort/PiCameraFramePortAi.xml</import_port_type>
 
     <internal_interfaces>
         <internal_interface name="downlinkQueue" priority="1" full="drop">
@@ -74,6 +75,12 @@
                 Position received by FlexAvr
             </comment>
         </port>
+        <port name="AskPictureFrame" data_type="App::PiCameraFramePort" kind="output">
+            <comment>
+                To ask next picture packet
+            </comment>
+        </port>
+
     </ports>
 
 
