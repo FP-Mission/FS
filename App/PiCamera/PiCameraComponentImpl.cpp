@@ -164,7 +164,7 @@ namespace App {
         }
         for(U32 i = 0; i< nbPacket;i++){
           if(!frameSend[i]){
-            printf("Send frame %u\n", i);
+            printf("Send frame %u/%u of picture %u\n", i, nbPacket, pictureId);
             this->sendFrame(i);
             frameSend[i] = true;
             return;
