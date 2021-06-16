@@ -201,16 +201,19 @@ namespace App {
           this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
           return;
         }
-        pictureId = nbPicture;
-        sendingPicture = currentTime;
-        std::ostringstream osData;
-        osData << DATA_DIRECTORY << "data.bin";
-        std::ofstream outFileData (osData.str(), std::ios::out | std::ios::binary);
-        outFileData.write((char*)&sendingPicture,sizeof(sendingPicture));
-        outFileData.write((char*)&pictureId,sizeof(pictureId));
-        outFileData.close();
+        if(currentTime != 0){
+          pictureId = nbPicture;
+          sendingPicture = currentTime;
+          std::ostringstream osData;
+          osData << DATA_DIRECTORY << "data.bin";
+          std::ofstream outFileData (osData.str(), std::ios::out | std::ios::binary);
+          outFileData.write((char*)&sendingPicture,sizeof(sendingPicture));
+          outFileData.write((char*)&pictureId,sizeof(pictureId));
+          outFileData.close();
 
-        loadPicture();
+          loadPicture();
+        }
+
       
 
         /*for(U32 i = 0; i< nbPacket; i++){
