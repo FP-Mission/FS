@@ -109,6 +109,16 @@
                 </arg>                
              </args>
         </command>
+        <command kind="async" opcode="5" mnemonic="PiCam_CanSend">
+            <comment>
+            can send
+            </comment>
+             <args>
+                <arg name="canSend" type="U8">
+                    <comment>boolean</comment>
+                </arg>                
+             </args>
+        </command>
     </commands>
 
     <telemetry>

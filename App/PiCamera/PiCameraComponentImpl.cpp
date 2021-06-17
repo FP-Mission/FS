@@ -36,7 +36,7 @@ namespace App {
         const char *const compName
     ) : PiCameraComponentBase(compName), nbPicture(0) ,width(320),
      height(240), indexSSDV(0), timeInterval(0), timeCpt(0), sendingPicture(0), pictureId(-1)
-     ,fileSize(0), currentTime(0), nbPacket(0)
+     ,fileSize(0), currentTime(0), nbPacket(0), canSend(false)
   {
     std::ostringstream osTelemetry;
     osTelemetry << TELEMETRY_DIRECTORY << "telemetry.csv";
@@ -146,6 +146,7 @@ namespace App {
       }
 
       currentTime = getTime().getSeconds();
+      writeLastPictureTaken();
       if(takePicture(BASE_WIDTH,BASE_HEIGHT,false) && takePicture(width,height,true) ){
           ++nbPicture;
           log_ACTIVITY_LO_PiCam_PictureTaken();
@@ -159,7 +160,7 @@ namespace App {
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           U32 frame
       ){
-        if(pictureId ==-1){
+        if(pictureId ==-1 || !canSend){
           return;
         }
         for(U32 i = 0; i< nbPacket;i++){
@@ -172,6 +173,7 @@ namespace App {
        }
       }
 
+
   // ----------------------------------------------------------------------
   // Command handler implementations
   // ----------------------------------------------------------------------
@@ -183,6 +185,7 @@ namespace App {
     )
   {
     currentTime = getTime().getSeconds();
+    writeLastPictureTaken();
     if(takePicture(BASE_WIDTH,BASE_HEIGHT,false) && takePicture(width,height,true) ){
       ++nbPicture;
       tlmWrite_PiCam_PictureCnt(nbPicture);
@@ -199,11 +202,13 @@ namespace App {
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq /*!< The command sequence number*/
       ){
-        if(nbPicture == 0 || pictureId == nbPicture){
+
+        canSend = true;
+        if(nbPicture == 0 || pictureId == nbPicture || currentTime == 0){
           this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
           return;
         }
-        if(currentTime != 0){
+
           pictureId = nbPicture;
           sendingPicture = currentTime;
           std::ostringstream osData;
@@ -214,9 +219,7 @@ namespace App {
           outFileData.close();
 
           loadPicture();
-        }
-
-      
+              
 
         /*for(U32 i = 0; i< nbPacket; i++){
             this->sendFrame(i);
@@ -270,6 +273,20 @@ namespace App {
          
           
         this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+      }
+
+     void PiCameraComponentImpl::PiCam_CanSend_cmdHandler(
+          const FwOpcodeType opCode, /*!< The opcode*/
+          const U32 cmdSeq, /*!< The command sequence number*/
+          U8 canSend
+      ){
+        if(canSend != 0 && canSend != 1){
+          this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);  
+          return;   
+        }
+
+        this->canSend = (canSend == 0) ? false: true;
+        
       }
 
   bool PiCameraComponentImpl::takePicture(U32 width, U32 height, bool ground){
@@ -416,6 +433,7 @@ namespace App {
       indata.close();
 
       loadPicture();
+      loadLastPictureTaken();
   }
   void PiCameraComponentImpl::sendFrame(U16 frameId){
         m_picturePacket.setData(binaryData, frameId, SIZE_PACKET, fileSize);
@@ -426,5 +444,25 @@ namespace App {
         FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
         this->PictureOut_out(0,this->m_comBuffer,0);
   }
+  void PiCameraComponentImpl::loadLastPictureTaken(){
+      std::ifstream indata; // indata is like cin
+      std::ostringstream osData;
+      osData << DATA_DIRECTORY << "dataPicture.bin";
+      indata.open(osData.str(), std::ios::in | std::ios::binary); // opens the file
+      if(!indata){
+        return;
+      }
+      indata.read((char*)&currentTime,sizeof(currentTime));
+      indata.close();
+    }
+  void PiCameraComponentImpl::writeLastPictureTaken(){
+    
+      std::ostringstream osData;
+      osData << DATA_DIRECTORY << "dataPicture.bin";
+      std::ofstream outFileData (osData.str(), std::ios::out | std::ios::binary);
+      outFileData.write((char*)&currentTime,sizeof(currentTime));
+      outFileData.close();
+  }
+
 
 } // end namespace App
