@@ -1,0 +1,1 @@
+[{"x": "23:47:15", "y": {"latitude": 47.0024, "longitude": 7.0126, "altitude": 0, "satellite": 0}},{"x": "23:47:15", "y": {"latitude": 47.1024, "longitude": 7.0126, "altitude": 0, "satellite": 0}}]

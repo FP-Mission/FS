@@ -54,12 +54,12 @@
         </port>
         <port name="PictureOut" data_type="Fw::Com" kind="output">
             <comment>
-            Port out for the last picture path;
+                Port out for the last picture path
             </comment>
         </port>
         <port name="SendFrame" data_type="PiCameraFramePort" kind="async_input">
             <comment>
-            Port out for the last picture path;
+                Ask next packet to send
             </comment>
         </port>
 
@@ -106,6 +106,16 @@
              <args>
                 <arg name="frameId" type="U16">
                     <comment>Frame id</comment>
+                </arg>                
+             </args>
+        </command>
+        <command kind="async" opcode="5" mnemonic="PiCam_CanSend">
+            <comment>
+            can send
+            </comment>
+             <args>
+                <arg name="canSend" type="U8">
+                    <comment>boolean</comment>
                 </arg>                
              </args>
         </command>
@@ -191,4 +201,3 @@
         </event>
      </events>
 </component>
-

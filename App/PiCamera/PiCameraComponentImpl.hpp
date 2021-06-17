@@ -141,6 +141,12 @@ namespace App {
           U16 wframeIdidth
       );
 
+    void PiCam_CanSend_cmdHandler(
+          const FwOpcodeType opCode, /*!< The opcode*/
+          const U32 cmdSeq, /*!< The command sequence number*/
+          U8 canSend
+      );
+
       bool takePicture(U32 width, U32 height, bool ground);
       void manageTelemetry();
       void managePpm(raspicam::RaspiCam &camera ,unsigned char* data);
@@ -153,6 +159,8 @@ namespace App {
 
       void loadPicture();
       void loadData();
+      void loadLastPictureTaken();
+      void writeLastPictureTaken();
       void sendFrame(U16 frameId);     
      
       F32 temperature;
@@ -185,6 +193,7 @@ namespace App {
      Fw::PicturePacket m_picturePacket;
      U8* binaryData;
      bool* frameSend;
+     bool canSend;
 
     };
 
