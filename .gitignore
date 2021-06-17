@@ -3,10 +3,8 @@
 
 App/build-artifacts/
 
-App/build-fprime-automatic-native/
-App/build-fprime-automatic-native-ut/
-App/build-fprime-automatic-raspberrypi/
-App/build-fprime-automatic-raspberrypi-ut/
+App/build-fprime-automatic-*/
+App/build-fprime-automatic-*-ut/
 
 App/logs/
 logs/
