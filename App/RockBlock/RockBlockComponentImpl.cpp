@@ -352,15 +352,19 @@ void RockBlockComponentImpl ::serialRecv_handler(
                 U16 checksum = (*(pointer + 2 + dataSize) << 8) + *(pointer + 3 + dataSize);
                 DEBUG_PRINT("Checksum: %4X\n", checksum);
 
-                // @todo check size !
-                FW_ASSERT(this->fpCommandBuffer.getData());
-                memcpy(this->fpCommandBuffer.getData(), framePointer + 2, dataSize);
-                this->fpCommandBuffer.setSize(dataSize);
+                if(dataSize <= FP_COMMAND_BUFFER_SIZE) {
+                    FW_ASSERT(this->fpCommandBuffer.getData());
+                    // Copy from data start (after 2 bytes length)
+                    memcpy(this->fpCommandBuffer.getData(), framePointer + 2, dataSize);
+                    this->fpCommandBuffer.setSize(dataSize);
 
-                if(this->isConnected_recvData_OutputPort(0)) {
+                    if(this->isConnected_recvData_OutputPort(0)) {
                     this->recvData_out(0, this->fpCommandBuffer);
+                    } else {
+                        Fw::Logger::logMsg("[WARNING] RockBlock component is not connected for uplink\n");
+                    }
                 } else {
-                    Fw::Logger::logMsg("[WARNING] RockBlock component is not connected for uplink\n");
+                    Fw::Logger::logMsg("[ERROR] Received RockBlock command is too big\n");
                 }
             }
 
