@@ -145,5 +145,7 @@
 #define DICT_BAROMETER_TEMP 0xc8
 #define DICT_BAROMETER_PRESS 0xc9
 #define DICT_BAROMETER_ALT 0xca
+#define DICT_Eps_BatteryVoltage 0x64
+#define DICT_PiCam_PictureCnt 0x82
 
 #endif
