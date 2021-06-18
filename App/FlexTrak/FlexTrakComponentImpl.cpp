@@ -262,7 +262,7 @@ void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
             }
             this->lastLogPacketsMutex.unLock();
         } else {
-            Fw::Logger::logMsg("[ERROR] LogPacket too big - Unable to store it for downlink\n");
+            Fw::Logger::logMsg("[ERROR] LogPacket too big (%u) - Unable to store it for downlink\n", packetSize);
         }
     } else if (packetType == Fw::ComPacket::FW_PACKET_TLM_REPORT) {
         // Save TlmReportPacket for downlink
@@ -273,7 +273,7 @@ void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
             this->lastTlmReportMutex.unLock();
             Fw::Logger::logMsg("TlmReportPacket saved for downlink (%u)\n", buffer.getSize());
         } else {
-            Fw::Logger::logMsg("[ERROR] Incorrect size for TlmReportPacket - Unable to store it for downlink\n");
+            Fw::Logger::logMsg("[ERROR] Incorrect size for TlmReportPacket (%u) - Unable to store it for downlink\n", packetSize);
         }
     } else if (packetType == Fw::ComPacket::FW_PACKET_TELEM) {
         // Save TlmPacket for downlink
@@ -290,7 +290,7 @@ void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
             }
             this->lastTlmPacketsMutex.unLock();
         } else {
-            Fw::Logger::logMsg("[ERROR] TlmPacket too big - Unable to store it for downlink\n");
+            Fw::Logger::logMsg("[ERROR] TlmPacket too big (%u) - Unable to store it for downlink\n", packetSize);
         } 
     } else if (packetType == Fw::ComPacket::FW_PACKET_PICTURE) {
         // Save PicturePacket for downlink
@@ -302,7 +302,7 @@ void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
             this->lastPicturePacketMutex.unLock();
             Fw::Logger::logMsg("PicturePacket saved for downlink (%u)\n", buffer.getSize());
         } else {
-            Fw::Logger::logMsg("[ERROR] PicturePacket too big - Unable to store it for downlink\n");
+            Fw::Logger::logMsg("[ERROR] PicturePacket too big (%u) - Unable to store it for downlink\n", packetSize);
         }
     }
 }
