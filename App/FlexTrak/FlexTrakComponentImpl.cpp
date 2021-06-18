@@ -22,8 +22,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define DEBUG_PRINT(x,...) Fw::Logger::logMsg(x,##__VA_ARGS__);
-//#define DEBUG_PRINT(x,...)
+//#define DEBUG_PRINT(x,...) Fw::Logger::logMsg(x,##__VA_ARGS__);
+#define DEBUG_PRINT(x,...)
 
 namespace App {
 
@@ -47,20 +47,29 @@ void FlexTrakComponentImpl ::init(const NATIVE_INT_TYPE queueDepth,
     {'implicit': 0, 'coding': 8, 'bandwidth': 5, 'spreading': 11, 'lowopt': 0},  # 5
     {'implicit': 1, 'coding': 5, 'bandwidth': 5, 'spreading':  6, 'lowopt': 0}]  # 6
     //*/
-    mode = 1;
-    frequency = 434.225;
+    this->mode = 1;
+    this->frequency = 434.225;
 
-    modes[0].implicit = 0;
-    modes[0].coding = 8;
-    modes[0].bandwidth = 3;
-    modes[0].spreading = 11;
-    modes[0].lowopt = 1;
+    this->modes[0].implicit = 0;
+    this->modes[0].coding = 8;
+    this->modes[0].bandwidth = 3;
+    this->modes[0].spreading = 11;
+    this->modes[0].lowopt = 1;
 
-    modes[1].implicit = 1;
-    modes[1].coding = 5;
-    modes[1].bandwidth = 3;
-    modes[1].spreading = 6;
-    modes[1].lowopt = 0;
+    this->modes[1].implicit = 1;
+    this->modes[1].coding = 5;
+    this->modes[1].bandwidth = 3;
+    this->modes[1].spreading = 6;
+    this->modes[1].lowopt = 0;
+
+    this->tlmPacketInCtn = 0;
+    this->tlmPacketOutCtn = 0;
+    this->logPacketInCtn = 0;
+    this->logPacketOutCtn = 0;
+
+    this->lastTlmReportTime = Fw::Time(0, 0);
+    this->newPicturePacket = false;
+    this->newTlmReport = false;
 }
 
 // Step 0: The linux serial driver keeps its storage externally. This means that
@@ -178,16 +187,16 @@ void FlexTrakComponentImpl ::serialRecv_handler(const NATIVE_INT_TYPE portNum,
             I16 temp1 = atoi(pointer + 6);
             externalTemp_out(0, temp1);
         } else if(detectCommand("LoRaIsFree=", pointer)) {
-            serialMutex.lock();
-            loRaIsFree = atoi(pointer + 11) == 1 ? true : false;
-            serialMutex.unLock();
-            if(loRaIsFree) {
-                DEBUG_PRINT("[FlexAvr] LoRa freed\n");
+            loRaIsFreeMutex.lock();
+            this->loRaIsFree = atoi(pointer + 11) == 1 ? true : false;
+            if(this->loRaIsFree) {
+                Fw::Logger::logMsg("[FlexAvr] LoRa freed\n");
             } else {
                 DEBUG_PRINT("[FlexAvr] LoRa busy\n");
             }
+            loRaIsFreeMutex.unLock();
         } else if(detectCommand("DataDownlinked=", pointer)) {
-            DEBUG_PRINT("[FlexAvr] Data downlinked (%u)\n", atoi(pointer + 15));
+            Fw::Logger::logMsg("[FlexAvr] Data downlinked (%u)\n", atoi(pointer + 15));
         } else {
             DEBUG_PRINT("[FlexAvr] Rx (%u): %s", buffsize, reinterpret_cast<POINTER_CAST>(pointer));
         }
@@ -217,8 +226,6 @@ void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
 
     U16 packetSize = buffer.getSize();
 
-    //DEBUG_PRINT("Tx buffer size %u\n", packetSize);
-
     if(packetSize > FW_COM_BUFFER_MAX_SIZE) {
         Fw::Logger::logMsg("Too big packet to downlink %u\n", packetSize);
         return;
@@ -240,51 +247,168 @@ void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
     stat = deserBufferWrapper.deserialize(packetType);
     FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
 
-    // @todo Enable event and tlm downlink
     if(packetType == Fw::ComPacket::FW_PACKET_LOG) {
-        DEBUG_PRINT("Downlink LogPacket %u\n", buffer.getSize());
-        this->downlinkQueue_internalInterfaceInvoke(0,buffer);
-        /*/ @todo Add packet to downlink queue 
-        Os::Queue::QueueStatus stat = this->downlinkQueue.send(buffer.getSer, 0, Os::Queue::QUEUE_NONBLOCKING);
-        if(stat == Os::Queue::QUEUE_OK) {
-            DEBUG_PRINT("Sent in queue\n");
-            Fw::Buffer unqueueBuffer;
-            stat = this->downlinkQueue.receive(, 0, Os::Queue::QUEUE_NONBLOCKING);
-            if(stat == Os::Queue::QUEUE_OK) {
-                DEBUG_PRINT("Queue read\n");
+        // Save log packet for downlink
+        if(packetSize <= FW_COM_BUFFER_MAX_SIZE) {
+            this->lastLogPacketsMutex.lock();
+            U8 newCtn = (this->logPacketInCtn + 1) % LOG_PACKETS_QUEUE_SIZE;
+            if(newCtn == this->logPacketOutCtn) {
+                Fw::Logger::logMsg("[ERROR] Unable to store LogPacket for downlink - Queue full\n");
             } else {
-                DEBUG_PRINT("Error reading queue %u\n", stat);
+                memcpy(&lastLogPackets[this->logPacketInCtn][0], pointer, packetSize);
+                this->lastLogPacketsSize[this->logPacketInCtn] = packetSize;
+                Fw::Logger::logMsg("LogPacket (%u) saved for downlink (%u)\n", packetSize, this->logPacketInCtn);
+                this->logPacketInCtn = newCtn;
             }
+            this->lastLogPacketsMutex.unLock();
         } else {
-            DEBUG_PRINT("Error sending in queue %u\n", stat);
+            Fw::Logger::logMsg("[ERROR] LogPacket too big - Unable to store it for downlink\n");
         }
-        //*/
     } else if (packetType == Fw::ComPacket::FW_PACKET_TLM_REPORT) {
-        DEBUG_PRINT("Downlink TlmReportPacket %u\n", buffer.getSize());
-        this->downlinkQueue_internalInterfaceInvoke(0,buffer);
+        // Save TlmReportPacket for downlink
+        if(packetSize == TLM_REPORT_SIZE) {
+            this->lastTlmReportMutex.lock();
+            memcpy(this->lastTlmReport, pointer, packetSize);
+            this->newTlmReport = true;
+            this->lastTlmReportMutex.unLock();
+            Fw::Logger::logMsg("TlmReportPacket saved for downlink (%u)\n", buffer.getSize());
+        } else {
+            Fw::Logger::logMsg("[ERROR] Incorrect size for TlmReportPacket - Unable to store it for downlink\n");
+        }
     } else if (packetType == Fw::ComPacket::FW_PACKET_TELEM) {
-        DEBUG_PRINT("Downlink TlmPacket %u\n", buffer.getSize());
-        this->downlinkQueue_internalInterfaceInvoke(0,buffer);
+        // Save TlmPacket for downlink
+        if(packetSize <= FW_COM_BUFFER_MAX_SIZE) {
+            this->lastTlmPacketsMutex.lock();
+            U8 newCtn = (this->tlmPacketInCtn + 1) % TLM_PACKETS_QUEUE_SIZE;
+            if(newCtn == this->tlmPacketOutCtn) {
+                Fw::Logger::logMsg("[ERROR] Unable to store TlmPacket for downlink - Queue full\n");
+            } else {
+                memcpy(&lastTlmPackets[this->tlmPacketInCtn][0], pointer, packetSize);
+                this->lastTlmPacketsSize[this->tlmPacketInCtn] = packetSize;
+                Fw::Logger::logMsg("TlmPacket (%u) saved for downlink (%u)\n", packetSize, this->tlmPacketInCtn);
+                this->tlmPacketInCtn = newCtn;
+            }
+            this->lastTlmPacketsMutex.unLock();
+        } else {
+            Fw::Logger::logMsg("[ERROR] TlmPacket too big - Unable to store it for downlink\n");
+        } 
     } else if (packetType == Fw::ComPacket::FW_PACKET_PICTURE) {
-        DEBUG_PRINT("Downlink PicturePacket %u\n", buffer.getSize());
-        this->downlinkQueue_internalInterfaceInvoke(0,buffer);
+        // Save PicturePacket for downlink
+        if(packetSize <= PICTURE_PACKET_SIZE) {
+            this->lastPicturePacketMutex.lock();
+            memcpy(this->lastPicturePacket, pointer, packetSize);
+            this->lastPictureSize = packetSize;
+            this->newPicturePacket = true;
+            this->lastPicturePacketMutex.unLock();
+            Fw::Logger::logMsg("PicturePacket saved for downlink (%u)\n", buffer.getSize());
+        } else {
+            Fw::Logger::logMsg("[ERROR] PicturePacket too big - Unable to store it for downlink\n");
+        }
     }
 }
 
 void FlexTrakComponentImpl::Run_handler(NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE context) {
-    serialMutex.lock();
-    if(loRaIsFree) {
-        this->AskPictureFrame_out(0, 0);
+    this->loRaIsFreeMutex.lock();
+    bool loRaIsFree_cpy = this->loRaIsFree;
+    this->loRaIsFreeMutex.unLock();
+    if(loRaIsFree_cpy) {
+        DEBUG_PRINT("DownlinkDataScheduler called\n");
+        downlinkDataScheduler();
+    } else {
+        DEBUG_PRINT("DownlinkDataScheduler not called, LoRa is busy\n");
     }
-    serialMutex.unLock();
 }
 
-void FlexTrakComponentImpl::downlinkQueue_internalInterfaceHandler(U8 packetType, Fw::Buffer &buffer) {
-    char *pointer = reinterpret_cast<char *>(buffer.getData());
-    U16 packetSize = buffer.getSize();
+void FlexTrakComponentImpl::downlinkDataScheduler() {
+    bool ret = false;
 
-    serialMutex.lock();
-    if(loRaIsFree) {
+    // PRIORITY 4 (forced)
+    // Force send TlmReport if none has been sent since 20 seconds
+    this->lastTlmReportMutex.lock();
+    
+    Fw::Time currentTime = getTime();
+    Fw::Time delta = Fw::Time::sub(currentTime, this->lastTlmReportTime);
+
+    if(this->newTlmReport && delta.getSeconds() > 20) {
+        Fw::Logger::logMsg("Downlink TlmReport (forced after %u seconds)\n", delta.getSeconds());
+        if(downlinkData(this->lastTlmReport, TLM_REPORT_SIZE)) {
+            this->lastTlmReportTime = getTime();
+            this->newTlmReport = false;
+        }
+        ret = true;
+    }
+    this->lastTlmReportMutex.unLock();
+
+    if(ret) return;
+    
+    // PRIORITY 1 
+    // Send LogPacket if available
+    this->lastLogPacketsMutex.lock();
+    if(this->logPacketInCtn != this->logPacketOutCtn) {
+        U16 packetSize = this->lastLogPacketsSize[this->logPacketOutCtn];
+        Fw::Logger::logMsg("Downlink LogPacket (%u, %u)\n", packetSize, this->logPacketOutCtn);
+        if(downlinkData(&this->lastLogPackets[this->logPacketOutCtn][0], packetSize)) {
+            this->logPacketOutCtn = (this->logPacketOutCtn + 1) % LOG_PACKETS_QUEUE_SIZE;
+        }
+        ret = true;
+    }
+    this->lastLogPacketsMutex.unLock();
+
+    if(ret) return;
+
+    // PRIORITY 2
+    // Send TlmPacket if available
+    this->lastTlmPacketsMutex.lock();
+    if(this->tlmPacketInCtn != this->tlmPacketOutCtn) {
+        U16 packetSize = this->lastTlmPacketsSize[this->tlmPacketOutCtn];
+        Fw::Logger::logMsg("Downlink TlmPacket (%u, %u)\n", packetSize, this->logPacketOutCtn);
+        if(downlinkData(&this->lastTlmPackets[this->tlmPacketOutCtn][0], packetSize)) {
+            this->tlmPacketOutCtn = (this->tlmPacketOutCtn + 1) % TLM_PACKETS_QUEUE_SIZE;
+        }
+        ret = true;
+    }
+    this->lastTlmPacketsMutex.unLock();
+
+    if(ret) return;
+
+
+    // PRIORITY 3
+    // Send PicturePacket if available
+    this->lastPicturePacketMutex.lock();
+    if(this->newPicturePacket) {
+        Fw::Logger::logMsg("Downlink PicturePacket (%u)\n", this->lastPictureSize);
+        if(downlinkData(this->lastPicturePacket, this->lastPictureSize)) {
+            this->newPicturePacket = false;
+            // Ask next PicturePacket
+            this->AskPictureFrame_out(0, 0);
+        }
+        ret = true;
+    }
+    this->lastPicturePacketMutex.unLock();
+
+    if(ret) return;
+
+    // PRIORITY 4
+    // Send TlmReport if available
+    this->lastTlmReportMutex.lock();
+    if(this->newTlmReport) {
+        Fw::Logger::logMsg("Downlink TlmReport\n");
+        if(downlinkData(this->lastTlmReport, TLM_REPORT_SIZE)) {
+            this->lastTlmReportTime = getTime();
+            this->newTlmReport = false;
+        }
+    }
+    this->lastTlmReportMutex.unLock();
+}
+
+bool FlexTrakComponentImpl::downlinkData(char *packetPointer, U16 packetSize) {
+    bool dataDownlinked = false;
+
+    this->loRaIsFreeMutex.lock();
+    bool loRaIsFree_cpy = this->loRaIsFree;
+    this->loRaIsFreeMutex.unLock();
+
+    if(loRaIsFree_cpy) {
         sendFlexTrakCommand("CH1");
 
         char data[FW_COM_BUFFER_MAX_SIZE + 5]; // Add header and tail ~LD<size>[... packet ...]'\r'
@@ -295,7 +419,7 @@ void FlexTrakComponentImpl::downlinkQueue_internalInterfaceHandler(U8 packetType
         U8 i = 0;
         //DEBUG_PRINT("Downlink data : ");
         for (i; i < packetSize; i++) {
-            data[4 + i] = *(pointer + i);
+            data[4 + i] = *(packetPointer + i);
             //DEBUG_PRINT("%c", data[4 + i]);
         }
         //DEBUG_PRINT("END\n");
@@ -306,7 +430,6 @@ void FlexTrakComponentImpl::downlinkQueue_internalInterfaceHandler(U8 packetType
         U8 commandSize = packetSize + 5;
         //*/
 
-
         Fw::Buffer buf; 
         buf.setData((U8*)data);
         buf.setSize(commandSize);
@@ -314,19 +437,24 @@ void FlexTrakComponentImpl::downlinkQueue_internalInterfaceHandler(U8 packetType
         sendFlexTrak(buf);
 
         sendFlexTrakCommand("CH0");
+
+        dataDownlinked = true;
     } else {
         Fw::Logger::logMsg("[ERROR] FlexTrak is not ready to downlink data - Abord\n");
     }
 
-    serialMutex.unLock();
+    return dataDownlinked;
 }
 
 void FlexTrakComponentImpl:: sendFlexTrak(Fw::Buffer &buffer) {
+    serialMutex.lock();
     DEBUG_PRINT("FlexTrak Tx (%u) %.3s\n", buffer.getSize(), reinterpret_cast<POINTER_CAST>(buffer.getData()));
     this->serialSend_out(0, buffer);
+    serialMutex.unLock();
 }
 
 void FlexTrakComponentImpl:: sendFlexTrakCommand(std::string command) {
+    serialMutex.lock();
     char commandToSend[30]; 
     Fw::Buffer buffer;
     U16 size = command.size() + 2;
@@ -337,13 +465,13 @@ void FlexTrakComponentImpl:: sendFlexTrakCommand(std::string command) {
     // sendFlexTrak(buf); // directly call serialSend_out() to avoid sendFlexTrak() log
     this->serialSend_out(0, buffer);
     DEBUG_PRINT("FlexTrak Tx (%u) ~%s\n", size, reinterpret_cast<POINTER_CAST>(command.c_str()));
+    serialMutex.unLock();
 }
 
 void FlexTrakComponentImpl:: configureHardware() {
     char temp[20]; 
     // ensure array is big enough to contain command, parameters and additional 
     // '\r' added by sendFlexTrakCommand()
-    serialMutex.lock();
     sendFlexTrakCommand("CH0"); // Low priority mode
     sendFlexTrakCommand("CV");  // Ask version
     sendFlexTrakCommand("CPFP1");   // Set payload name to FP1
@@ -361,7 +489,6 @@ void FlexTrakComponentImpl:: configureHardware() {
     sprintf(temp, "LF%.3f", frequency);
     sendFlexTrakCommand(temp);
     sendFlexTrakCommand("CS");  // Save settings
-    serialMutex.unLock();
 }
 
 // ----------------------------------------------------------------------

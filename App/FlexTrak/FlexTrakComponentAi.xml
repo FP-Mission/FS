@@ -13,22 +13,6 @@
     <import_port_type>App/FlexTrak/Position/PositionPortAi.xml</import_port_type>
     <import_port_type>App/PiCamera/PiCameraPort/PiCameraFramePortAi.xml</import_port_type>
 
-    <internal_interfaces>
-        <internal_interface name="downlinkQueue" priority="1" full="drop">
-            <comment>
-            Internal interface to send packet to component thread
-            </comment>
-            <args>
-                <arg name="packetType" type="U8">
-                    <comment>Packet type</comment>
-                </arg>
-                <arg name="packet" type="Fw::Buffer" pass_by="reference">
-                    <comment>Buffer containing serialized packet</comment>
-                </arg>
-            </args>
-        </internal_interface>
-    </internal_interfaces>    
-
     <ports>
         <port name="Run" data_type="Svc::Sched" kind="async_input" >
             <comment>

@@ -77,14 +77,16 @@ void RockBlockComponentImpl::Run_handler(const NATIVE_INT_TYPE portNum, NATIVE_U
     // the run scheduler empty the queue
     this->sendNextCommand();
     
-    // 
-    Fw::Time currentTime = getTime();
-    this->mailboxCheckMutex.lock();
-    Fw::Time delta = Fw::Time::sub(currentTime, this->lastMailboxCheck);
-    this->lastMailboxCheck = currentTime;
-    this->mailboxCheckMutex.unLock();
-    if(delta.getSeconds() > MAILBOX_INTERVAL) {
-        this->addCommand("AT+SBDIX");
+    // Check when was the last mailbox check
+    if(MAILBOX_INTERVAL != 0) {
+        Fw::Time currentTime = getTime();
+        this->mailboxCheckMutex.lock();
+        Fw::Time delta = Fw::Time::sub(currentTime, this->lastMailboxCheck);
+        this->lastMailboxCheck = currentTime;
+        this->mailboxCheckMutex.unLock();
+        if(delta.getSeconds() > MAILBOX_INTERVAL) {
+            this->addCommand("AT+SBDIX");
+        }
     }
 }
 
@@ -92,6 +94,10 @@ void RockBlockComponentImpl:: configureHardware() {
     this->sendRockBlockCommand("AT"); // Send first command to receive OK response
     this->addCommand("AT+SBDMTA?");
     this->addCommand("AT+CSQ");
+    // Mailbox check at launch if enabled
+    if(MAILBOX_INTERVAL != 0) {
+        this->addCommand("AT+SBDIX");
+    }
 }
 
 void RockBlockComponentImpl:: addCommand(std::string command) {
@@ -105,9 +111,8 @@ void RockBlockComponentImpl:: addCommand(std::string command) {
         if(newCtn == this->rbCommandOutCtn) {
             Fw::Logger::logMsg("[ERROR] RockBlock sending queue full\n");
         } else {
-            // ! If data are not read, they will be overriden
             sprintf(&rbCommandBuffer[this->rbCommandInCtn][0], command.c_str(), commandLength);
-            this->rbCommandInCtn = (this->rbCommandInCtn + 1) % ROCKBLOCK_COMMAND_BUFFER_SIZE;
+            this->rbCommandInCtn = newCtn;
             DEBUG_PRINT("Add RockBlock command %s\n", reinterpret_cast<POINTER_CAST>(command.c_str()));
         }
     }
@@ -172,7 +177,7 @@ bool RockBlockComponentImpl:: sendRockBlockCommand(std::string command, bool log
         }
         sent = true;
     } else {
-        DEBUG_PRINT("RockBlock is not ok, delay command %s\n", reinterpret_cast<POINTER_CAST>(command.c_str()));
+        DEBUG_PRINT("RockBlock is not free, delay command %s\n", reinterpret_cast<POINTER_CAST>(command.c_str()));
     }
     serialMutex.unLock();
     return sent;
