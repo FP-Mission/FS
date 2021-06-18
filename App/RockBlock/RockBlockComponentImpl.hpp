@@ -14,7 +14,6 @@
 #define RockBlock_HPP
 
 #include <Os/Mutex.hpp>
-//#include <Fw/Time.hpp>
 
 #include "App/RockBlock/RockBlockComponentAc.hpp"
 #include "fprime/config/LinuxSerialDriverComponentImplCfg.hpp"
@@ -24,6 +23,8 @@
 #define ROCKBLOCK_COMMAND_SIZE 16
 #define ROCKBLOCK_COMMAND_BUFFER_SIZE 10    // Maximum allocation size for RockBlock AT commands
 #define FP_COMMAND_BUFFER_SIZE 128          // Maximum allocation size of the recv buffer for F' commands
+
+#define MAILBOX_INTERVAL 300 // seconds
 
 namespace App {
 
@@ -132,6 +133,8 @@ class RockBlockComponentImpl : public RockBlockComponentBase {
 
     U32 pingKey;            //<! Save pingKey on pingIn
     Os::Mutex pingMutex;    //<! Mutual exclusion between PingIn_handler and serialRecv_handler
+
+    Os::Mutex mailboxCheckMutex;    //<! Mutual exclusion for mailbox check time
 
     Fw::Time lastMailboxCheck;
 

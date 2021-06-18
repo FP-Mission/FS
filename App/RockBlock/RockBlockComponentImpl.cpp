@@ -19,7 +19,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define DEBUG_PRINT(x, ...)  printf(x, ##__VA_ARGS__); fflush(stdout)
+#define DEBUG_PRINT(x,...) Fw::Logger::logMsg(x,##__VA_ARGS__);
 //#define DEBUG_PRINT(x,...)
 
 namespace App {
@@ -76,12 +76,16 @@ void RockBlockComponentImpl::Run_handler(const NATIVE_INT_TYPE portNum, NATIVE_U
     // However, if a command has been added to the queue and no command is supposed to respond soon,
     // the run scheduler empty the queue
     this->sendNextCommand();
-    /*/
+    
+    // 
     Fw::Time currentTime = getTime();
-    Fw::Time delta = Time::sub(currentTime, this->lastMailboxCheck);
-    printf("Last check %u %u", time.getSeconds(), time.getUSeconds());
-    this->lastMailboxCheck = currentTime();
-    //*/
+    this->mailboxCheckMutex.lock();
+    Fw::Time delta = Fw::Time::sub(currentTime, this->lastMailboxCheck);
+    this->lastMailboxCheck = currentTime;
+    this->mailboxCheckMutex.unLock();
+    if(delta.getSeconds() > MAILBOX_INTERVAL) {
+        this->addCommand("AT+SBDIX");
+    }
 }
 
 void RockBlockComponentImpl:: configureHardware() {
@@ -104,7 +108,7 @@ void RockBlockComponentImpl:: addCommand(std::string command) {
             // ! If data are not read, they will be overriden
             sprintf(&rbCommandBuffer[this->rbCommandInCtn][0], command.c_str(), commandLength);
             this->rbCommandInCtn = (this->rbCommandInCtn + 1) % ROCKBLOCK_COMMAND_BUFFER_SIZE;
-            DEBUG_PRINT("Add RockBlock command %s\n", command.c_str());
+            DEBUG_PRINT("Add RockBlock command %s\n", reinterpret_cast<POINTER_CAST>(command.c_str()));
         }
     }
     this->rbCommandMutex.unLock();
@@ -168,7 +172,7 @@ bool RockBlockComponentImpl:: sendRockBlockCommand(std::string command, bool log
         }
         sent = true;
     } else {
-        DEBUG_PRINT("RockBlock is not ok, delay command %s\n", command.c_str());
+        DEBUG_PRINT("RockBlock is not ok, delay command %s\n", reinterpret_cast<POINTER_CAST>(command.c_str()));
     }
     serialMutex.unLock();
     return sent;
@@ -288,7 +292,9 @@ void RockBlockComponentImpl ::serialRecv_handler(
             U8 res = 0;
 
             // Save last time the mailbox have been checked
+            this->mailboxCheckMutex.lock();
             this->lastMailboxCheck = getTime();
+            this->mailboxCheckMutex.unLock();
 
             res = sscanf(pointer + 8, "%u, %u, %u, %u, %u, %u", 
                                         &SBDIX.moStatus, &SBDIX.moMsn,

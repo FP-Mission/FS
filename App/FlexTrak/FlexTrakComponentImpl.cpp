@@ -22,7 +22,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define DEBUG_PRINT(x, ...)  printf(x, ##__VA_ARGS__); fflush(stdout)
+#define DEBUG_PRINT(x,...) Fw::Logger::logMsg(x,##__VA_ARGS__);
 //#define DEBUG_PRINT(x,...)
 
 namespace App {
@@ -140,9 +140,9 @@ void FlexTrakComponentImpl ::serialRecv_handler(const NATIVE_INT_TYPE portNum,
 
     try {
         if(detectCommand("*", pointer)) {               // Command ack by the AVR
-            DEBUG_PRINT("[FlexAvr] Ack %s", pointer + 1);
+            DEBUG_PRINT("[FlexAvr] Ack %s", reinterpret_cast<POINTER_CAST>(pointer + 1));
         } else if(detectCommand("?", pointer)) {        // Command error response AVR
-            DEBUG_PRINT("[FlexAvr] Command error %s", pointer + 1);
+            DEBUG_PRINT("[FlexAvr] Command error %s", reinterpret_cast<POINTER_CAST>(pointer + 1));
         } else if (detectCommand("GPS=", pointer)) {
             // GPS=18/05/2021,08:43:32,46.22469,7.38071,0,3
             struct GPS_t {
@@ -184,12 +184,12 @@ void FlexTrakComponentImpl ::serialRecv_handler(const NATIVE_INT_TYPE portNum,
             if(loRaIsFree) {
                 DEBUG_PRINT("[FlexAvr] LoRa freed\n");
             } else {
-                DEBUG_PRINT("[FlexAvr] LoRa not free\n");
+                DEBUG_PRINT("[FlexAvr] LoRa busy\n");
             }
         } else if(detectCommand("DataDownlinked=", pointer)) {
             DEBUG_PRINT("[FlexAvr] Data downlinked (%u)\n", atoi(pointer + 15));
         } else {
-            DEBUG_PRINT("[FlexAvr] Rx (%u): %s", buffsize, pointer);
+            DEBUG_PRINT("[FlexAvr] Rx (%u): %s", buffsize, reinterpret_cast<POINTER_CAST>(pointer));
         }
     } catch (...) {
         Fw::Logger::logMsg("[ERROR] Unable to decode frame received from FlexAvr\n");
@@ -242,31 +242,31 @@ void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
 
     // @todo Enable event and tlm downlink
     if(packetType == Fw::ComPacket::FW_PACKET_LOG) {
-        printf("Abord downlink LogPacket %u\n", buffer.getSize());
-        //this->downlinkQueue_internalInterfaceInvoke(0,buffer);
+        DEBUG_PRINT("Downlink LogPacket %u\n", buffer.getSize());
+        this->downlinkQueue_internalInterfaceInvoke(0,buffer);
         /*/ @todo Add packet to downlink queue 
         Os::Queue::QueueStatus stat = this->downlinkQueue.send(buffer.getSer, 0, Os::Queue::QUEUE_NONBLOCKING);
         if(stat == Os::Queue::QUEUE_OK) {
-            printf("Sent in queue\n");
+            DEBUG_PRINT("Sent in queue\n");
             Fw::Buffer unqueueBuffer;
             stat = this->downlinkQueue.receive(, 0, Os::Queue::QUEUE_NONBLOCKING);
             if(stat == Os::Queue::QUEUE_OK) {
-                printf("Queue read\n");
+                DEBUG_PRINT("Queue read\n");
             } else {
-                printf("Error reading queue %u\n", stat);
+                DEBUG_PRINT("Error reading queue %u\n", stat);
             }
         } else {
-            printf("Error sending in queue %u\n", stat);
+            DEBUG_PRINT("Error sending in queue %u\n", stat);
         }
         //*/
     } else if (packetType == Fw::ComPacket::FW_PACKET_TLM_REPORT) {
-        printf("Abord downlink TlmReportPacket %u\n", buffer.getSize());
-        //this->downlinkQueue_internalInterfaceInvoke(0,buffer);
+        DEBUG_PRINT("Downlink TlmReportPacket %u\n", buffer.getSize());
+        this->downlinkQueue_internalInterfaceInvoke(0,buffer);
     } else if (packetType == Fw::ComPacket::FW_PACKET_TELEM) {
-        printf("Abord downlink TlmPacket %u\n", buffer.getSize());
-        //this->downlinkQueue_internalInterfaceInvoke(0,buffer);
+        DEBUG_PRINT("Downlink TlmPacket %u\n", buffer.getSize());
+        this->downlinkQueue_internalInterfaceInvoke(0,buffer);
     } else if (packetType == Fw::ComPacket::FW_PACKET_PICTURE) {
-        printf("Downlink PicturePacket %u\n", buffer.getSize());
+        DEBUG_PRINT("Downlink PicturePacket %u\n", buffer.getSize());
         this->downlinkQueue_internalInterfaceInvoke(0,buffer);
     }
 }
@@ -293,12 +293,12 @@ void FlexTrakComponentImpl::downlinkQueue_internalInterfaceHandler(U8 packetType
         data[2] = 'D';
         data[3] = packetSize;
         U8 i = 0;
-        //printf("Downlink data : ");
+        //DEBUG_PRINT("Downlink data : ");
         for (i; i < packetSize; i++) {
             data[4 + i] = *(pointer + i);
-            //printf("%c", data[4 + i]);
+            //DEBUG_PRINT("%c", data[4 + i]);
         }
-        //printf("END\n");
+        //DEBUG_PRINT("END\n");
         data[packetSize + 4] = '\r';    
         // @todo Should not be necessary, but current binary mode in FlexTrak use \r after binary data receiption
         // to process command. Incorrect way to deal with it but it works, so .... u know
@@ -315,14 +315,14 @@ void FlexTrakComponentImpl::downlinkQueue_internalInterfaceHandler(U8 packetType
 
         sendFlexTrakCommand("CH0");
     } else {
-        printf("LoRa is not free - Abord downlink\n");
+        Fw::Logger::logMsg("[ERROR] FlexTrak is not ready to downlink data - Abord\n");
     }
 
     serialMutex.unLock();
 }
 
 void FlexTrakComponentImpl:: sendFlexTrak(Fw::Buffer &buffer) {
-    DEBUG_PRINT("FlexTrak Tx (%u) %.3s\n", buffer.getSize(), buffer.getData());
+    DEBUG_PRINT("FlexTrak Tx (%u) %.3s\n", buffer.getSize(), reinterpret_cast<POINTER_CAST>(buffer.getData()));
     this->serialSend_out(0, buffer);
 }
 
@@ -336,7 +336,7 @@ void FlexTrakComponentImpl:: sendFlexTrakCommand(std::string command) {
     buffer.setSize(size);
     // sendFlexTrak(buf); // directly call serialSend_out() to avoid sendFlexTrak() log
     this->serialSend_out(0, buffer);
-    DEBUG_PRINT("FlexTrak Tx (%u) ~%s\n", size, command.c_str());
+    DEBUG_PRINT("FlexTrak Tx (%u) ~%s\n", size, reinterpret_cast<POINTER_CAST>(command.c_str()));
 }
 
 void FlexTrakComponentImpl:: configureHardware() {
