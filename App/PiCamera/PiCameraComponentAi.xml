@@ -10,6 +10,8 @@
     <import_port_type>Fw/Com/ComPortAi.xml</import_port_type>
     <import_port_type>App/PiCamera/PiCameraPort/PiCameraFramePortAi.xml</import_port_type>
     <import_port_type>Svc/Sched/SchedPortAi.xml</import_port_type>
+    <import_port_type>App/FlexTrak/TemperaturePort/TemperaturePortAi.xml</import_port_type>
+
     
     <import_serializable_type>App/PiCamera/PiCameraType/PictureSizeSerializableAi.xml</import_serializable_type>
 
@@ -60,6 +62,16 @@
         <port name="SendFrame" data_type="PiCameraFramePort" kind="async_input">
             <comment>
                 Ask next packet to send
+            </comment>
+        </port>
+        <port name="FlexInterTemp" data_type="App::Temperature" kind="sync_input">
+            <comment>
+                flextrack intern temp
+            </comment>
+        </port>
+        <port name="FlexExternTemp" data_type="App::Temperature" kind="sync_input">
+            <comment>
+                flextrack extern temp
             </comment>
         </port>
 

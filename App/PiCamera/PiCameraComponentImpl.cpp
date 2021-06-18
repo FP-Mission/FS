@@ -36,7 +36,9 @@ namespace App {
         const char *const compName
     ) : PiCameraComponentBase(compName), nbPicture(0) ,width(320),
      height(240), indexSSDV(0), timeInterval(0), timeCpt(0), sendingPicture(0), pictureId(-1)
-     ,fileSize(0), currentTime(0), nbPacket(0), canSend(false)
+     ,fileSize(0), currentTime(0), nbPacket(0), canSend(false), latitude(0), longitude(0),
+     flexExterTemp(0), flexInterTemp(0), altitudeGps(0), altitudeBaro(0), satellite(0), temperature(0),
+     pressure(0)
   {
     std::ostringstream osTelemetry;
     osTelemetry << TELEMETRY_DIRECTORY << "telemetry.csv";
@@ -54,7 +56,8 @@ namespace App {
 
     std::ofstream outFileTelemetry (osTelemetry.str());
     outFileTelemetry<< "id" <<","<<"Timecode" <<","<< "AltitudeGPS" <<","<< "AltitudeBaro" << 
-    ","<<"Temperature"<<","<< "Pressure"<<","<< "Longitude" <<","<< "Latitude" << "\n";
+    ","<<"Temperature"<<","<< "Pressure"<<","<< "Longitude" <<","<< "Latitude" <<
+    ","<< "FlexInternTemp" <<","<< "FlexExternTemp"  "\n";
     outFileTelemetry.close();
     }
     getNumberOfLine(osTelemetry);
@@ -171,6 +174,20 @@ namespace App {
             return;
           }
        }
+      }
+
+    void PiCameraComponentImpl::FlexInterTemp_handler(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          I16 degree /*!< The call order*/
+      ){
+          this->flexInterTemp = degree;
+      }
+      
+    void PiCameraComponentImpl::FlexExternTemp_handler(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          I16 degree /*!< The call order*/
+      ){
+        this->flexExterTemp = degree;
       }
 
 
@@ -331,8 +348,9 @@ namespace App {
     osTelemetry << TELEMETRY_DIRECTORY << "telemetry.csv";
     std::ofstream outFileTelemetry (osTelemetry.str(),std::ios::app );
 
-    outFileTelemetry << nbPicture <<","<<currentTime <<"," <<altitudeGps <<","<< altitudeBaro << 
-    ","<<temperature<<","<< pressure<<","<< longitude<<","<< latitude << "\n";
+    outFileTelemetry << nbPicture <<","<<currentTime <<"," << altitudeGps <<","<< altitudeBaro << 
+    ","<<temperature<<","<< pressure<<","<< longitude<<","<< latitude << 
+    ","<< flexInterTemp<<","<< flexExterTemp << "\n";
 
     outFileTelemetry.close();
   }

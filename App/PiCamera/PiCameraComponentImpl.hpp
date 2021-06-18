@@ -101,6 +101,14 @@ namespace App {
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           U32 frame /*!< The call order*/
       );
+    void FlexInterTemp_handler(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          I16 degree /*!< The call order*/
+      );
+    void FlexExternTemp_handler(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          I16 degree /*!< The call order*/
+      );
 
     PRIVATE:
 
@@ -171,6 +179,9 @@ namespace App {
       F64 longitude;
       U16 altitudeGps;
       U8 satellite;
+
+      I16 flexInterTemp;
+      I16 flexExterTemp;
 
       U32 nbPicture;
       U32 currentTime;

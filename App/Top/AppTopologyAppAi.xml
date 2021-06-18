@@ -978,6 +978,14 @@
         <source component="flexTrak" port="gps" type="Position" num="0"/>
         <target component="gps" port="positionIn" type="Position" num="0"/>
      </connection>
+     <connection name="flexTrakInterTempPiCamera">
+        <source component="flexTrak" port="internalTemp" type="Temperature" num="0"/>
+        <target component="piCamera" port="FlexInterTemp" type="Temperature" num="0"/>
+    </connection>
+        <connection name="flexTrakExternTempPiCamera">
+        <source component="flexTrak" port="externalTemp" type="Temperature" num="0"/>
+        <target component="piCamera" port="FlexExternTemp" type="Temperature" num="0"/>
+    </connection>
         <!-- Serial Driver 2 - rockBlock -->
      <connection name = "serialDriver2Buff">
         <source component = "rockBlock" port = "serialBufferOut" type = "BufferSend" num = "0"/>
