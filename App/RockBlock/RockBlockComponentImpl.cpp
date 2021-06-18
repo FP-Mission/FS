@@ -19,7 +19,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define DEBUG_PRINT(x, ...)  printf(x, ##__VA_ARGS__); fflush(stdout)
+#define DEBUG_PRINT(x,...) Fw::Logger::logMsg(x,##__VA_ARGS__);
 //#define DEBUG_PRINT(x,...)
 
 namespace App {
@@ -76,18 +76,28 @@ void RockBlockComponentImpl::Run_handler(const NATIVE_INT_TYPE portNum, NATIVE_U
     // However, if a command has been added to the queue and no command is supposed to respond soon,
     // the run scheduler empty the queue
     this->sendNextCommand();
-    /*/
-    Fw::Time currentTime = getTime();
-    Fw::Time delta = Time::sub(currentTime, this->lastMailboxCheck);
-    printf("Last check %u %u", time.getSeconds(), time.getUSeconds());
-    this->lastMailboxCheck = currentTime();
-    //*/
+    
+    // Check when was the last mailbox check
+    if(MAILBOX_INTERVAL != 0) {
+        Fw::Time currentTime = getTime();
+        this->mailboxCheckMutex.lock();
+        Fw::Time delta = Fw::Time::sub(currentTime, this->lastMailboxCheck);
+        this->lastMailboxCheck = currentTime;
+        this->mailboxCheckMutex.unLock();
+        if(delta.getSeconds() > MAILBOX_INTERVAL) {
+            this->addCommand("AT+SBDIX");
+        }
+    }
 }
 
 void RockBlockComponentImpl:: configureHardware() {
     this->sendRockBlockCommand("AT"); // Send first command to receive OK response
     this->addCommand("AT+SBDMTA?");
     this->addCommand("AT+CSQ");
+    // Mailbox check at launch if enabled
+    if(MAILBOX_INTERVAL != 0) {
+        this->addCommand("AT+SBDIX");
+    }
 }
 
 void RockBlockComponentImpl:: addCommand(std::string command) {
@@ -101,10 +111,9 @@ void RockBlockComponentImpl:: addCommand(std::string command) {
         if(newCtn == this->rbCommandOutCtn) {
             Fw::Logger::logMsg("[ERROR] RockBlock sending queue full\n");
         } else {
-            // ! If data are not read, they will be overriden
             sprintf(&rbCommandBuffer[this->rbCommandInCtn][0], command.c_str(), commandLength);
-            this->rbCommandInCtn = (this->rbCommandInCtn + 1) % ROCKBLOCK_COMMAND_BUFFER_SIZE;
-            DEBUG_PRINT("Add RockBlock command %s\n", command.c_str());
+            this->rbCommandInCtn = newCtn;
+            DEBUG_PRINT("Add RockBlock command %s\n", reinterpret_cast<POINTER_CAST>(command.c_str()));
         }
     }
     this->rbCommandMutex.unLock();
@@ -168,7 +177,7 @@ bool RockBlockComponentImpl:: sendRockBlockCommand(std::string command, bool log
         }
         sent = true;
     } else {
-        DEBUG_PRINT("RockBlock is not ok, delay command %s\n", command.c_str());
+        DEBUG_PRINT("RockBlock is not free, delay command %s\n", reinterpret_cast<POINTER_CAST>(command.c_str()));
     }
     serialMutex.unLock();
     return sent;
@@ -288,7 +297,9 @@ void RockBlockComponentImpl ::serialRecv_handler(
             U8 res = 0;
 
             // Save last time the mailbox have been checked
+            this->mailboxCheckMutex.lock();
             this->lastMailboxCheck = getTime();
+            this->mailboxCheckMutex.unLock();
 
             res = sscanf(pointer + 8, "%u, %u, %u, %u, %u, %u", 
                                         &SBDIX.moStatus, &SBDIX.moMsn,
@@ -346,15 +357,19 @@ void RockBlockComponentImpl ::serialRecv_handler(
                 U16 checksum = (*(pointer + 2 + dataSize) << 8) + *(pointer + 3 + dataSize);
                 DEBUG_PRINT("Checksum: %4X\n", checksum);
 
-                // @todo check size !
-                FW_ASSERT(this->fpCommandBuffer.getData());
-                memcpy(this->fpCommandBuffer.getData(), framePointer + 2, dataSize);
-                this->fpCommandBuffer.setSize(dataSize);
+                if(dataSize <= FP_COMMAND_BUFFER_SIZE) {
+                    FW_ASSERT(this->fpCommandBuffer.getData());
+                    // Copy from data start (after 2 bytes length)
+                    memcpy(this->fpCommandBuffer.getData(), framePointer + 2, dataSize);
+                    this->fpCommandBuffer.setSize(dataSize);
 
-                if(this->isConnected_recvData_OutputPort(0)) {
+                    if(this->isConnected_recvData_OutputPort(0)) {
                     this->recvData_out(0, this->fpCommandBuffer);
+                    } else {
+                        Fw::Logger::logMsg("[WARNING] RockBlock component is not connected for uplink\n");
+                    }
                 } else {
-                    Fw::Logger::logMsg("[WARNING] RockBlock component is not connected for uplink\n");
+                    Fw::Logger::logMsg("[ERROR] Received RockBlock command is too big\n");
                 }
             }
 

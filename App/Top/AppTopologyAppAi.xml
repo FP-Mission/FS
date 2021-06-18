@@ -749,53 +749,53 @@
         <source component="blockDrv" port="CycleOut" type="Cycle" num="0"/>
         <target component="rateGroupDrv" port="CycleIn" type="Cycle" num="0"/>
     </connection>
-        <!-- Rate Group 1 -->
+        <!-- Rate Group 1 - 1 second -->
     <connection name="rateGroup1DriverComp">
         <source component="rateGroupDrv" port="CycleOut" type="Cycle" num="0"/>
         <target component="rateGroup1" port="CycleIn" type="Cycle" num="0"/>
     </connection>
-    <connection name="Rg1ChTlm">
-         <source component="rateGroup1" port="RateGroupMemberOut" type="Sched" num="1"/>
-         <target component="tlmChan" port="Run" type="Sched" num="0"/>
-    </connection>
-    <connection name = "Rg1SenseHat">
-        <source component = "rateGroup1" port = "RateGroupMemberOut" type = "Sched" num = "2"/>
-        <target component = "senseHat" port = "Schedin" type = "Sched" num = "0"/>
-    </connection>
-        <!-- Rate Group 2 -->
-    <connection name="Rg2Drv">
+        <!-- Rate Group 2 - 2 seconds -->
+    <connection name="rateGroup2DriverComp">
         <source component="rateGroupDrv" port="CycleOut" type="Cycle" num="1"/>
         <target component="rateGroup2" port="CycleIn" type="Cycle" num="0"/>
     </connection>
-    <connection name="Rg2Seq">
+    <connection name="RgSeq">
         <source component="rateGroup2" port="RateGroupMemberOut" type="Sched" num="0"/>
         <target component="flexTrak"  port="Run" type="Sched" num="0"/>
     </connection>
-        <!-- Rate Group 3 -->
+        <!-- Rate Group 3 - 4 seconds -->
     <connection name="rateGroup3DriverComp">
         <source component="rateGroupDrv" port="CycleOut" type="Cycle" num="2"/>
         <target component="rateGroup3" port="CycleIn" type="Cycle" num="0"/>
     </connection>
-    <connection name="Rg3Health">
+    <connection name="RgHealth">
         <source component="rateGroup3" port="RateGroupMemberOut" type="Sched" num="0"/>
         <target component="health" port="Run" type="Sched" num="0"/>
     </connection>
-    <connection name="Rg3BlkDrv">
+    <connection name="RgBlkDrv">
          <source component="rateGroup3" port="RateGroupMemberOut" type="Sched" num="1"/>
          <target component="blockDrv" port="Sched" type="Sched" num="0"/>
     </connection>
-            <!-- Rate Group 4 -->
-    <connection name="rateGroup1DriverComp">
+    <connection name = "RgSenseHat">
+        <source component = "rateGroup3" port = "RateGroupMemberOut" type = "Sched" num = "2"/>
+        <target component = "senseHat" port = "Schedin" type = "Sched" num = "0"/>
+    </connection>
+            <!-- Rate Group 4 - 10 seconds -->
+    <connection name="rateGroup4DriverComp">
         <source component="rateGroupDrv" port="CycleOut" type="Cycle" num="3"/>
         <target component="rateGroup4" port="CycleIn" type="Cycle" num="0"/>
     </connection>
-    <connection name="Rg4PiCamera">
+    <connection name="RgPiCamera">
         <source component="rateGroup4" port="RateGroupMemberOut" type="Sched" num="0"/>
         <target component="piCamera" port="Schedin" type="Sched" num="0"/>
     </connection>
-    <connection name="Rg3RockBlock">
-         <source component="rateGroup3" port="RateGroupMemberOut" type="Sched" num="2"/>
+    <connection name="RgRockBlock">
+         <source component="rateGroup4" port="RateGroupMemberOut" type="Sched" num="1"/>
          <target component="rockBlock" port="Run" type="Sched" num="0"/>
+    </connection>
+    <connection name="RgChTlm">
+         <source component="rateGroup4" port="RateGroupMemberOut" type="Sched" num="2"/>
+         <target component="tlmChan" port="Run" type="Sched" num="0"/>
     </connection>
     
     

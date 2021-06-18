@@ -23,6 +23,11 @@
 #define LORA_MIN_FREQUENCY (F32)434.040 
 #define LORA_MAX_FREQUENCY (F32)434.790
 
+#define TLM_REPORT_SIZE 73
+#define TLM_PACKETS_QUEUE_SIZE 5
+#define LOG_PACKETS_QUEUE_SIZE 15
+#define PICTURE_PACKET_SIZE 256
+
 namespace App {
 
 class FlexTrakComponentImpl : public FlexTrakComponentBase {
@@ -85,6 +90,9 @@ class FlexTrakComponentImpl : public FlexTrakComponentBase {
 
     bool detectCommand(const char* command, const char* line);
 
+    void downlinkDataScheduler();
+    bool downlinkData(char *pointer, U16 packetSize);
+
     PRIVATE :
 
     // ----------------------------------------------------------------------
@@ -111,6 +119,30 @@ class FlexTrakComponentImpl : public FlexTrakComponentBase {
     Fw::Buffer m_recvBuffers[DR_MAX_NUM_BUFFERS];
     BYTE m_uartBuffers[DR_MAX_NUM_BUFFERS][UART_READ_BUFF_SIZE];
 
+    // Packet buffers for downlink
+    char lastTlmReport[TLM_REPORT_SIZE];
+    char lastPicturePacket[PICTURE_PACKET_SIZE];
+    char lastTlmPackets[FW_COM_BUFFER_MAX_SIZE][TLM_PACKETS_QUEUE_SIZE];
+    char lastLogPackets[FW_COM_BUFFER_MAX_SIZE][LOG_PACKETS_QUEUE_SIZE];
+
+    U16 lastPictureSize;
+    U16 lastTlmPacketsSize[TLM_PACKETS_QUEUE_SIZE];
+    U16 lastLogPacketsSize[LOG_PACKETS_QUEUE_SIZE];
+
+    U8 tlmPacketInCtn;
+    U8 tlmPacketOutCtn;
+    U8 logPacketInCtn;
+    U8 logPacketOutCtn;
+    bool newTlmReport;
+    bool newPicturePacket;
+
+    Os::Mutex lastTlmReportMutex;
+    Os::Mutex lastTlmPacketsMutex;
+    Os::Mutex lastLogPacketsMutex;
+    Os::Mutex lastPicturePacketMutex;
+
+    Fw::Time lastTlmReportTime;
+
     // Lora configuration variables
     struct LoRaConfig {
         U8 implicit;
@@ -125,6 +157,7 @@ class FlexTrakComponentImpl : public FlexTrakComponentBase {
 
     bool loRaIsFree;
     Os::Mutex serialMutex;    //<! Lock when serial line is used
+    Os::Mutex loRaIsFreeMutex;    //<! Lock when serial line is used
 
     U32 pingKey; //<! Save pingKey on pingIn
     Os::Mutex pingMutex; //<! Mutual exclusion between PingIn_handler and serialRecv_handler
