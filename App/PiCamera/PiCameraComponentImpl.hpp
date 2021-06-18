@@ -152,7 +152,8 @@ namespace App {
     void PiCam_CanSend_cmdHandler(
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq, /*!< The command sequence number*/
-          U8 canSend
+          U8 canSend,
+          U16 startFrame
       );
 
       bool takePicture(U32 width, U32 height, bool ground);

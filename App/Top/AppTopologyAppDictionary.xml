@@ -278,6 +278,7 @@
     <command component="piCamera" mnemonic="PiCam_CanSend" opcode="0x87">
       <args>
         <arg name="canSend" type="U8"/>
+        <arg name="startFrame" type="U16"/>
       </args>
     </command>
     <command component="predictor" mnemonic="Predi_SetPredictionRate" opcode="0x8c">

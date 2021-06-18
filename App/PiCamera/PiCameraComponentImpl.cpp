@@ -277,7 +277,7 @@ namespace App {
           const U32 cmdSeq, /*!< The command sequence number*/
           U16 frameId
       ){
-         if(pictureId == -1 || frameId < -1 || frameId > nbPacket){
+         if(pictureId == -1 || frameId < -1 || frameId > nbPacket-1){
           this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
           return;
         }
@@ -295,14 +295,21 @@ namespace App {
      void PiCameraComponentImpl::PiCam_CanSend_cmdHandler(
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq, /*!< The command sequence number*/
-          U8 canSend
+          U8 canSend,
+          U16 startFrame
       ){
-        if(canSend != 0 && canSend != 1){
+        if((canSend != 0 && canSend != 1) || (startFrame < 0 || startFrame > nbPacket-1)){
           this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);  
           return;   
         }
 
         this->canSend = (canSend == 0) ? false: true;
+
+        if(pictureId != -1){
+          for(U32 i = 0; i<startFrame;i++){
+              frameSend[i] = true;
+          }
+        }
         
       }
 

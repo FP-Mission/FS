@@ -128,7 +128,10 @@
              <args>
                 <arg name="canSend" type="U8">
                     <comment>boolean</comment>
-                </arg>                
+                </arg>
+                <arg name="startFrame" type="U16">
+                    <comment>start frame</comment>
+                </arg>                 
              </args>
         </command>
     </commands>
