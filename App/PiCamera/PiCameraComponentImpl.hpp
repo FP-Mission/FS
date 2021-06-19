@@ -161,6 +161,7 @@ namespace App {
       void managePpm(raspicam::RaspiCam &camera ,unsigned char* data);
       void managePng(unsigned char* data, U32 width, U32 height);
       void manageJpg(unsigned char* data, U32 width, U32 height);
+      void sendAvailableFrame();
 
       static void myOutput(unsigned char byte);
 

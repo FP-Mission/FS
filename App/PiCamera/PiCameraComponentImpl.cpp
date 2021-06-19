@@ -166,14 +166,7 @@ namespace App {
         if(pictureId ==-1 || !canSend){
           return;
         }
-        for(U32 i = 0; i< nbPacket;i++){
-          if(!frameSend[i]){
-            printf("Send frame %u/%u of picture %u\n", i, nbPacket, pictureId);
-            this->sendFrame(i);
-            frameSend[i] = true;
-            return;
-          }
-       }
+        sendAvailableFrame();
       }
 
     void PiCameraComponentImpl::FlexInterTemp_handler(
@@ -236,12 +229,7 @@ namespace App {
           outFileData.close();
 
           loadPicture();
-              
-
-        /*for(U32 i = 0; i< nbPacket; i++){
-            this->sendFrame(i);
-        }*/
-
+          sendAvailableFrame();
         
         
         this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
@@ -309,6 +297,10 @@ namespace App {
           for(U32 i = 0; i<startFrame;i++){
               frameSend[i] = true;
           }
+        }
+
+        if(canSend){
+          sendAvailableFrame();
         }
         
       }
@@ -487,6 +479,16 @@ namespace App {
       std::ofstream outFileData (osData.str(), std::ios::out | std::ios::binary);
       outFileData.write((char*)&currentTime,sizeof(currentTime));
       outFileData.close();
+  }
+  void PiCameraComponentImpl::sendAvailableFrame(){
+    for(U32 i = 0; i< nbPacket;i++){
+          if(!frameSend[i]){
+            printf("Send frame %u/%u of picture %u\n", i, nbPacket, pictureId);
+            this->sendFrame(i);
+            frameSend[i] = true;
+            return;
+          }
+       }
   }
 
 
