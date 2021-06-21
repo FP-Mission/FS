@@ -15,6 +15,11 @@
 
 #include "App/Predictor/PredictorComponentAc.hpp"
 
+#include <Fw/Tlm/PositionSerializable/PositionSerializableCustom.hpp>
+
+#define SLOT_SIZE 100
+#define SLOT_COUNT 600 // 60000 / SLOT_SIZE
+
 namespace App {
 
 class PredictorComponentImpl : public PredictorComponentBase {
@@ -37,6 +42,40 @@ class PredictorComponentImpl : public PredictorComponentBase {
     //! Destroy object Predictor
     //!
     ~PredictorComponentImpl(void);
+
+    private:
+
+    struct Delta_t {
+        F64 latitude;
+        F64 longitude;
+    };
+
+    typedef U16 CDA_t;
+    typedef U16 Slot_t;
+
+    U16 slotSize = 100;
+    U16 slotCount = 60000;
+    FlightMode flightMode;
+    
+    App::PositionSerCustom previousPosition; 
+    U32 minimumAltitude;
+    U32 maximumAltitude;
+    F32 ascentRate;
+    F32 landingAltitude;
+    F64 landingLatitude;
+    F64 landingLongitude;
+    U8 pollPeriod;
+    U8 counter;
+    CDA_t CDA;
+
+    Delta_t deltas[SLOT_COUNT];
+
+    U16 /* Slot_t */ getSlot(F32 altitude);
+    F32 calculateAirDensity(F32 altitude);
+    F32 calculateDescentRate(F32 weight, F32 CDTimesArea, F32 altitude);
+    U16 /* CDA_t */ calculateCDA(F32 weight, F32 altitude, F32 descentRate);
+    void addGpsPosition(App::PositionSerCustom position, App::PositionSerCustom &result, U64 &timeTillLanding);
+    void calculateLandingPosition(App::PositionSerCustom position, App::PositionSerCustom &predictedPosition, U64 timeTillLanding);
 
     PRIVATE :
 
