@@ -361,7 +361,7 @@ void FlexTrakComponentImpl::downlinkDataScheduler() {
     this->lastTlmPacketsMutex.lock();
     if(this->tlmPacketInCtn != this->tlmPacketOutCtn) {
         U16 packetSize = this->lastTlmPacketsSize[this->tlmPacketOutCtn];
-        Fw::Logger::logMsg("Downlink TlmPacket (%u, %u)\n", packetSize, this->logPacketOutCtn);
+        Fw::Logger::logMsg("Downlink TlmPacket (%u, %u)\n", packetSize, this->tlmPacketOutCtn);
         if(downlinkData(&this->lastTlmPackets[this->tlmPacketOutCtn][0], packetSize)) {
             this->tlmPacketOutCtn = (this->tlmPacketOutCtn + 1) % TLM_PACKETS_QUEUE_SIZE;
         }
@@ -420,9 +420,9 @@ bool FlexTrakComponentImpl::downlinkData(char *packetPointer, U16 packetSize) {
         //DEBUG_PRINT("Downlink data : ");
         for (i; i < packetSize; i++) {
             data[4 + i] = *(packetPointer + i);
-            //DEBUG_PRINT("%c", data[4 + i]);
+            //DEBUG_PRINT("%2X", data[4 + i]);
         }
-        //DEBUG_PRINT("END\n");
+        //DEBUG_PRINT("\n");
         data[packetSize + 4] = '\r';    
         // @todo Should not be necessary, but current binary mode in FlexTrak use \r after binary data receiption
         // to process command. Incorrect way to deal with it but it works, so .... u know

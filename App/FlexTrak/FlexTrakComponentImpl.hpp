@@ -122,9 +122,9 @@ class FlexTrakComponentImpl : public FlexTrakComponentBase {
     // Packet buffers for downlink
     char lastTlmReport[TLM_REPORT_SIZE];
     char lastPicturePacket[PICTURE_PACKET_SIZE];
-    char lastTlmPackets[FW_COM_BUFFER_MAX_SIZE][TLM_PACKETS_QUEUE_SIZE];
-    char lastLogPackets[FW_COM_BUFFER_MAX_SIZE][LOG_PACKETS_QUEUE_SIZE];
-
+    char lastTlmPackets[TLM_PACKETS_QUEUE_SIZE][FW_COM_BUFFER_MAX_SIZE];
+    char lastLogPackets[LOG_PACKETS_QUEUE_SIZE][FW_COM_BUFFER_MAX_SIZE];
+    
     U16 lastPictureSize;
     U16 lastTlmPacketsSize[TLM_PACKETS_QUEUE_SIZE];
     U16 lastLogPacketsSize[LOG_PACKETS_QUEUE_SIZE];
