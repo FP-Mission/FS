@@ -35,7 +35,7 @@ namespace App {
     PiCameraComponentImpl(
         const char *const compName
     ) : PiCameraComponentBase(compName), nbPicture(0) ,width(320),
-     height(240), indexSSDV(0), timeInterval(0), timeCpt(0), sendingPicture(0), pictureId(-1)
+     height(240), indexSSDV(0), timeInterval(180), timeCpt(0), sendingPicture(0), pictureId(-1)
      ,fileSize(0), currentTime(0), nbPacket(0), canSend(false), latitude(0), longitude(0),
      flexExterTemp(0), flexInterTemp(0), altitudeGps(0), altitudeBaro(0), satellite(0), temperature(0),
      pressure(0)
