@@ -137,14 +137,14 @@
     </commands>
 
     <telemetry>
-        <channel id="0" name="PiCam_PictureCnt" data_type="U32">
+        <channel id="0" name="PiCam_PictureCnt" data_type="U8">
             <comment>
                 Number of pictures taken
             </comment>
         </channel>
          <channel id="1" name="PiCam_PictureSize" data_type="App::PictureSize">
             <comment>
-                Number of pictures taken
+                Picture size
             </comment>
         </channel>
          <channel id="2" name="PiCam_Timeinterval" data_type="U8">
