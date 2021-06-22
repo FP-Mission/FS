@@ -723,7 +723,7 @@
     </event>
     <event component="pingRcvr" name="PR_PingReceived" id="0x4d" severity="DIAGNOSTIC" format_string="PingReceiver pinged with code %d">
       <args>
-        <arg name="code" type="U16"/>
+        <arg name="code" type="U32"/>
       </args>
     </event>
     <event component="serialDriver1" name="DR_OpenError" id="0x4f" severity="WARNING_HI" format_string="Error opening UART device %s: %d %s">
@@ -958,7 +958,7 @@
     <channel component="rateGroup3" name="RgCycleSlips" id="0x4a" description="Cycle slips for rate group" type="U32"/>
     <channel component="rateGroup4" name="RgMaxTime" id="0xd2" format_string="%u us" description="Max execution time rate group" type="U32"/>
     <channel component="rateGroup4" name="RgCycleSlips" id="0xd3" description="Cycle slips for rate group" type="U32"/>
-    <channel component="pingRcvr" name="PR_NumPings" id="0x4c" description="Number of pings received" type="U32"/>
+    <channel component="pingRcvr" name="PR_NumPings" id="0x4c" description="Number of pings received" type="U16"/>
     <channel component="blockDrv" name="BD_Cycles" id="0x4e" description="Driver cycle count" type="U16"/>
     <channel component="serialDriver1" name="DR_BytesSent" id="0x4f" description="Bytes Sent" type="U32"/>
     <channel component="serialDriver1" name="DR_BytesRecv" id="0x50" description="Bytes Received" type="U32"/>
