@@ -48,13 +48,13 @@ class TemperatureProbesComponentImpl : public TemperatureProbesComponentBase {
         //! Handler implementation for internal
         //!
         void
-        internal_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+        internalIn_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
                          I16 degree /*!< Temperature in °C*/
         );
 
     //! Handler implementation for external
     //!
-    void external_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+    void externalIn_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
                           I16 degree /*!< Temperature in °C*/
     );
 

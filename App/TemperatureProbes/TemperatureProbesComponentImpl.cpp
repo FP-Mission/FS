@@ -35,15 +35,17 @@ TemperatureProbesComponentImpl ::~TemperatureProbesComponentImpl(void) {}
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-void TemperatureProbesComponentImpl ::internal_handler(
+void TemperatureProbesComponentImpl ::internalIn_handler(
     const NATIVE_INT_TYPE portNum, I16 degree) {
     //printf("[TemperatureProbes] Internal temperature: %d\n", degree);
+    internalOut_out(0, degree);
     tlmWrite_TempProb_InternalTemperature(degree);
 }
 
-void TemperatureProbesComponentImpl ::external_handler(
+void TemperatureProbesComponentImpl ::externalIn_handler(
     const NATIVE_INT_TYPE portNum, I16 degree) {
     //printf("[TemperatureProbes] External temperature: %d\n", degree);
+    externalOut_out(0, degree);
     tlmWrite_TempProb_ExternalTemperature(degree);
 }
 

@@ -281,18 +281,18 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
         rockBlock.configureHardware();
     }
 
-    eps.start(0, 100, 10 * 1024);
-    piCamera.start(0, 100, 10 * 1024);
-    predictor.start(0, 100, 10 * 1024);
+    eps.start(0, 95, 10 * 1024);
+    piCamera.start(0, 95, 10 * 1024);
+    predictor.start(0, 90, 10 * 1024);
     temperatureProbes.start(0, 100, 10 * 1024);
 
-    senseHat.start(0, 100, 10*1024);
+    senseHat.start(0, 97, 10*1024);
 
-    thermometer.start(0, 100, 10*1024);
+    thermometer.start(0, 96, 10*1024);
 
-    motionTracking.start(0, 100, 10*1024);
+    motionTracking.start(0, 96, 10*1024);
 
-    barometer.start(0, 100, 10*1024);
+    barometer.start(0, 96, 10*1024);
 
 
     // Initialize socket server if and only if there is a valid specification

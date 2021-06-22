@@ -101,11 +101,11 @@ namespace App {
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           U32 frame /*!< The call order*/
       );
-    void FlexInterTemp_handler(
+    void tempProbeInternal_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           I16 degree /*!< The call order*/
       );
-    void FlexExternTemp_handler(
+    void tempProbeExternal_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           I16 degree /*!< The call order*/
       );
