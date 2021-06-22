@@ -82,7 +82,6 @@ void RockBlockComponentImpl::Run_handler(const NATIVE_INT_TYPE portNum, NATIVE_U
         Fw::Time currentTime = getTime();
         this->mailboxCheckMutex.lock();
         Fw::Time delta = Fw::Time::sub(currentTime, this->lastMailboxCheck);
-        this->lastMailboxCheck = currentTime;
         this->mailboxCheckMutex.unLock();
         if(delta.getSeconds() > MAILBOX_INTERVAL) {
             this->addCommand("AT+SBDIX");
