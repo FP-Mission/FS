@@ -6,14 +6,24 @@
     <import_port_type>App/FlexTrak/TemperaturePort/TemperaturePortAi.xml</import_port_type>
 
     <ports>
-        <port name="internal" data_type="App::Temperature" kind="async_input" max_number="1">
+        <port name="internalIn" data_type="App::Temperature" kind="async_input" max_number="1">
             <comment>
                 Internal temperature in °C
             </comment>
         </port>
-        <port name="external" data_type="App::Temperature" kind="async_input" max_number="1">
+        <port name="externalIn" data_type="App::Temperature" kind="async_input" max_number="1">
             <comment>
                 External temperature in °C, provided by the DS18B20 probe
+            </comment>
+        </port>
+        <port name="internalOut" data_type="App::Temperature" kind="output" max_number="1">
+            <comment>
+                Internal temperature output in °C
+            </comment>
+        </port>
+        <port name="externalOut" data_type="App::Temperature" kind="output" max_number="1">
+            <comment>
+                External temperature output in °C
             </comment>
         </port>
     </ports>

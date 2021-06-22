@@ -964,11 +964,11 @@
         <!-- FlexTrak - Sensors -->
      <connection name="flexTrakInternalTemp">
         <source component="flexTrak" port="internalTemp" type="Temperature" num="0"/>
-        <target component="temperatureProbes" port="internal" type="Temperature" num="0"/>
+        <target component="temperatureProbes" port="internalIn" type="Temperature" num="0"/>
      </connection>
      <connection name="flexTrakExternalTemp">
         <source component="flexTrak" port="externalTemp" type="Temperature" num="0"/>
-        <target component="temperatureProbes" port="external" type="Temperature" num="0"/>
+        <target component="temperatureProbes" port="externalIn" type="Temperature" num="0"/>
      </connection>
      <connection name="flexTrakBattery">
         <source component="flexTrak" port="batteryVoltage" type="BatteryLevel" num="0"/>
@@ -978,14 +978,6 @@
         <source component="flexTrak" port="gps" type="Position" num="0"/>
         <target component="gps" port="positionIn" type="Position" num="0"/>
      </connection>
-     <connection name="flexTrakInterTempPiCamera">
-        <source component="flexTrak" port="internalTemp" type="Temperature" num="0"/>
-        <target component="piCamera" port="FlexInterTemp" type="Temperature" num="0"/>
-    </connection>
-        <connection name="flexTrakExternTempPiCamera">
-        <source component="flexTrak" port="externalTemp" type="Temperature" num="0"/>
-        <target component="piCamera" port="FlexExternTemp" type="Temperature" num="0"/>
-    </connection>
         <!-- Serial Driver 2 - rockBlock -->
      <connection name = "serialDriver2Buff">
         <source component = "rockBlock" port = "serialBufferOut" type = "BufferSend" num = "0"/>
@@ -1044,5 +1036,12 @@
         <source component="flexTrak" port="AskPictureFrame" type="App::PiCameraFramePort" num="0"/>
         <target component="piCamera" port="SendFrame" type="App::PiCameraFramePort" num="0"/>
     </connection>
-
+    <connection name="temperatureProbesIntOutPiCamera">
+        <source component="temperatureProbes" port="internalOut" type="Temperature" num="0"/>
+        <target component="piCamera" port="tempProbeInternal" type="Temperature" num="0"/>
+    </connection>
+    <connection name="temperatureProbesExtOutPiCamera">
+        <source component="temperatureProbes" port="externalOut" type="Temperature" num="0"/>
+        <target component="piCamera" port="tempProbeExternal" type="Temperature" num="0"/>
+    </connection>
 </assembly>

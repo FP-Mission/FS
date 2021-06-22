@@ -169,14 +169,14 @@ namespace App {
         sendAvailableFrame();
       }
 
-    void PiCameraComponentImpl::FlexInterTemp_handler(
+    void PiCameraComponentImpl::tempProbeInternal_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           I16 degree /*!< The call order*/
       ){
           this->flexInterTemp = degree;
       }
       
-    void PiCameraComponentImpl::FlexExternTemp_handler(
+    void PiCameraComponentImpl::tempProbeExternal_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           I16 degree /*!< The call order*/
       ){

@@ -64,14 +64,14 @@
                 Ask next packet to send
             </comment>
         </port>
-        <port name="FlexInterTemp" data_type="App::Temperature" kind="sync_input">
+        <port name="tempProbeInternal" data_type="App::Temperature" kind="sync_input">
             <comment>
-                flextrack intern temp
+                Internal temperature from FlexTrak
             </comment>
         </port>
-        <port name="FlexExternTemp" data_type="App::Temperature" kind="sync_input">
+        <port name="tempProbeExternal" data_type="App::Temperature" kind="sync_input">
             <comment>
-                flextrack extern temp
+                External temperature from FlexTrak
             </comment>
         </port>
 
