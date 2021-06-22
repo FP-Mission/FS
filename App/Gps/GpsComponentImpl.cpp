@@ -27,12 +27,33 @@ void GpsComponentImpl ::init(const NATIVE_INT_TYPE instance) {
     GpsComponentBase::init(instance);
 }
 
-GpsComponentImpl ::~GpsComponentImpl(void) {}
+GpsComponentImpl ::~GpsComponentImpl(void) {
+    this->gpsLocked = false;
+}
 
 
 // ----------------------------------------------------------------------
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
+
+void GpsComponentImpl::Run_handler(NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE context) {
+
+
+    Fw::Time currentTime = getTime();
+    this->gpsMutex.lock();
+
+    if(this->gpsLocked) { // if gps was locked
+        Fw::Time delta = Fw::Time::sub(currentTime, this->lastGps);
+        // and no signal was received since a few
+        if(delta.getSeconds() > GPS_LOCK_INTERVAL) {
+            // consider gps has unlocked and send event
+            this->gpsLocked = false;
+            this->log_ACTIVITY_LO_Gps_LockState(0);
+        }
+    }
+
+    this->gpsMutex.unLock();
+}
 
 void GpsComponentImpl ::positionIn_handler(
       const NATIVE_INT_TYPE portNum,
@@ -43,6 +64,16 @@ void GpsComponentImpl ::positionIn_handler(
       U8 satellite
   )
 {
+    // Update lock state
+    this->gpsMutex.lock();
+    this->lastGps = time;
+    if(!this->gpsLocked) { // if gps was unlocked
+        this->gpsLocked = true;
+        // gps is now locked, send event
+        this->log_ACTIVITY_LO_Gps_LockState(1);
+    }
+    this->gpsMutex.unLock();
+
     //printf("[GPS] (%f, %f, %u) %u\n", latitude, longitude, altitude, satellite);
     // Generate Tlm for GPS position
     App::PositionSer pos;
@@ -51,6 +82,7 @@ void GpsComponentImpl ::positionIn_handler(
     pos.setaltitude(altitude);
     pos.setsatellite(satellite);
     this->tlmWrite_Gps_Position(pos);
+
     // Forward GPS to PiCamera
     this->positionOut_out(0, time, latitude, longitude, altitude, satellite);
 }
@@ -59,10 +91,15 @@ void GpsComponentImpl ::positionIn_handler(
 // Command handler implementations
 // ----------------------------------------------------------------------
 
-void GpsComponentImpl ::Gps_SetFlightModeAltitude_cmdHandler(
-    const FwOpcodeType opCode, const U32 cmdSeq, U16 altitude) {
-    // TODO
-    this->log_ACTIVITY_HI_Gps_Error();
+void GpsComponentImpl ::Gps_GetLockState_cmdHandler(
+    const FwOpcodeType opCode, const U32 cmdSeq) {
+    this->gpsMutex.lock();
+    if(this->gpsLocked) {
+        this->log_ACTIVITY_LO_Gps_LockState(1);
+    } else {
+        this->log_ACTIVITY_LO_Gps_LockState(0);
+    }
+    this->gpsMutex.unLock();
     this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
 }
 

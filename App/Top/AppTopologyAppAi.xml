@@ -713,6 +713,10 @@
         <source component = "rateGroup3" port = "RateGroupMemberOut" type = "Sched" num = "2"/>
         <target component = "senseHat" port = "Schedin" type = "Sched" num = "0"/>
     </connection>
+    <connection name = "RgSenseHat">
+        <source component = "rateGroup3" port = "RateGroupMemberOut" type = "Sched" num = "3"/>
+        <target component = "gps" port = "Run" type = "Sched" num = "0"/>
+    </connection>
             <!-- Rate Group 4 - 10 seconds -->
     <connection name="rateGroup4DriverComp">
         <source component="rateGroupDrv" port="CycleOut" type="Cycle" num="3"/>

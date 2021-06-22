@@ -93,7 +93,7 @@
 #define DICT_Eps_CriticallyLowBattery 0x65
 #define DICT_FT_Mode 0x6e
 #define DICT_FT_Frequency 0x6f
-#define DICT_Gps_Error 0x78
+#define DICT_Gps_LockState 0x78
 #define DICT_PiCam_PictureTaken 0x82
 #define DICT_PiCam_PictureError 0x83
 #define DICT_Predi_FlightMode 0x8c

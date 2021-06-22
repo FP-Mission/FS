@@ -13,7 +13,11 @@
 #ifndef Gps_HPP
 #define Gps_HPP
 
+#include <Os/Mutex.hpp>
+
 #include "App/Gps/GpsComponentAc.hpp"
+
+#define GPS_LOCK_INTERVAL 10
 
 namespace App {
 
@@ -41,6 +45,8 @@ class GpsComponentImpl : public GpsComponentBase {
       // Handler implementations for user-defined typed input ports
       // ----------------------------------------------------------------------
 
+      void Run_handler(NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE context);
+
       //! Handler implementation for positionIn
       //!
       void positionIn_handler(
@@ -63,11 +69,14 @@ class GpsComponentImpl : public GpsComponentBase {
         //! switch from pedestrian mode (for more accuracy on the ground) to
         //! flight mode (to work above 18km)
         void
-        Gps_SetFlightModeAltitude_cmdHandler(
+        Gps_GetLockState_cmdHandler(
             const FwOpcodeType opCode, /*!< The opcode*/
-            const U32 cmdSeq,          /*!< The command sequence number*/
-            U16 altitude               /*!< Altitude in meters*/
+            const U32 cmdSeq          /*!< The command sequence number*/
         );
+
+        Fw::Time lastGps;
+        bool gpsLocked;
+        Os::Mutex gpsMutex;
 };
 
 }  // end namespace App

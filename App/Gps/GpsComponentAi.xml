@@ -3,10 +3,16 @@
 <component name="Gps" kind="passive" namespace="App">
     <comment>Component handling the FlexTrak GPS</comment>
     
+    <import_port_type>Svc/Sched/SchedPortAi.xml</import_port_type>
     <import_port_type>App/FlexTrak/Position/PositionPortAi.xml</import_port_type>
     <import_serializable_type>App/FlexTrak/Position/PositionSerializableAi.xml</import_serializable_type>
     
     <ports>
+        <port name="Run" data_type="Svc::Sched" kind="sync_input" >
+            <comment>
+                Run port for gps lock check
+            </comment>
+        </port>
         <port name="positionOut" data_type="App::Position" kind="output" max_number="2">
             <comment>
                 GPS Position output
@@ -20,15 +26,10 @@
     </ports>
 
     <commands>
-        <command kind="sync" opcode="0" mnemonic="Gps_SetFlightModeAltitude">
+        <command kind="sync" opcode="0" mnemonic="Gps_GetLockState">
             <comment>
-                Set flight mode altitude. This is the altitude at which the GPS will switch from pedestrian mode (for more accuracy on the ground) to flight mode (to work above 18km)
+                Get current lock state
             </comment>
-            <args>
-                <arg name="altitude" type="U16">
-                    <comment>Altitude in meters</comment>
-                </arg>          
-            </args>
         </command>
     </commands>
 
@@ -41,10 +42,15 @@
     </telemetry>
     
     <events>
-        <event id="0" name="Gps_Error" severity="ACTIVITY_HI" format_string = "Error" >
+        <event id="0" name="Gps_LockState" severity="ACTIVITY_LO" format_string = "Lock state: %u" >
             <comment>
-                Random error event for test purpose
+                Get lock state. 1: Locked (signal), 0: Unlocked (no signal)
             </comment>
+            <args>
+                <arg name="state" type="U8">
+                    <comment>Lock state</comment>
+                </arg>          
+            </args>
         </event>
     </events>
 </component>

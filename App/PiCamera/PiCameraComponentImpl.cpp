@@ -106,7 +106,7 @@ namespace App {
     this->longitude = longitude;
     this->altitudeGps = altitude;
     this->satellite = satellite; 
-    log_ACTIVITY_LO_PiCam_PositionUpdate();
+    //log_ACTIVITY_LO_PiCam_PositionUpdate();
   }
 
   void PiCameraComponentImpl ::

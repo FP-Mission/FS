@@ -181,10 +181,8 @@
         <arg name="frequency" type="F32"/>
       </args>
     </command>
-    <command component="gps" mnemonic="Gps_SetFlightModeAltitude" opcode="0x78">
-      <args>
-        <arg name="altitude" type="U16"/>
-      </args>
+    <command component="gps" mnemonic="Gps_GetLockState" opcode="0x78">
+      <args/>
     </command>
     <command component="piCamera" mnemonic="PiCam_TakePicture" opcode="0x82">
       <args/>
@@ -588,8 +586,10 @@
         <arg name="frequency" type="F32"/>
       </args>
     </event>
-    <event component="gps" name="Gps_Error" id="0x78" severity="ACTIVITY_HI" format_string="Error">
-      <args/>
+    <event component="gps" name="Gps_LockState" id="0x78" severity="ACTIVITY_LO" format_string="Lock state: %u">
+      <args>
+        <arg name="state" type="U8"/>
+      </args>
     </event>
     <event component="piCamera" name="PiCam_PictureTaken" id="0x82" severity="ACTIVITY_LO" format_string="Picture was taken">
       <args/>
