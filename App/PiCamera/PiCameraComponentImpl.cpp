@@ -152,6 +152,7 @@ namespace App {
       writeLastPictureTaken();
       if(takePicture(BASE_WIDTH,BASE_HEIGHT,false) && takePicture(width,height,true) ){
           ++nbPicture;
+          tlmWrite_PiCam_PictureCnt(nbPicture);
           log_ACTIVITY_LO_PiCam_PictureTaken();
           timeCpt=1;
           return;
