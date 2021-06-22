@@ -35,7 +35,7 @@ namespace App {
     PiCameraComponentImpl(
         const char *const compName
     ) : PiCameraComponentBase(compName), nbPicture(0) ,width(320),
-     height(240), indexSSDV(0), timeInterval(180), timeCpt(0), sendingPicture(0), pictureId(-1)
+     height(240), indexSSDV(0), timeInterval(18), timeCpt(0), sendingPicture(0), pictureId(-1)
      ,fileSize(0), currentTime(0), nbPacket(0), canSend(false), latitude(0), longitude(0),
      flexExterTemp(0), flexInterTemp(0), altitudeGps(0), altitudeBaro(0), satellite(0), temperature(0),
      pressure(0)
@@ -276,7 +276,7 @@ namespace App {
             frameSend[frameId] = false;
         }
          
-          
+        sendAvailableFrame();
         this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
       }
 
@@ -286,22 +286,24 @@ namespace App {
           U8 canSend,
           U16 startFrame
       ){
-        if((canSend != 0 && canSend != 1) || (startFrame < 0 || startFrame > nbPacket-1)){
-          this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);  
-          return;   
+        if(pictureId == -1 || (canSend != 0 && canSend != 1)){
+          this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
+          return;
         }
-
         this->canSend = (canSend == 0) ? false: true;
 
-        if(pictureId != -1){
+        if(canSend){
+          if(startFrame < 0 || startFrame > nbPacket-1){
+            this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
+            return;  
+          }
           for(U32 i = 0; i<startFrame;i++){
               frameSend[i] = true;
           }
-        }
-
-        if(canSend){
           sendAvailableFrame();
+
         }
+        this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
         
       }
 
