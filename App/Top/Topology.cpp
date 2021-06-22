@@ -64,11 +64,9 @@ Svc::FatalHandlerComponentImpl fatalHandler(FW_OPTIONAL_NAME("fatalHandler"));
 Svc::AssertFatalAdapterComponentImpl fatalAdapter(
     FW_OPTIONAL_NAME("fatalAdapter"));
 Svc::CommandDispatcherImpl cmdDisp(FW_OPTIONAL_NAME("CMDDISP"));
-Svc::CmdSequencerComponentImpl cmdSeq(FW_OPTIONAL_NAME("CMDSEQ"));
 Svc::ActiveLoggerImpl eventLogger(FW_OPTIONAL_NAME("ELOG"));
 Svc::TlmChanImpl tlmChan(FW_OPTIONAL_NAME("TLM"));
 Svc::HealthImpl health(FW_OPTIONAL_NAME("health"));
-Svc::PrmDbImpl prmDb(FW_OPTIONAL_NAME("PRM"), "PrmDb.dat");
 Svc::GroundInterfaceComponentImpl groundIf(FW_OPTIONAL_NAME("GNDIF"));
 
 #if FW_ENABLE_TEXT_LOGGING
@@ -147,11 +145,6 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
 
     cmdDisp.init(20, 0);
 
-    cmdSeq.init(10, 0);
-    cmdSeq.allocateBuffer(0, seqMallocator, 5 * 1024);
-
-    prmDb.init(10, 0);
-
     groundIf.init(0);
     socketIpDriver.init(0);
     serialDriver1.init(0);
@@ -187,10 +180,8 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
 
     /* Register commands */
     tlmChan.regCommands();
-    cmdSeq.regCommands();
     cmdDisp.regCommands();
     eventLogger.regCommands();
-    prmDb.regCommands();
     health.regCommands();
     pingRcvr.regCommands();
     senseHat.regCommands();
@@ -202,9 +193,6 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     predictor.regCommands();
     rockBlock.regCommands();
     temperatureProbes.regCommands();
-
-    // read parameters
-    // prmDb.readParamFile();
 
 #ifdef ROCKBLOCK_SIMULATOR
     // ttyUSB0 BAUD_19200 for real module, ttyAMA0 BAUD_38400 for simulator
@@ -258,12 +246,9 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     blockDrv.start(0, 140, 10 * 1024);
     // start dispatcher
     cmdDisp.start(0, 101, 10 * 1024);
-    // start sequencer
-    cmdSeq.start(0, 100, 10 * 1024);
     // start telemetry
     eventLogger.start(0, 98, 10 * 1024);
     tlmChan.start(0, 97, 10 * 1024);
-    prmDb.start(0, 96, 10 * 1024);
 
     pingRcvr.start(0, 100, 10 * 1024);
 
@@ -302,24 +287,22 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
 
     // Set health ping entries
     Svc::HealthImpl::PingEntry pingEntries[] = {
-        {3, 5, getHealthName(rateGroup1)},   // 0
-        {3, 5, getHealthName(rateGroup2)},   // 1
-        {3, 5, getHealthName(rateGroup3)},   // 2
-        {3, 5, getHealthName(cmdDisp)},      // 3
-        {3, 5, getHealthName(eventLogger)},  // 4
-        {3, 5, getHealthName(cmdSeq)},       // 5
-        {3, 5, getHealthName(tlmChan)},      // 6
-        {3, 5, getHealthName(prmDb)},        // 7
-        {3, 5, getHealthName(pingRcvr)},     // 8
-        {3, 5, getHealthName(blockDrv)},     // 9
-        {6, 10, getHealthName(flexTrak)},     // 10
-        {3, 5, getHealthName(piCamera)},     // 11
-        {3, 5, getHealthName(rockBlock)},    // 12
-		{3, 5, getHealthName(senseHat)},        // 13
-        {3, 5, getHealthName(thermometer)},     // 14
-        {3, 5, getHealthName(motionTracking)},  // 15
-        {3, 5, getHealthName(barometer)},       // 16
-        {3, 5, getHealthName(rateGroup4)},      // 17
+        {3, 5, getHealthName(rateGroup1)},      // 0
+        {3, 5, getHealthName(rateGroup2)},      // 1
+        {3, 5, getHealthName(rateGroup3)},      // 2
+        {3, 5, getHealthName(cmdDisp)},         // 3
+        {3, 5, getHealthName(eventLogger)},     // 4
+        {3, 5, getHealthName(tlmChan)},         // 5
+        {3, 5, getHealthName(pingRcvr)},        // 6
+        {3, 5, getHealthName(blockDrv)},        // 7
+        {3, 5, getHealthName(flexTrak)},        // 8
+        {3, 5, getHealthName(piCamera)},        // 9
+        {6, 10, getHealthName(rockBlock)},      // 10
+        {3, 5, getHealthName(senseHat)},        // 11
+        {3, 5, getHealthName(thermometer)},     // 12
+		{3, 5, getHealthName(motionTracking)},  // 13
+        {3, 5, getHealthName(barometer)},       // 14
+        {3, 5, getHealthName(rateGroup4)},      // 15
     };
 
 #ifndef ROCKBLOCK_SIMULATOR
@@ -341,8 +324,6 @@ void exitTasks(void) {
     cmdDisp.exit();
     eventLogger.exit();
     tlmChan.exit();
-    prmDb.exit();
-    cmdSeq.exit();
     pingRcvr.exit();
     // App
     eps.exit();
@@ -365,8 +346,6 @@ void exitTasks(void) {
     (void)cmdDisp.ActiveComponentBase::join(NULL);
     (void)eventLogger.ActiveComponentBase::join(NULL);
     (void)tlmChan.ActiveComponentBase::join(NULL);
-    (void)prmDb.ActiveComponentBase::join(NULL);
-    (void)cmdSeq.ActiveComponentBase::join(NULL);
     (void)pingRcvr.ActiveComponentBase::join(NULL);
     // App
     (void)eps.ActiveComponentBase::join(NULL);
@@ -381,5 +360,4 @@ void exitTasks(void) {
     (void)barometer.ActiveComponentBase::join(NULL);
     socketIpDriver.exitSocketTask();
     (void)socketIpDriver.joinSocketTask(NULL);
-    cmdSeq.deallocateBuffer(seqMallocator);
 }

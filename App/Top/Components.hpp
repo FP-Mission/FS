@@ -18,13 +18,11 @@
 #include <Svc/AssertFatalAdapter/AssertFatalAdapterComponentImpl.hpp>
 #include <Svc/BufferManager/BufferManager.hpp>
 #include <Svc/CmdDispatcher/CommandDispatcherImpl.hpp>
-#include <Svc/CmdSequencer/CmdSequencerImpl.hpp>
 #include <Svc/FatalHandler/FatalHandlerComponentImpl.hpp>
 #include <Svc/GroundInterface/GroundInterface.hpp>
 #include <Svc/Health/HealthComponentImpl.hpp>
 #include <Svc/LinuxTime/LinuxTimeImpl.hpp>
 #include <Svc/PassiveConsoleTextLogger/ConsoleTextLoggerImpl.hpp>
-#include <Svc/PrmDb/PrmDbImpl.hpp>
 #include <Svc/RateGroupDriver/RateGroupDriverImpl.hpp>
 #include <Svc/TlmChan/TlmChanImpl.hpp>
 
@@ -39,14 +37,12 @@ void exitTasks(void);
 
 extern Svc::RateGroupDriverImpl rateGroupDrv;
 extern Svc::ActiveRateGroupImpl rateGroup1, rateGroup2, rateGroup3, rateGroup4;
-extern Svc::CmdSequencerComponentImpl cmdSeq;
 extern Svc::GroundInterfaceComponentImpl groundIf;
 extern Svc::ConsoleTextLoggerImpl textLogger;
 extern Svc::ActiveLoggerImpl eventLogger;
 extern Svc::LinuxTimeImpl linuxTime;
 extern Svc::TlmChanImpl tlmChan;
 extern Svc::CommandDispatcherImpl cmdDisp;
-extern Svc::PrmDbImpl prmDb;
 extern Svc::AssertFatalAdapterComponentImpl fatalAdapter;
 extern Svc::FatalHandlerComponentImpl fatalHandler;
 extern Svc::HealthImpl health;
