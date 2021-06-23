@@ -24,8 +24,9 @@
 #define ROCKBLOCK_COMMAND_BUFFER_SIZE 10    // Maximum allocation size for RockBlock AT commands
 #define FP_COMMAND_BUFFER_SIZE 128          // Maximum allocation size of the recv buffer for F' commands
 
-#define MAILBOX_INTERVAL 900 // (300) seconds, set to 0 to disable. if enabled, will periodically check mailbox (+ at launch)
-#define CSQ_INTERVAL 4
+#define MAILBOX_INTERVAL 600    // seconds, set to 0 to disable. if enabled, will periodically check mailbox (+ at launch)
+#define CSQ_INTERVAL_HIGH 15    // csq check when network is good (* 4 seconds)
+#define CSQ_INTERVAL_LOW 7      // csq check when network is down (* 4 seconds)
 
 namespace App {
 
@@ -117,6 +118,9 @@ class RockBlockComponentImpl : public RockBlockComponentBase {
     char rbCommandBuffer[ROCKBLOCK_COMMAND_BUFFER_SIZE][ROCKBLOCK_COMMAND_SIZE];
     U8 rbCommandInCtn;
     U8 rbCommandOutCtn;
+
+    U8 csqInterval;
+    Os::Mutex csqIntervalMutex;
 
     Fw::Buffer fpCommandBuffer;                 //!< Buffer used to pass F' commands received by RockBlock
     U8 fpCommandData[FP_COMMAND_BUFFER_SIZE];   //!< Data for above buffer

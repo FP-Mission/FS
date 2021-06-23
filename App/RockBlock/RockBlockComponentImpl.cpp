@@ -40,6 +40,7 @@ void RockBlockComponentImpl ::init(const NATIVE_INT_TYPE queueDepth,
     this->simulatorMode = false;
     // RockBlock is considered as available at launch
     this->rockBlockIsOk = true;
+    this->csqInterval = CSQ_INTERVAL_LOW;
     // Default ping key value
     this->pingKey = 0;
     this->pingCtn = 0;
@@ -85,7 +86,7 @@ void RockBlockComponentImpl::Run_handler(const NATIVE_INT_TYPE portNum, NATIVE_U
         Fw::Time delta = Fw::Time::sub(currentTime, this->lastMailboxCheck);
         this->mailboxCheckMutex.unLock();
         if(delta.getSeconds() > MAILBOX_INTERVAL) {
-            Fw::Logger::logMsg("[RockBlock] Periodic mailbox check");
+            Fw::Logger::logMsg("[RockBlock] Periodic mailbox check\n");
             this->addCommand("AT+SBDIX");
         }
     }
@@ -202,13 +203,15 @@ void RockBlockComponentImpl ::PingIn_handler(const NATIVE_INT_TYPE portNum,
     pingMutex.lock();
     // Try to directly send an AT command
     // If RockBlock is busy, next OK received will respond to the ping request
-    if(this->pingCtn == CSQ_INTERVAL - 1) {
-        this->sendRockBlockCommand("AT", false);
-    } else {
+    this->csqIntervalMutex.lock();
+    if(this->pingCtn == this->csqInterval - 1) {
         this->sendRockBlockCommand("AT+CSQ", false);
+    } else {
+        this->sendRockBlockCommand("AT", false);
     }
+    this->csqIntervalMutex.unLock();
     this->pingKey = key;
-    this->pingCtn = (this->pingCtn + 1) % CSQ_INTERVAL;
+    this->pingCtn = (this->pingCtn + 1) % this->csqInterval ;
     pingMutex.unLock();
 }
 
@@ -287,6 +290,15 @@ void RockBlockComponentImpl ::serialRecv_handler(
         } else if(detectCommand("+CSQ:", pointer)) {
             U8 signalQuality = atoi(pointer + 5);
             this->log_ACTIVITY_LO_RckBlck_CSQ(signalQuality);
+
+            this->csqIntervalMutex.lock();
+            if (signalQuality == 0) {
+                this->csqInterval = CSQ_INTERVAL_LOW;
+            } else {
+                this->csqInterval = CSQ_INTERVAL_HIGH;
+
+            }
+            this->csqIntervalMutex.unLock();
         }  else if(detectCommand("+SBDMTA:", pointer)) {
             Fw::LogStringArg arg(pointer);
             this->log_DIAGNOSTIC_RckBlck_Response(arg);
@@ -382,7 +394,7 @@ void RockBlockComponentImpl ::serialRecv_handler(
 
             // If messages are queued, get them
             if(SBDIX.mtQueued > 0) {
-                Fw::Logger::logMsg("[RockBlock] Binary messages pending in queue, check mailbox");
+                Fw::Logger::logMsg("[RockBlock] Binary messages pending in queue, check mailbox\n");
                 this->addCommand("AT+SBDIX");
             }
 
@@ -401,7 +413,7 @@ void RockBlockComponentImpl ::serialRecv_handler(
                 Fw::Logger::logMsg("[RockBlock] %s\n", reinterpret_cast<POINTER_CAST>(pointer));
                 // If messages are queued, get them
                 if(SBDIX.mtQueued > 0) {
-                    Fw::Logger::logMsg("[RockBlock] Text messages pending in queue, check mailbox");
+                    Fw::Logger::logMsg("[RockBlock] Text messages pending in queue, check mailbox\n");
                     this->addCommand("AT+SBDIX");
                 }
             } else {
