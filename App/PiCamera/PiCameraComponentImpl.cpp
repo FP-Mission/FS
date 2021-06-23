@@ -311,7 +311,7 @@ namespace App {
           const U32 cmdSeq /*!< The command sequence number*/
       ){
         canSend=true;
-        if(pictureId ==-1 || !canSend){
+        if(pictureId ==-1){
           return;
           this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
         }
