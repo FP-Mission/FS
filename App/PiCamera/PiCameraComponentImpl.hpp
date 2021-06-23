@@ -123,7 +123,7 @@ namespace App {
           const U32 cmdSeq /*!< The command sequence number*/
       );
 
-     void PiCam_SendLast_cmdHandler(
+     void PiCam_LoadLast_cmdHandler(
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq /*!< The command sequence number*/
       );
@@ -156,6 +156,11 @@ namespace App {
           U16 startFrame
       );
 
+     void PiCam_StartSending_cmdHandler(
+          const FwOpcodeType opCode, /*!< The opcode*/
+          const U32 cmdSeq /*!< The command sequence number*/
+      );
+
       bool takePicture(U32 width, U32 height, bool ground);
       void manageTelemetry();
       void managePpm(raspicam::RaspiCam &camera ,unsigned char* data);
@@ -167,7 +172,7 @@ namespace App {
 
       void getNumberOfLine(std::ostringstream& path);
 
-      void loadPicture();
+      void loadPicture(bool);
       void loadData();
       void loadLastPictureTaken();
       void writeLastPictureTaken();

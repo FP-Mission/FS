@@ -209,12 +209,11 @@ namespace App {
 
   }
 
-   void PiCameraComponentImpl::PiCam_SendLast_cmdHandler(
+   void PiCameraComponentImpl::PiCam_LoadLast_cmdHandler(
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq /*!< The command sequence number*/
       ){
 
-        canSend = true;
         if(nbPicture == 0 || pictureId == nbPicture || currentTime == 0){
           this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
           return;
@@ -229,8 +228,7 @@ namespace App {
           outFileData.write((char*)&pictureId,sizeof(pictureId));
           outFileData.close();
 
-          loadPicture();
-          sendAvailableFrame();
+          loadPicture(true);
         
         
         this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
@@ -277,7 +275,6 @@ namespace App {
             frameSend[frameId] = false;
         }
          
-        sendAvailableFrame();
         this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
       }
 
@@ -301,11 +298,25 @@ namespace App {
           for(U32 i = 0; i<startFrame;i++){
               frameSend[i] = true;
           }
-          sendAvailableFrame();
+          for(U32 i = startFrame; i<nbPacket; i++){
+              frameSend[i] = false;
+          }
 
         }
         this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
         
+      }
+     void PiCameraComponentImpl::PiCam_StartSending_cmdHandler(
+          const FwOpcodeType opCode, /*!< The opcode*/
+          const U32 cmdSeq /*!< The command sequence number*/
+      ){
+        canSend=true;
+        if(pictureId ==-1 || !canSend){
+          return;
+          this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
+        }
+        sendAvailableFrame();
+        this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
       }
 
   bool PiCameraComponentImpl::takePicture(U32 width, U32 height, bool ground){
@@ -417,7 +428,7 @@ namespace App {
       PiCameraComponentImpl::jpgFile << byte;
     }
 
-  void PiCameraComponentImpl::loadPicture(){
+  void PiCameraComponentImpl::loadPicture(bool isTrue){
     delete binaryData;
     delete frameSend;
       std::ostringstream osPictureSsdv;
@@ -431,6 +442,11 @@ namespace App {
       binaryData = new U8[fileSize];
       nbPacket = fileSize/SIZE_PACKET;
       frameSend = new bool[nbPacket]{ false};
+      if(isTrue){
+        for(int i = 0; i<nbPacket; i++){
+          frameSend[i] = true;
+        }
+      }
       char* dataChar = reinterpret_cast<char*>(binaryData);
       in.read(dataChar ,fileSize);
 
@@ -452,7 +468,7 @@ namespace App {
       indata.read((char*)&pictureId,sizeof(pictureId));
       indata.close();
 
-      loadPicture();
+      loadPicture(false);
       loadLastPictureTaken();
   }
   void PiCameraComponentImpl::sendFrame(U16 frameId){

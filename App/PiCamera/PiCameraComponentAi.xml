@@ -83,7 +83,7 @@
             Take picture
             </comment>
         </command>
-        <command kind="async" opcode="1" mnemonic="PiCam_SendLast">
+        <command kind="async" opcode="1" mnemonic="PiCam_LoadLast">
             <comment>
             Take picture
             </comment>
@@ -133,6 +133,11 @@
                     <comment>start frame</comment>
                 </arg>                 
              </args>
+        </command>
+        <command kind="async" opcode="6" mnemonic="PiCam_StartSending">
+            <comment>
+            start sending
+            </comment>
         </command>
     </commands>
 
