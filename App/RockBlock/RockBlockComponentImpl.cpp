@@ -42,6 +42,7 @@ void RockBlockComponentImpl ::init(const NATIVE_INT_TYPE queueDepth,
     this->rockBlockIsOk = true;
     // Default ping key value
     this->pingKey = 0;
+    this->pingCtn = 0;
     this->rbCommandInCtn = 0;
     this->rbCommandOutCtn = 0;
     this->textDataReceived = false;
@@ -200,8 +201,13 @@ void RockBlockComponentImpl ::PingIn_handler(const NATIVE_INT_TYPE portNum,
     pingMutex.lock();
     // Try to directly send an AT command
     // If RockBlock is busy, next OK received will respond to the ping request
-    this->sendRockBlockCommand("AT", false);
+    if(this->pingCtn == CSQ_INTERVAL - 1) {
+        this->sendRockBlockCommand("AT", false);
+    } else {
+        this->sendRockBlockCommand("AT+CSQ", false);
+    }
     this->pingKey = key;
+    this->pingCtn = (this->pingCtn + 1) % CSQ_INTERVAL;
     pingMutex.unLock();
 }
 

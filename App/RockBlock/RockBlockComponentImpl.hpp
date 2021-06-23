@@ -25,6 +25,7 @@
 #define FP_COMMAND_BUFFER_SIZE 128          // Maximum allocation size of the recv buffer for F' commands
 
 #define MAILBOX_INTERVAL 900 // (300) seconds, set to 0 to disable. if enabled, will periodically check mailbox (+ at launch)
+#define CSQ_INTERVAL 4
 
 namespace App {
 
@@ -132,6 +133,7 @@ class RockBlockComponentImpl : public RockBlockComponentBase {
     } SBDIX;
 
     U32 pingKey;            //<! Save pingKey on pingIn
+    U8 pingCtn;
     Os::Mutex pingMutex;    //<! Mutual exclusion between PingIn_handler and serialRecv_handler
 
     Os::Mutex mailboxCheckMutex;    //<! Mutual exclusion for mailbox check time
