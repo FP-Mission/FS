@@ -85,6 +85,7 @@ void RockBlockComponentImpl::Run_handler(const NATIVE_INT_TYPE portNum, NATIVE_U
         Fw::Time delta = Fw::Time::sub(currentTime, this->lastMailboxCheck);
         this->mailboxCheckMutex.unLock();
         if(delta.getSeconds() > MAILBOX_INTERVAL) {
+            Fw::Logger::logMsg("[RockBlock] Periodic mailbox check");
             this->addCommand("AT+SBDIX");
         }
     }
@@ -324,7 +325,6 @@ void RockBlockComponentImpl ::serialRecv_handler(
                 switch (SBDIX.mtStatus) {
                     case 0:
                         // No SBD message to receive from the GSS
-                        Fw::Logger::logMsg("[RockBlock] No message received");
                         this->log_ACTIVITY_HI_RckBlck_NoMessageReceived(SBDIX.mtMsn);
                         break;
                     case 1:
@@ -382,6 +382,7 @@ void RockBlockComponentImpl ::serialRecv_handler(
 
             // If messages are queued, get them
             if(SBDIX.mtQueued > 0) {
+                Fw::Logger::logMsg("[RockBlock] Binary messages pending in queue, check mailbox");
                 this->addCommand("AT+SBDIX");
             }
 
@@ -400,6 +401,7 @@ void RockBlockComponentImpl ::serialRecv_handler(
                 Fw::Logger::logMsg("[RockBlock] %s\n", reinterpret_cast<POINTER_CAST>(pointer));
                 // If messages are queued, get them
                 if(SBDIX.mtQueued > 0) {
+                    Fw::Logger::logMsg("[RockBlock] Text messages pending in queue, check mailbox");
                     this->addCommand("AT+SBDIX");
                 }
             } else {
