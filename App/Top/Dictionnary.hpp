@@ -99,7 +99,8 @@
 #define DICT_Predi_FlightMode 0x8c
 #define DICT_RckBlck_CSQ 0x96
 #define DICT_RckBlck_MessageReceived 0x97
-#define DICT_RckBlck_UnableToSend 0x98
+#define DICT_RckBlck_NoMessageReceived 0x98
+#define DICT_RckBlck_UnableToSend 0x99
 #define DICT_RckBlck_MailboxCheckFail 0x9a
 #define DICT_RckBlck_RingAlert 0x9b
 #define DICT_RckBlck_CommandSent 0x9c
