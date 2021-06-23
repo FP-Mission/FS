@@ -24,7 +24,7 @@
 #define ROCKBLOCK_COMMAND_BUFFER_SIZE 10    // Maximum allocation size for RockBlock AT commands
 #define FP_COMMAND_BUFFER_SIZE 128          // Maximum allocation size of the recv buffer for F' commands
 
-#define MAILBOX_INTERVAL 0 // (300) seconds, set to 0 to disable. if enabled, will periodically check mailbox (+ at launch)
+#define MAILBOX_INTERVAL 900 // (300) seconds, set to 0 to disable. if enabled, will periodically check mailbox (+ at launch)
 
 namespace App {
 

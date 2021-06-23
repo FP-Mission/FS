@@ -636,7 +636,12 @@
         <arg name="mtQueued" type="U16"/>
       </args>
     </event>
-    <event component="rockBlock" name="RckBlck_UnableToSend" id="0x98" severity="WARNING_LO" format_string="Unable to send message (Error %u)">
+    <event component="rockBlock" name="RckBlck_NoMessageReceived" id="0x98" severity="ACTIVITY_HI" format_string="No new message (%u)">
+      <args>
+        <arg name="mtMsn" type="U16"/>
+      </args>
+    </event>
+    <event component="rockBlock" name="RckBlck_UnableToSend" id="0x99" severity="WARNING_LO" format_string="Unable to send message (Error %u)">
       <args>
         <arg name="error" type="U8"/>
       </args>

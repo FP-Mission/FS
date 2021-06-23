@@ -87,7 +87,17 @@
                 </arg>
             </args>
         </event>
-        <event id="2" name="RckBlck_UnableToSend" severity="WARNING_LO" format_string = "Unable to send message (Error %u)" >
+        <event id="2" name="RckBlck_NoMessageReceived" severity="ACTIVITY_HI" format_string = "No new message (%u)" >
+            <comment>
+                No new message has been received
+            </comment>
+            <args>
+                <arg name="mtMsn" type="U16">
+                    <comment> Mobile Terminated Message Sequence Number </comment>
+                </arg>
+            </args>
+        </event>
+        <event id="3" name="RckBlck_UnableToSend" severity="WARNING_LO" format_string = "Unable to send message (Error %u)" >
             <comment>
                 Unable to send message
             </comment>

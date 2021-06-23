@@ -319,6 +319,7 @@ void RockBlockComponentImpl ::serialRecv_handler(
                     case 0:
                         // No SBD message to receive from the GSS
                         Fw::Logger::logMsg("[RockBlock] No message received");
+                        this->log_ACTIVITY_HI_RckBlck_NoMessageReceived(SBDIX.mtMsn);
                         break;
                     case 1:
                         // SBD message successfully received from the GSS.
