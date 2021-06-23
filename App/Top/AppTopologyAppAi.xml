@@ -95,18 +95,18 @@
     <!-- -->
     
     <!-- GROUND INTERFACE DOWNLINK - CHOSE BETWEEN IP OR FLEXTRAK -->
-    <!-- Send data to Ip
+    <!-- Send data to Ip -->
     <connection name="CommunicationSend">
         <source component="groundIf" port="write" type="Fw::BufferSend" num="0"/>
         <target component="socketIpDriver" port="send" type="Fw::BufferSend" num="0"/>
     </connection>
-    -->
-    <!-- Send data to FlexTrak -->
+    
+    <!-- Send data to FlexTrak 
     <connection name="CommunicationSend">
         <source component="groundIf" port="write" type="Fw::BufferSend" num="0"/>
         <target component="flexTrak" port="sendData" type="Fw::BufferSend" num="0"/>
     </connection>
-    <!-- -->
+    -->
 
         <!-- Command uplink -->
     <connection name="cmdDispPkts">

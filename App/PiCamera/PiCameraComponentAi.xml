@@ -121,23 +121,20 @@
                 </arg>                
              </args>
         </command>
-        <command kind="async" opcode="5" mnemonic="PiCam_CanSend">
+        <command kind="async" opcode="5" mnemonic="PiCam_StopSending">
             <comment>
-            can send
+            stop sending
             </comment>
-             <args>
-                <arg name="canSend" type="U8">
-                    <comment>boolean</comment>
-                </arg>
-                <arg name="startFrame" type="U16">
-                    <comment>start frame</comment>
-                </arg>                 
-             </args>
         </command>
         <command kind="async" opcode="6" mnemonic="PiCam_StartSending">
             <comment>
             start sending
             </comment>
+             <args>
+                <arg name="startFrame" type="I16">
+                    <comment>start frame</comment>
+                </arg>                 
+             </args>
         </command>
     </commands>
 

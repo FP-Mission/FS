@@ -278,23 +278,25 @@ namespace App {
         this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
       }
 
-     void PiCameraComponentImpl::PiCam_CanSend_cmdHandler(
+     void PiCameraComponentImpl::PiCam_StopSending_cmdHandler(
+          const FwOpcodeType opCode, /*!< The opcode*/
+          const U32 cmdSeq /*!< The command sequence number*/
+      ){
+        this->canSend = false;
+        this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+        
+      }
+     void PiCameraComponentImpl::PiCam_StartSending_cmdHandler(
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq, /*!< The command sequence number*/
-          U8 canSend,
-          U16 startFrame
+          I16 startFrame
       ){
-        if(pictureId == -1 || (canSend != 0 && canSend != 1)){
+        if(pictureId ==-1 || startFrame < -1 || startFrame > nbPacket-1){
           this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
           return;
         }
-        this->canSend = (canSend == 0) ? false: true;
-
-        if(canSend){
-          if(startFrame < 0 || startFrame > nbPacket-1){
-            this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
-            return;  
-          }
+        canSend = true;
+        if(startFrame !=-1){
           for(U32 i = 0; i<startFrame;i++){
               frameSend[i] = true;
           }
@@ -302,18 +304,6 @@ namespace App {
               frameSend[i] = false;
           }
 
-        }
-        this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
-        
-      }
-     void PiCameraComponentImpl::PiCam_StartSending_cmdHandler(
-          const FwOpcodeType opCode, /*!< The opcode*/
-          const U32 cmdSeq /*!< The command sequence number*/
-      ){
-        canSend=true;
-        if(pictureId ==-1){
-          return;
-          this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
         }
         sendAvailableFrame();
         this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);

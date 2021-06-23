@@ -206,14 +206,13 @@
         <arg name="frameId" type="U16"/>
       </args>
     </command>
-    <command component="piCamera" mnemonic="PiCam_CanSend" opcode="0x87">
-      <args>
-        <arg name="canSend" type="U8"/>
-        <arg name="startFrame" type="U16"/>
-      </args>
+    <command component="piCamera" mnemonic="PiCam_StopSending" opcode="0x87">
+      <args/>
     </command>
     <command component="piCamera" mnemonic="PiCam_StartSending" opcode="0x88">
-      <args/>
+      <args>
+        <arg name="startFrame" type="I16"/>
+      </args>
     </command>
     <command component="predictor" mnemonic="Predi_SetPredictionRate" opcode="0x8c">
       <args>
