@@ -264,7 +264,7 @@ namespace App {
           const U32 cmdSeq, /*!< The command sequence number*/
           I16 frameId
       ){
-          if(frameId > nbPacket -1){
+          if(frameId > (I32)nbPacket -1){
             printf("dedewdewdewd\n");
           }
          if(pictureId == -1 || frameId < -1 || frameId > nbPacket-1){
