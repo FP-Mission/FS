@@ -264,10 +264,7 @@ namespace App {
           const U32 cmdSeq, /*!< The command sequence number*/
           I16 frameId
       ){
-          if(frameId > (I32)nbPacket -1){
-            printf("dedewdewdewd\n");
-          }
-         if(pictureId == -1 || frameId < -1 || frameId > nbPacket-1){
+         if(pictureId == -1 || frameId < -1 || frameId > (I32)nbPacket-1){
            printf("picturedi: %u, frameId: %hd, nbpacket: %d\n",pictureId,frameId,nbPacket-1);
           this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
           return;
@@ -295,7 +292,7 @@ namespace App {
           const U32 cmdSeq, /*!< The command sequence number*/
           I16 startFrame
       ){
-        if(pictureId ==-1 || startFrame < -1 || startFrame > nbPacket-1){
+        if(pictureId ==-1 || startFrame < -1 || startFrame > (I32)nbPacket-1){
           this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
           return;
         }
