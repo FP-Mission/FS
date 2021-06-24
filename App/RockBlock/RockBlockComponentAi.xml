@@ -56,9 +56,9 @@
     </commands>
 
     <telemetry>
-        <channel id="0" name="RckBlck_Ch" data_type="U16">
+        <channel id="0" name="RckBlck_RSSI" data_type="U8">
             <comment>
-                Sample channel
+                RSSI level
             </comment>
         </channel>
     </telemetry>
