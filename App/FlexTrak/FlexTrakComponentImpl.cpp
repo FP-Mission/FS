@@ -257,7 +257,7 @@ void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
             } else {
                 memcpy(&lastLogPackets[this->logPacketInCtn][0], pointer, packetSize);
                 this->lastLogPacketsSize[this->logPacketInCtn] = packetSize;
-                DEBUG_PRINT("LogPacket (%u) saved for downlink (%u)\n", packetSize, this->logPacketInCtn);
+                DEBUG_PRINT("[FlexTrak] LogPacket (%u) saved for downlink (%u)\n", packetSize, this->logPacketInCtn);
                 this->logPacketInCtn = newCtn;
             }
             this->lastLogPacketsMutex.unLock();
@@ -271,7 +271,7 @@ void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
             memcpy(this->lastTlmReport, pointer, packetSize);
             this->newTlmReport = true;
             this->lastTlmReportMutex.unLock();
-            DEBUG_PRINT("TlmReportPacket saved for downlink (%u)\n", buffer.getSize());
+            DEBUG_PRINT("[FlexTrak] TlmReportPacket saved for downlink (%u)\n", buffer.getSize());
         } else {
             Fw::Logger::logMsg("[ERROR] Incorrect size for TlmReportPacket (%u) - Unable to store it for downlink\n", packetSize);
         }
@@ -285,7 +285,7 @@ void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
             } else {
                 memcpy(&lastTlmPackets[this->tlmPacketInCtn][0], pointer, packetSize);
                 this->lastTlmPacketsSize[this->tlmPacketInCtn] = packetSize;
-                DEBUG_PRINT("TlmPacket (%u) saved for downlink (%u)\n", packetSize, this->tlmPacketInCtn);
+                DEBUG_PRINT("[FlexTrak] TlmPacket (%u) saved for downlink (%u)\n", packetSize, this->tlmPacketInCtn);
                 this->tlmPacketInCtn = newCtn;
             }
             this->lastTlmPacketsMutex.unLock();
@@ -300,7 +300,7 @@ void FlexTrakComponentImpl ::sendData_handler(const NATIVE_INT_TYPE portNum,
             this->lastPictureSize = packetSize;
             this->newPicturePacket = true;
             this->lastPicturePacketMutex.unLock();
-            DEBUG_PRINT("PicturePacket saved for downlink (%u)\n", buffer.getSize());
+            DEBUG_PRINT("[FlexTrak] PicturePacket saved for downlink (%u)\n", buffer.getSize());
         } else {
             Fw::Logger::logMsg("[ERROR] PicturePacket too big (%u) - Unable to store it for downlink\n", packetSize);
         }
@@ -330,7 +330,7 @@ void FlexTrakComponentImpl::downlinkDataScheduler() {
     Fw::Time delta = Fw::Time::sub(currentTime, this->lastTlmReportTime);
 
     if(this->newTlmReport && delta.getSeconds() > 20) {
-        Fw::Logger::logMsg("Downlink TlmReport (forced after %u seconds)\n", delta.getSeconds());
+        Fw::Logger::logMsg("[INFO] Downlink TlmReport (forced after %u seconds)\n", delta.getSeconds());
         if(downlinkData(this->lastTlmReport, TLM_REPORT_SIZE)) {
             this->lastTlmReportTime = getTime();
             this->newTlmReport = false;
@@ -346,7 +346,7 @@ void FlexTrakComponentImpl::downlinkDataScheduler() {
     this->lastLogPacketsMutex.lock();
     if(this->logPacketInCtn != this->logPacketOutCtn) {
         U16 packetSize = this->lastLogPacketsSize[this->logPacketOutCtn];
-        Fw::Logger::logMsg("Downlink LogPacket (%u, %u)\n", packetSize, this->logPacketOutCtn);
+        Fw::Logger::logMsg("[INFO] Downlink LogPacket (%u, %u)\n", packetSize, this->logPacketOutCtn);
         if(downlinkData(&this->lastLogPackets[this->logPacketOutCtn][0], packetSize)) {
             this->logPacketOutCtn = (this->logPacketOutCtn + 1) % LOG_PACKETS_QUEUE_SIZE;
         }
@@ -361,7 +361,7 @@ void FlexTrakComponentImpl::downlinkDataScheduler() {
     this->lastTlmPacketsMutex.lock();
     if(this->tlmPacketInCtn != this->tlmPacketOutCtn) {
         U16 packetSize = this->lastTlmPacketsSize[this->tlmPacketOutCtn];
-        Fw::Logger::logMsg("Downlink TlmPacket (%u, %u)\n", packetSize, this->tlmPacketOutCtn);
+        Fw::Logger::logMsg("[INFO] Downlink TlmPacket (%u, %u)\n", packetSize, this->tlmPacketOutCtn);
         if(downlinkData(&this->lastTlmPackets[this->tlmPacketOutCtn][0], packetSize)) {
             this->tlmPacketOutCtn = (this->tlmPacketOutCtn + 1) % TLM_PACKETS_QUEUE_SIZE;
         }
@@ -376,7 +376,7 @@ void FlexTrakComponentImpl::downlinkDataScheduler() {
     // Send PicturePacket if available
     this->lastPicturePacketMutex.lock();
     if(this->newPicturePacket) {
-        Fw::Logger::logMsg("Downlink PicturePacket (%u)\n", this->lastPictureSize);
+        Fw::Logger::logMsg("[INFO] Downlink PicturePacket (%u)\n", this->lastPictureSize);
         if(downlinkData(this->lastPicturePacket, this->lastPictureSize)) {
             this->newPicturePacket = false;
             // Ask next PicturePacket
@@ -392,7 +392,7 @@ void FlexTrakComponentImpl::downlinkDataScheduler() {
     // Send TlmReport if available
     this->lastTlmReportMutex.lock();
     if(this->newTlmReport) {
-        Fw::Logger::logMsg("Downlink TlmReport\n");
+        Fw::Logger::logMsg("[INFO] Downlink TlmReport\n");
         if(downlinkData(this->lastTlmReport, TLM_REPORT_SIZE)) {
             this->lastTlmReportTime = getTime();
             this->newTlmReport = false;

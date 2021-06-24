@@ -15,6 +15,7 @@
 #include "Fw/Types/BasicTypes.hpp"
 #include "Os/FileSystem.hpp"
 #include <Fw/Com/ComPacket.hpp>
+#include "Fw/Logger/Logger.hpp"
 
 
 #include "toojpeg.h"
@@ -265,7 +266,7 @@ namespace App {
           I16 frameId
       ){
          if(pictureId == -1 || frameId < -1 || frameId > (I32)nbPacket-1){
-           printf("picturedi: %u, frameId: %hd, nbpacket: %d\n",pictureId,frameId,nbPacket-1);
+           Fw::Logger::logMsg("picturedi: %u, frameId: %hd, nbpacket: %d\n",pictureId,frameId,nbPacket-1);
           this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
           return;
         }
@@ -315,14 +316,14 @@ namespace App {
     Camera.setWidth(width);
     Camera.setHeight(height);
     //Open camera
-    std::cout<<"Opening Camera..."<<std::endl;
+    Fw::Logger::logMsg("[INFO] Opening camera ...\n");
     if ( !Camera.open()) {
-      std::cerr<<"Error opening camera"<<std::endl;
+      Fw::Logger::logMsg("[ERROR] Unable to open camera\n");
       return false;
       }
       
     //wait a while until camera stabilizes
-    std::cout<<"Sleeping for 3 secs"<<std::endl;
+    //std::cout<<"Sleeping for 3 secs"<<std::endl;
     sleep(3);
     
     //capture
@@ -330,7 +331,7 @@ namespace App {
     
     //allocate memory
     unsigned char *data=new unsigned char[  Camera.getImageTypeSize ( raspicam::RASPICAM_FORMAT_RGB )];
-    printf("size %d \n",(int)Camera.getImageTypeSize ( raspicam::RASPICAM_FORMAT_RGB ));
+    //printf("size %d \n",(int)Camera.getImageTypeSize ( raspicam::RASPICAM_FORMAT_RGB ));
     
     //extract the image in rgb format
     Camera.retrieve ( data,raspicam::RASPICAM_FORMAT_RGB );//get camera image
@@ -493,7 +494,7 @@ namespace App {
   void PiCameraComponentImpl::sendAvailableFrame(){
     for(U32 i = 0; i< nbPacket;i++){
           if(!frameSend[i]){
-            printf("Send frame %u/%u of picture %u\n", i, nbPacket, pictureId);
+            Fw::Logger::logMsg("Send frame %u/%u of picture %u\n", i, nbPacket, pictureId);
             this->sendFrame(i);
             frameSend[i] = true;
             return;
