@@ -731,7 +731,7 @@
     <channel component="piCamera" name="PiCam_PictureSize" id="0x83" description="Picture size" type="App::PictureSize"/>
     <channel component="piCamera" name="PiCam_Timeinterval" id="0x84" description="Time interval of 10 seconds" type="U8"/>
     <channel component="predictor" name="Predi_LandingPosition" id="0x8c" description="Predicted landing position" type="App::PositionSer"/>
-    <channel component="rockBlock" name="RckBlck_Ch" id="0x96" description="Sample channel" type="U16"/>
+    <channel component="rockBlock" name="RckBlck_RSSI" id="0x96" description="RSSI level" type="U8"/>
     <channel component="temperatureProbes" name="TempProb_InternalTemperature" id="0xa0" description="Internal temperature in &#176;C" type="I16"/>
     <channel component="temperatureProbes" name="TempProb_ExternalTemperature" id="0xa1" description="External temperature in &#176;C" type="I16"/>
     <channel component="thermometer" name="THERMOMETER_TEMP" id="0xb4" description="Temperature value" type="F32"/>

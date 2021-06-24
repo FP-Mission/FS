@@ -57,7 +57,7 @@ Svc::ActiveRateGroupImpl rateGroup3(FW_OPTIONAL_NAME("RG3"), rg3Context,
                                     FW_NUM_ARRAY_ELEMENTS(rg3Context));
 
 static NATIVE_UINT_TYPE rg4Context[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-Svc::ActiveRateGroupImpl rateGroup4(FW_OPTIONAL_NAME("RG3"), rg4Context,
+Svc::ActiveRateGroupImpl rateGroup4(FW_OPTIONAL_NAME("RG4"), rg4Context,
                                     FW_NUM_ARRAY_ELEMENTS(rg4Context));
 
 Svc::FatalHandlerComponentImpl fatalHandler(FW_OPTIONAL_NAME("fatalHandler"));

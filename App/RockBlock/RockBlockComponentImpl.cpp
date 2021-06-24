@@ -19,8 +19,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define DEBUG_PRINT(x,...) Fw::Logger::logMsg(x,##__VA_ARGS__);
-//#define DEBUG_PRINT(x,...)
+//#define DEBUG_PRINT(x,...) Fw::Logger::logMsg(x,##__VA_ARGS__);
+#define DEBUG_PRINT(x,...)
 
 namespace App {
 
@@ -161,6 +161,8 @@ void RockBlockComponentImpl:: sendNextCommand() {
         // Increment out counter if command has been sent
         if(this->sendRockBlockCommand(cmd)) {
             this->rbCommandOutCtn = (this->rbCommandOutCtn + 1) % ROCKBLOCK_COMMAND_BUFFER_SIZE;
+        } else {
+            Fw::Logger::logMsg("[RockBlock] Command delayed %u/%u\n", this->rbCommandInCtn, this->rbCommandOutCtn);
         }
     } else {
         // DEBUG_PRINT("No pending command\n");
@@ -199,7 +201,7 @@ bool RockBlockComponentImpl:: sendRockBlockCommand(std::string command, bool log
         }
         sent = true;
     } else {
-        DEBUG_PRINT("RockBlock is not free, delay command %s\n", reinterpret_cast<POINTER_CAST>(command.c_str()));
+        Fw::Logger::logMsg("[WARNING] RockBlock is not free for command %s\n", reinterpret_cast<POINTER_CAST>(command.c_str()));
     }
     serialMutex.unLock();
     return sent;
@@ -309,6 +311,7 @@ void RockBlockComponentImpl ::serialRecv_handler(
             this->sendNextCommand();
         } else if(detectCommand("+CSQ:", pointer)) {
             U8 signalQuality = atoi(pointer + 5);
+            log_ACTIVITY_LO_RckBlck_CSQ(signalQuality);
             tlmWrite_RckBlck_RSSI(signalQuality);
             this->csqIntervalMutex.lock();
             if (signalQuality == 0) {
@@ -341,12 +344,12 @@ void RockBlockComponentImpl ::serialRecv_handler(
                                         &SBDIX.mtLength, &mtQueued_temp);
 
             if(res == 6) {
-                DEBUG_PRINT("[RockBlock] moStatus: %u, moMsN: %u, mtStatus: %u, mtMsn: %u, mtLength: %u, mtQueued: %u\n", SBDIX.moStatus, SBDIX.moMsn, SBDIX.mtStatus, SBDIX.mtMsn, SBDIX.mtLength, mtQueued_temp);
+                Fw::Logger::logMsg("[RockBlock] moStatus: %u, moMsN: %u, mtStatus: %u, mtMsn: %u, mtLength: %u, mtQueued: %u\n", SBDIX.moStatus, SBDIX.moMsn, SBDIX.mtStatus, SBDIX.mtMsn, SBDIX.mtLength, mtQueued_temp);
 
                 if(SBDIX.moStatus >= 0 && SBDIX.moStatus <= 2) {
                     Fw::Logger::logMsg("[RockBlock] Message, if any, transferred successfully (%u)\n", SBDIX.moMsn);
                 } else {
-                    this->log_WARNING_LO_RckBlck_UnableToSend(SBDIX.moStatus);
+                    //this->log_WARNING_LO_RckBlck_UnableToSend(SBDIX.moStatus);
                 }
 
                 switch (SBDIX.mtStatus) {

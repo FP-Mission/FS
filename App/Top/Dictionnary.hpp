@@ -108,7 +108,7 @@
 #define DICT_PiCam_PictureSize 0x83
 #define DICT_PiCam_Timeinterval 0x84
 #define DICT_Predi_LandingPosition 0x8c
-#define DICT_RckBlck_Ch 0x96
+#define DICT_RckBlck_RSSI 0x96
 #define DICT_TempProb_InternalTemperature 0xa0
 #define DICT_TempProb_ExternalTemperature 0xa1
 #define DICT_THERMOMETER_TEMP 0xb4
