@@ -81,18 +81,18 @@
     <!-- ########### -->
 
     <!-- GROUND INTERFACE UPLINK - CHOSE BETWEEN IP OR ROCKBLOCK -->
-    <!-- Receive data through Ip -->
+    <!-- Receive data through Ip 
     <connection name="CommunicationRecv">
         <source component="socketIpDriver" port="recv" type="Fw::BufferSend" num="0"/>
         <target component="groundIf" port="readCallback" type="Fw::BufferSend" num="0"/>
     </connection>
-   
-    <!-- Receive data through RockBlock 
+   -->
+    <!-- Receive data through RockBlock -->
     <connection name="CommunicationRecv">
         <source component="rockBlock" port="recvData" type="Fw::BufferSend" num="0"/>
         <target component="groundIf" port="readCallback" type="Fw::BufferSend" num="0"/>
     </connection> 
-    -->
+    
 
     <!-- GROUND INTERFACE DOWNLINK - CHOSE BETWEEN IP OR FLEXTRAK -->
     <!-- Send data to Ip 
