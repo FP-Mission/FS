@@ -49,6 +49,7 @@ void RockBlockComponentImpl ::init(const NATIVE_INT_TYPE queueDepth,
     this->textDataReceived = false;
     this->SBDIX.mtQueued = 0;
     this->lastMailboxCheck = getTime();
+    this->mailboxCheckOnGoing = false;
 }
 
 // Step 0: The linux serial driver keeps its storage externally. This means that
@@ -80,16 +81,18 @@ void RockBlockComponentImpl::Run_handler(const NATIVE_INT_TYPE portNum, NATIVE_U
     this->sendNextCommand();
     
     // Check when was the last mailbox check
-    if(MAILBOX_INTERVAL != 0) {
+    this->mailboxCheckMutex.lock();
+    if(MAILBOX_INTERVAL != 0 && this->mailboxCheckOnGoing == false) {
         Fw::Time currentTime = getTime();
-        this->mailboxCheckMutex.lock();
         Fw::Time delta = Fw::Time::sub(currentTime, this->lastMailboxCheck);
-        this->mailboxCheckMutex.unLock();
         if(delta.getSeconds() > MAILBOX_INTERVAL) {
             Fw::Logger::logMsg("[RockBlock] Periodic mailbox check\n");
-            this->addCommand("AT+SBDIX");
+            if(this->addCommand("AT+SBDIX")) {
+                this->mailboxCheckOnGoing = true;
+            }
         }
     }
+    this->mailboxCheckMutex.unLock();
 }
 
 void RockBlockComponentImpl:: configureHardware() {
@@ -98,11 +101,14 @@ void RockBlockComponentImpl:: configureHardware() {
     this->addCommand("AT+CSQ");
     // Mailbox check at launch if enabled
     if(MAILBOX_INTERVAL != 0) {
-        this->addCommand("AT+SBDIX");
+        if(this->addCommand("AT+SBDIX")) {
+            this->mailboxCheckOnGoing = true;
+        }
     }
 }
 
-void RockBlockComponentImpl:: addCommand(std::string command) {
+bool RockBlockComponentImpl:: addCommand(std::string command) {
+    bool ret = false;
     this->rbCommandMutex.lock();
     U8 commandLength = command.size();
     if(commandLength > ROCKBLOCK_COMMAND_SIZE) {
@@ -115,10 +121,12 @@ void RockBlockComponentImpl:: addCommand(std::string command) {
         } else {
             sprintf(&rbCommandBuffer[this->rbCommandInCtn][0], command.c_str(), commandLength);
             this->rbCommandInCtn = newCtn;
+            ret = true;
             DEBUG_PRINT("Add RockBlock command %s\n", reinterpret_cast<POINTER_CAST>(command.c_str()));
         }
     }
     this->rbCommandMutex.unLock();
+    return ret;
 }
 
 void RockBlockComponentImpl:: sendNextCommand() {
@@ -317,6 +325,7 @@ void RockBlockComponentImpl ::serialRecv_handler(
             // Save last time the mailbox have been checked
             this->mailboxCheckMutex.lock();
             this->lastMailboxCheck = getTime();
+            this->mailboxCheckOnGoing = false;
             this->mailboxCheckMutex.unLock();
 
             res = sscanf(pointer + 8, "%u, %u, %u, %u, %u, %u", 
@@ -325,8 +334,7 @@ void RockBlockComponentImpl ::serialRecv_handler(
                                         &SBDIX.mtLength, &SBDIX.mtQueued);
 
             if(res == 6) {
-                DEBUG_PRINT("[RockBlock] moStatus: %u, moMsN: %u, mtStatus: %u, mtMsn: %u, mtLength: %u, mtQueued: %u\n", 
-                                SBDIX.moStatus, SBDIX.moMsn, SBDIX.mtStatus, SBDIX.mtMsn, SBDIX.mtLength, SBDIX.mtQueued);
+                DEBUG_PRINT("[RockBlock] moStatus: %u, moMsN: %u, mtStatus: %u, mtMsn: %u, mtLength: %u, mtQueued: %u\n", SBDIX.moStatus, SBDIX.moMsn, SBDIX.mtStatus, SBDIX.mtMsn, SBDIX.mtLength, SBDIX.mtQueued);
 
                 if(SBDIX.moStatus >= 0 && SBDIX.moStatus <= 2) {
                     Fw::Logger::logMsg("[RockBlock] Message, if any, transferred successfully (%u)\n", SBDIX.moMsn);
@@ -395,7 +403,11 @@ void RockBlockComponentImpl ::serialRecv_handler(
             // If messages are queued, get them
             if(SBDIX.mtQueued > 0) {
                 Fw::Logger::logMsg("[RockBlock] Binary messages pending in queue, check mailbox\n");
-                this->addCommand("AT+SBDIX");
+                if(this->addCommand("AT+SBDIX")) {
+                    this->mailboxCheckMutex.lock();
+                    this->mailboxCheckOnGoing = true;
+                    this->mailboxCheckMutex.unLock();
+                }
             }
 
         } else if(detectCommand("+SBDRT:", pointer)) {
@@ -404,7 +416,11 @@ void RockBlockComponentImpl ::serialRecv_handler(
             DEBUG_PRINT("[RockBlock] +SBDRT:\n");
         } else if (detectCommand("SBDRING", pointer)) {
             this->log_ACTIVITY_HI_RckBlck_RingAlert();
-            this->addCommand("AT+SBDIXA");
+            if(this->addCommand("AT+SBDIXA")) {
+                this->mailboxCheckMutex.lock();
+                this->mailboxCheckOnGoing = true;
+                this->mailboxCheckMutex.unLock();
+            }
         } else if(detectCommand("\r\n", pointer) && buffsize == 2) {
             // Empty line
             //DEBUG_PRINT("[RockBlock] Emtpy\n", pointer);

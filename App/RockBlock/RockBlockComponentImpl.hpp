@@ -86,7 +86,7 @@ class RockBlockComponentImpl : public RockBlockComponentBase {
         Drv::SerialReadStatus &status  /*!< Status of read*/
     );
 
-    void addCommand(std::string command);
+    bool addCommand(std::string command);
     void sendNextCommand();
     bool sendRockBlockCommand(std::string command, bool log);
     bool sendRockBlockCommand(std::string command);
@@ -143,6 +143,7 @@ class RockBlockComponentImpl : public RockBlockComponentBase {
     Os::Mutex mailboxCheckMutex;    //<! Mutual exclusion for mailbox check time
 
     Fw::Time lastMailboxCheck;
+    bool mailboxCheckOnGoing;
 
     public:
         bool simulatorMode;
