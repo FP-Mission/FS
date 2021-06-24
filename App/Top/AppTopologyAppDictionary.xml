@@ -203,7 +203,7 @@
     </command>
     <command component="piCamera" mnemonic="PiCam_SendFrame" opcode="0x86">
       <args>
-        <arg name="frameId" type="U16"/>
+        <arg name="frameId" type="I16"/>
       </args>
     </command>
     <command component="piCamera" mnemonic="PiCam_StopSending" opcode="0x87">

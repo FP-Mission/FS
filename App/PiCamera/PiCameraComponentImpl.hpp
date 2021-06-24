@@ -146,7 +146,7 @@ namespace App {
       void PiCam_SendFrame_cmdHandler(
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq, /*!< The command sequence number*/
-          U16 wframeIdidth
+          I16 frameId
       );
 
     void PiCam_StopSending_cmdHandler(

@@ -116,7 +116,7 @@
             Send frame of current picture
             </comment>
              <args>
-                <arg name="frameId" type="U16">
+                <arg name="frameId" type="I16">
                     <comment>Frame id</comment>
                 </arg>                
              </args>

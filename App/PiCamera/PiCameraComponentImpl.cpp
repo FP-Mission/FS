@@ -262,8 +262,10 @@ namespace App {
       void PiCameraComponentImpl::PiCam_SendFrame_cmdHandler(
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq, /*!< The command sequence number*/
-          U16 frameId
+          I16 frameId
       ){
+          printf("send frame frameid : %hd",frameId);
+          printf("send frame frameid : %hu",frameId);
          if(pictureId == -1 || frameId < -1 || frameId > nbPacket-1){
           this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
           return;
@@ -291,6 +293,8 @@ namespace App {
           const U32 cmdSeq, /*!< The command sequence number*/
           I16 startFrame
       ){
+        printf("send frame frameid : %hd",startFrame);
+          printf("send frame frameid : %hu",startFrame);
         if(pictureId ==-1 || startFrame < -1 || startFrame > nbPacket-1){
           this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
           return;
