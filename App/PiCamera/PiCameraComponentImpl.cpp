@@ -228,7 +228,7 @@ namespace App {
           outFileData.write((char*)&pictureId,sizeof(pictureId));
           outFileData.close();
 
-          loadPicture(true);
+          loadPicture(false);
         
         
         this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
@@ -459,7 +459,7 @@ namespace App {
       indata.read((char*)&pictureId,sizeof(pictureId));
       indata.close();
 
-      loadPicture(false);
+      loadPicture(true);
       loadLastPictureTaken();
   }
   void PiCameraComponentImpl::sendFrame(U16 frameId){
