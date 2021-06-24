@@ -265,10 +265,10 @@ namespace App {
           I16 frameId
       ){
         if(frameId < -1){
-          printf("sjewndjewndjnewdjnewd\n")
+          printf("sjewndjewndjnewdjnewd\n");
         }
         if(frameId == -1){
-         printf("salutsalutsalut\n")
+         printf("salutsalutsalut\n");
         }
          if(pictureId == -1 || frameId < -1 || frameId > nbPacket-1){
           this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
