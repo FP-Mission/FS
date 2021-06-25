@@ -125,6 +125,9 @@
     <command component="cmdDisp" mnemonic="CMD_CLEAR_TRACKING" opcode="0x6">
       <args/>
     </command>
+    <command component="cmdDisp" mnemonic="CMD_REBOOT" opcode="0x7">
+      <args/>
+    </command>
     <command component="health" mnemonic="HLTH_ENABLE" opcode="0x1d">
       <args>
         <arg name="enable" type="Health::enable::HealthEnabled"/>
