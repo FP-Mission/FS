@@ -39,6 +39,11 @@
                 GPS position
             </comment>
         </channel>
+        <channel id="1" name="Gps_LockState" data_type="U8">
+            <comment>
+                Lock state
+            </comment>
+        </channel>
     </telemetry>
     
     <events>

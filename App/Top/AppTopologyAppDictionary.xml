@@ -727,6 +727,7 @@
     <channel component="eps" name="Eps_BatteryVoltage" id="0x64" description="Battery level in mV" type="U16"/>
     <channel component="flexTrak" name="FT_SSDVBufferLength" id="0x6e" description="Used length of SSDV buffer" type="U16"/>
     <channel component="gps" name="Gps_Position" id="0x78" description="GPS position" type="App::PositionSer"/>
+    <channel component="gps" name="Gps_LockState" id="0x79" description="Lock state" type="U8"/>
     <channel component="piCamera" name="PiCam_PictureCnt" id="0x82" description="Number of pictures taken" type="U8"/>
     <channel component="piCamera" name="PiCam_PictureSize" id="0x83" description="Picture size" type="App::PictureSize"/>
     <channel component="piCamera" name="PiCam_Timeinterval" id="0x84" description="Time interval of 10 seconds" type="U8"/>

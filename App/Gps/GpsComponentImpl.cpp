@@ -49,6 +49,7 @@ void GpsComponentImpl::Run_handler(NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE con
             // consider gps has unlocked and send event
             this->gpsLocked = false;
             this->log_ACTIVITY_LO_Gps_LockState(0);
+            this->tlmWrite_Gps_LockState(0);
         }
     }
 
@@ -71,6 +72,7 @@ void GpsComponentImpl ::positionIn_handler(
         this->gpsLocked = true;
         // gps is now locked, send event
         this->log_ACTIVITY_LO_Gps_LockState(1);
+        this->tlmWrite_Gps_LockState(1);
     }
     this->gpsMutex.unLock();
 
