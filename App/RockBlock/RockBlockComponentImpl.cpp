@@ -457,7 +457,12 @@ void RockBlockComponentImpl ::serialRecv_handler(
             }
 
             // If messages are queued, get them
-            if(SBDIX.mtQueued > 0) {
+            this->mailboxCheckMutex.lock();
+            U8 ringAltertsCtn_temp = this->ringAlertsCtn;
+            this->mailboxCheckMutex.lock();
+            // If ringAlterCtn > 0, checkMailbox will occur in Run_handler
+            // Only check mailbox if messages are queued and ring alterts were not received
+            if(SBDIX.mtQueued > 0 && ringAltertsCtn_temp == 0) {
                 Fw::Logger::logMsg("[RockBlock] Binary messages pending in queue, check mailbox\n");
                 this->checkMailbox();
             }
