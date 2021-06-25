@@ -111,6 +111,7 @@ void RockBlockComponentImpl::Run_handler(const NATIVE_INT_TYPE portNum, NATIVE_U
 
 void RockBlockComponentImpl:: configureHardware() {
     this->sendRockBlockCommand("AT"); // Send first command to receive OK response
+    this->addCommand("AT+SBDMTA=1");
     this->addCommand("AT+SBDMTA?");
     this->addCommand("AT+CSQ");
     // Mailbox check at launch if enabled
@@ -459,7 +460,7 @@ void RockBlockComponentImpl ::serialRecv_handler(
             // If messages are queued, get them
             this->mailboxCheckMutex.lock();
             U8 ringAltertsCtn_temp = this->ringAlertsCtn;
-            this->mailboxCheckMutex.lock();
+            this->mailboxCheckMutex.unLock();
             // If ringAlterCtn > 0, checkMailbox will occur in Run_handler
             // Only check mailbox if messages are queued and ring alterts were not received
             if(SBDIX.mtQueued > 0 && ringAltertsCtn_temp == 0) {
