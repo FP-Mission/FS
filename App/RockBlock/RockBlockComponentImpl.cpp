@@ -247,9 +247,9 @@ void RockBlockComponentImpl ::PingIn_handler(const NATIVE_INT_TYPE portNum,
     } else {
         this->sendRockBlockCommand("AT", false);
     }
+    this->pingCtn = (this->pingCtn + 1) % this->csqInterval ;
     this->csqIntervalMutex.unLock();
     this->pingKey = key;
-    this->pingCtn = (this->pingCtn + 1) % this->csqInterval ;
     pingMutex.unLock();
 }
 
