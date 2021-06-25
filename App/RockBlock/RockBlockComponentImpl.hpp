@@ -88,6 +88,7 @@ class RockBlockComponentImpl : public RockBlockComponentBase {
 
     bool addCommand(std::string command);
     void sendNextCommand();
+    bool checkMailbox();
     bool sendRockBlockCommand(std::string command, bool log);
     bool sendRockBlockCommand(std::string command);
     bool detectCommand(const char* command, const char* line);
@@ -121,6 +122,7 @@ class RockBlockComponentImpl : public RockBlockComponentBase {
 
     U8 csqInterval;
     Os::Mutex csqIntervalMutex;
+    U8 noNetworkCtn;
 
     Fw::Buffer fpCommandBuffer;                 //!< Buffer used to pass F' commands received by RockBlock
     U8 fpCommandData[FP_COMMAND_BUFFER_SIZE];   //!< Data for above buffer
