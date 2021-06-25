@@ -379,6 +379,7 @@ void RockBlockComponentImpl ::serialRecv_handler(
                 switch (SBDIX.mtStatus) {
                     case 0:
                         // No SBD message to receive from the GSS
+                        SBDIX.mtQueued = mtQueued_temp;
                         this->log_ACTIVITY_HI_RckBlck_NoMessageReceived(SBDIX.mtMsn);
                         break;
                     case 1:
