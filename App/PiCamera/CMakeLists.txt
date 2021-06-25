@@ -18,7 +18,7 @@ include_directories(../lib/include)
 include_directories(../lib/include/libpng16)
 
 find_library(RASPICAM raspicam /usr/local/lib)
-find_library(PNG png ..lib/lib)
+find_library(PNG png ../lib/lib)
 
 target_link_libraries(App_PiCamera ${RASPICAM} ${PNG})
 
