@@ -49,7 +49,7 @@ namespace App {
   void Tester ::
     toDo(void) 
   {
-    // TODO
+    ASSERT_TRUE(false);
   }
 
   // ----------------------------------------------------------------------
