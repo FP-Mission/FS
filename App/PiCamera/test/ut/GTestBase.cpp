@@ -157,7 +157,7 @@ namespace App {
         const char *const __callSiteFileName,
         const U32 __callSiteLineNumber,
         const U32 __index,
-        const U32& val
+        const U8& val
     )
     const
   {

@@ -55,8 +55,8 @@ namespace App {
     this->component.doDispatch();
 
     //check event
-    ASSERT_EVENTS_SIZE(1);
-    ASSERT_EVENTS_MS_DATA_SIZE(1);
+    ASSERT_EVENTS_SIZE(0);
+    ASSERT_EVENTS_MS_DATA_SIZE(0);
 
     //check port out
     ASSERT_FROM_PORT_HISTORY_SIZE(3);
@@ -79,8 +79,8 @@ namespace App {
     this->component.doDispatch();
 
     //check event
-    ASSERT_EVENTS_SIZE(1);
-    ASSERT_EVENTS_MS_DATA_SIZE(1);
+    ASSERT_EVENTS_SIZE(0);
+    ASSERT_EVENTS_MS_DATA_SIZE(0);
 
     //check port out
     ASSERT_FROM_PORT_HISTORY_SIZE(3);

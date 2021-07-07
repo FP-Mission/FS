@@ -17,7 +17,7 @@ TEST(Nominal, TestPort) {
     App::Tester tester;
     TEST_CASE(PiCamera.2,"Test BarometerPort");
     tester.testBarometerPort();
-        TEST_CASE(PiCamera.3,"Test PositionPort");
+    TEST_CASE(PiCamera.3,"Test PositionPort");
     tester.testPositionPort();
 }
 

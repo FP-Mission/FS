@@ -46,8 +46,7 @@ namespace App {
   // ----------------------------------------------------------------------
   // Tests 
   // ----------------------------------------------------------------------
-
-  void Tester ::
+void Tester ::
     testCreatedDirectories(void) 
   {
     Os::FileSystem::Status statusBase = Os::FileSystem::createDirectory(BASE_DIRECTORY); 
@@ -73,7 +72,8 @@ namespace App {
     osTelemetry << TELEMETRY_DIRECTORY << "telemetry.csv";
 
     dataTheoritical<< "id" <<","<<"Timecode" <<","<< "AltitudeGPS" <<","<< "AltitudeBaro" << 
-    ","<<"Temperature"<<","<< "Pressure"<<","<< "Longitude" <<","<< "Latitude";
+    ","<<"Temperature"<<","<< "Pressure"<<","<< "Longitude" <<","<< "Latitude" <<
+    ","<< "FlexInternTemp" <<","<< "FlexExternTemp" << "\n";
 
     std::ifstream f(osTelemetry.str());
     std::string dataEmpirical;
@@ -189,6 +189,18 @@ namespace App {
     this->connect_to_SendFrame(
         0,
         this->component.get_SendFrame_InputPort(0)
+    );
+
+    // tempProbeInternal
+    this->connect_to_tempProbeInternal(
+        0,
+        this->component.get_tempProbeInternal_InputPort(0)
+    );
+
+    // tempProbeExternal
+    this->connect_to_tempProbeExternal(
+        0,
+        this->component.get_tempProbeExternal_InputPort(0)
     );
 
     // CmdDisp

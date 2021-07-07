@@ -89,6 +89,20 @@ namespace App {
           App::InputPiCameraFramePortPort *const SendFrame /*!< The port*/
       );
 
+      //! Connect tempProbeInternal to to_tempProbeInternal[portNum]
+      //!
+      void connect_to_tempProbeInternal(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          App::InputTemperaturePort *const tempProbeInternal /*!< The port*/
+      );
+
+      //! Connect tempProbeExternal to to_tempProbeExternal[portNum]
+      //!
+      void connect_to_tempProbeExternal(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          App::InputTemperaturePort *const tempProbeExternal /*!< The port*/
+      );
+
       //! Connect CmdDisp to to_CmdDisp[portNum]
       //!
       void connect_to_CmdDisp(
@@ -409,6 +423,20 @@ namespace App {
           U32 frame /*!< frame value*/
       );
 
+      //! Invoke the to port connected to tempProbeInternal
+      //!
+      void invoke_to_tempProbeInternal(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          I16 degree /*!< Temperature in °C*/
+      );
+
+      //! Invoke the to port connected to tempProbeExternal
+      //!
+      void invoke_to_tempProbeExternal(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          I16 degree /*!< Temperature in °C*/
+      );
+
     public:
 
       // ----------------------------------------------------------------------
@@ -462,6 +490,18 @@ namespace App {
       //! \return The number of to_SendFrame ports
       //!
       NATIVE_INT_TYPE getNum_to_SendFrame(void) const;
+
+      //! Get the number of to_tempProbeInternal ports
+      //!
+      //! \return The number of to_tempProbeInternal ports
+      //!
+      NATIVE_INT_TYPE getNum_to_tempProbeInternal(void) const;
+
+      //! Get the number of to_tempProbeExternal ports
+      //!
+      //! \return The number of to_tempProbeExternal ports
+      //!
+      NATIVE_INT_TYPE getNum_to_tempProbeExternal(void) const;
 
       //! Get the number of to_CmdDisp ports
       //!
@@ -563,6 +603,22 @@ namespace App {
 
       //! Check whether port is connected
       //!
+      //! Whether to_tempProbeInternal[portNum] is connected
+      //!
+      bool isConnected_to_tempProbeInternal(
+          const NATIVE_INT_TYPE portNum /*!< The port number*/
+      );
+
+      //! Check whether port is connected
+      //!
+      //! Whether to_tempProbeExternal[portNum] is connected
+      //!
+      bool isConnected_to_tempProbeExternal(
+          const NATIVE_INT_TYPE portNum /*!< The port number*/
+      );
+
+      //! Check whether port is connected
+      //!
       //! Whether to_CmdDisp[portNum] is connected
       //!
       bool isConnected_to_CmdDisp(
@@ -585,9 +641,9 @@ namespace App {
           const U32 cmdSeq /*!< The command sequence number*/
       );
 
-      //! Send a PiCam_SendLast command
+      //! Send a PiCam_LoadLast command
       //!
-      void sendCmd_PiCam_SendLast(
+      void sendCmd_PiCam_LoadLast(
           const NATIVE_INT_TYPE instance, /*!< The instance number*/
           const U32 cmdSeq /*!< The command sequence number*/
       );
@@ -607,6 +663,29 @@ namespace App {
           const U32 cmdSeq, /*!< The command sequence number*/
           U32 width, /*!< Image Width*/
           U32 height /*!< Image Height*/
+      );
+
+      //! Send a PiCam_SendFrame command
+      //!
+      void sendCmd_PiCam_SendFrame(
+          const NATIVE_INT_TYPE instance, /*!< The instance number*/
+          const U32 cmdSeq, /*!< The command sequence number*/
+          I16 frameId /*!< Frame id*/
+      );
+
+      //! Send a PiCam_StopSending command
+      //!
+      void sendCmd_PiCam_StopSending(
+          const NATIVE_INT_TYPE instance, /*!< The instance number*/
+          const U32 cmdSeq /*!< The command sequence number*/
+      );
+
+      //! Send a PiCam_StartSending command
+      //!
+      void sendCmd_PiCam_StartSending(
+          const NATIVE_INT_TYPE instance, /*!< The instance number*/
+          const U32 cmdSeq, /*!< The command sequence number*/
+          I16 startFrame /*!< start frame*/
       );
 
     protected:
@@ -863,14 +942,14 @@ namespace App {
       //!
       virtual void tlmInput_PiCam_PictureCnt(
           const Fw::Time& timeTag, /*!< The time*/
-          const U32& val /*!< The channel value*/
+          const U8& val /*!< The channel value*/
       );
 
       //! A telemetry entry for channel PiCam_PictureCnt
       //!
       typedef struct {
         Fw::Time timeTag;
-        U32 arg;
+        U8 arg;
       } TlmEntry_PiCam_PictureCnt;
 
       //! The history of PiCam_PictureCnt values
@@ -969,6 +1048,14 @@ namespace App {
       //! To port connected to SendFrame
       //!
       App::OutputPiCameraFramePortPort m_to_SendFrame[1];
+
+      //! To port connected to tempProbeInternal
+      //!
+      App::OutputTemperaturePort m_to_tempProbeInternal[1];
+
+      //! To port connected to tempProbeExternal
+      //!
+      App::OutputTemperaturePort m_to_tempProbeExternal[1];
 
       //! To port connected to CmdDisp
       //!

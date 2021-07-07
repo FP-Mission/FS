@@ -243,7 +243,7 @@ namespace App {
           const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
           const U32 __callSiteLineNumber, /*!< The line number of the call site*/
           const U32 __index, /*!< The index*/
-          const U32& val /*!< The channel value*/
+          const U8& val /*!< The channel value*/
       ) const;
 
     protected:

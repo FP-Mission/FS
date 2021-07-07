@@ -56,9 +56,9 @@ namespace App {
     this->component.doDispatch();
 
     // Event
-    ASSERT_EVENTS_SIZE(1);
-    ASSERT_EVENTS_MS_DATA_SIZE(1);
-    ASSERT_EVENTS_MS_DATA(0,temperatureTheoritical,humidityTheoritical);
+    ASSERT_EVENTS_SIZE(0);
+    ASSERT_EVENTS_MS_DATA_SIZE(0);
+    //ASSERT_EVENTS_MS_DATA(0,temperatureTheoritical,humidityTheoritical);
 
     //telemetry
     ASSERT_TLM_SIZE(2);

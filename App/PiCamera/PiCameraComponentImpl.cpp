@@ -58,7 +58,7 @@ namespace App {
     std::ofstream outFileTelemetry (osTelemetry.str());
     outFileTelemetry<< "id" <<","<<"Timecode" <<","<< "AltitudeGPS" <<","<< "AltitudeBaro" << 
     ","<<"Temperature"<<","<< "Pressure"<<","<< "Longitude" <<","<< "Latitude" <<
-    ","<< "FlexInternTemp" <<","<< "FlexExternTemp"  "\n";
+    ","<< "FlexInternTemp" <<","<< "FlexExternTemp" << "\n";
     outFileTelemetry.close();
     }
     getNumberOfLine(osTelemetry);

@@ -470,6 +470,52 @@ namespace App {
 
     }
 
+    // Initialize output port tempProbeInternal
+
+    for (
+        NATIVE_INT_TYPE _port = 0;
+        _port < this->getNum_to_tempProbeInternal();
+        ++_port
+    ) {
+      this->m_to_tempProbeInternal[_port].init();
+
+#if FW_OBJECT_NAMES == 1
+      char _portName[120];
+      snprintf(
+          _portName,
+          sizeof(_portName),
+          "%s_to_tempProbeInternal[%d]",
+          this->m_objName,
+          _port
+      );
+      this->m_to_tempProbeInternal[_port].setObjName(_portName);
+#endif
+
+    }
+
+    // Initialize output port tempProbeExternal
+
+    for (
+        NATIVE_INT_TYPE _port = 0;
+        _port < this->getNum_to_tempProbeExternal();
+        ++_port
+    ) {
+      this->m_to_tempProbeExternal[_port].init();
+
+#if FW_OBJECT_NAMES == 1
+      char _portName[120];
+      snprintf(
+          _portName,
+          sizeof(_portName),
+          "%s_to_tempProbeExternal[%d]",
+          this->m_objName,
+          _port
+      );
+      this->m_to_tempProbeExternal[_port].setObjName(_portName);
+#endif
+
+    }
+
   }
 
   // ----------------------------------------------------------------------
@@ -522,6 +568,18 @@ namespace App {
     getNum_to_SendFrame(void) const
   {
     return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(this->m_to_SendFrame);
+  }
+
+  NATIVE_INT_TYPE PiCameraTesterBase ::
+    getNum_to_tempProbeInternal(void) const
+  {
+    return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(this->m_to_tempProbeInternal);
+  }
+
+  NATIVE_INT_TYPE PiCameraTesterBase ::
+    getNum_to_tempProbeExternal(void) const
+  {
+    return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(this->m_to_tempProbeExternal);
   }
 
   NATIVE_INT_TYPE PiCameraTesterBase ::
@@ -633,6 +691,26 @@ namespace App {
   }
 
   void PiCameraTesterBase ::
+    connect_to_tempProbeInternal(
+        const NATIVE_INT_TYPE portNum,
+        App::InputTemperaturePort *const tempProbeInternal
+    )
+  {
+    FW_ASSERT(portNum < this->getNum_to_tempProbeInternal(),static_cast<AssertArg>(portNum));
+    this->m_to_tempProbeInternal[portNum].addCallPort(tempProbeInternal);
+  }
+
+  void PiCameraTesterBase ::
+    connect_to_tempProbeExternal(
+        const NATIVE_INT_TYPE portNum,
+        App::InputTemperaturePort *const tempProbeExternal
+    )
+  {
+    FW_ASSERT(portNum < this->getNum_to_tempProbeExternal(),static_cast<AssertArg>(portNum));
+    this->m_to_tempProbeExternal[portNum].addCallPort(tempProbeExternal);
+  }
+
+  void PiCameraTesterBase ::
     connect_to_CmdDisp(
         const NATIVE_INT_TYPE portNum,
         Fw::InputCmdPort *const CmdDisp
@@ -732,6 +810,32 @@ namespace App {
     );
   }
 
+  void PiCameraTesterBase ::
+    invoke_to_tempProbeInternal(
+        const NATIVE_INT_TYPE portNum,
+        I16 degree
+    )
+  {
+    FW_ASSERT(portNum < this->getNum_to_tempProbeInternal(),static_cast<AssertArg>(portNum));
+    FW_ASSERT(portNum < this->getNum_to_tempProbeInternal(),static_cast<AssertArg>(portNum));
+    this->m_to_tempProbeInternal[portNum].invoke(
+        degree
+    );
+  }
+
+  void PiCameraTesterBase ::
+    invoke_to_tempProbeExternal(
+        const NATIVE_INT_TYPE portNum,
+        I16 degree
+    )
+  {
+    FW_ASSERT(portNum < this->getNum_to_tempProbeExternal(),static_cast<AssertArg>(portNum));
+    FW_ASSERT(portNum < this->getNum_to_tempProbeExternal(),static_cast<AssertArg>(portNum));
+    this->m_to_tempProbeExternal[portNum].invoke(
+        degree
+    );
+  }
+
   // ----------------------------------------------------------------------
   // Connection status for to ports
   // ----------------------------------------------------------------------
@@ -776,6 +880,20 @@ namespace App {
   {
     FW_ASSERT(portNum < this->getNum_to_SendFrame(), static_cast<AssertArg>(portNum));
     return this->m_to_SendFrame[portNum].isConnected();
+  }
+
+  bool PiCameraTesterBase ::
+    isConnected_to_tempProbeInternal(const NATIVE_INT_TYPE portNum)
+  {
+    FW_ASSERT(portNum < this->getNum_to_tempProbeInternal(), static_cast<AssertArg>(portNum));
+    return this->m_to_tempProbeInternal[portNum].isConnected();
+  }
+
+  bool PiCameraTesterBase ::
+    isConnected_to_tempProbeExternal(const NATIVE_INT_TYPE portNum)
+  {
+    FW_ASSERT(portNum < this->getNum_to_tempProbeExternal(), static_cast<AssertArg>(portNum));
+    return this->m_to_tempProbeExternal[portNum].isConnected();
   }
 
   bool PiCameraTesterBase ::
@@ -1092,11 +1210,11 @@ namespace App {
   }
 
   // ----------------------------------------------------------------------
-  // Command: PiCam_SendLast
+  // Command: PiCam_LoadLast
   // ----------------------------------------------------------------------
 
   void PiCameraTesterBase ::
-    sendCmd_PiCam_SendLast(
+    sendCmd_PiCam_LoadLast(
         const NATIVE_INT_TYPE instance,
         const U32 cmdSeq
     )
@@ -1110,7 +1228,7 @@ namespace App {
 
     FwOpcodeType _opcode;
     const U32 idBase = this->getIdBase();
-    _opcode = PiCameraComponentBase::OPCODE_PICAM_SENDLAST + idBase;
+    _opcode = PiCameraComponentBase::OPCODE_PICAM_LOADLAST + idBase;
 
     if (this->m_to_CmdDisp[0].isConnected()) {
       this->m_to_CmdDisp[0].invoke(
@@ -1204,6 +1322,116 @@ namespace App {
 
   }
 
+  // ----------------------------------------------------------------------
+  // Command: PiCam_SendFrame
+  // ----------------------------------------------------------------------
+
+  void PiCameraTesterBase ::
+    sendCmd_PiCam_SendFrame(
+        const NATIVE_INT_TYPE instance,
+        const U32 cmdSeq,
+        I16 frameId
+    )
+  {
+
+    // Serialize arguments
+
+    Fw::CmdArgBuffer buff;
+    Fw::SerializeStatus _status;
+    _status = buff.serialize(frameId);
+    FW_ASSERT(_status == Fw::FW_SERIALIZE_OK,static_cast<AssertArg>(_status));
+
+    // Call output command port
+
+    FwOpcodeType _opcode;
+    const U32 idBase = this->getIdBase();
+    _opcode = PiCameraComponentBase::OPCODE_PICAM_SENDFRAME + idBase;
+
+    if (this->m_to_CmdDisp[0].isConnected()) {
+      this->m_to_CmdDisp[0].invoke(
+          _opcode,
+          cmdSeq,
+          buff
+      );
+    }
+    else {
+      printf("Test Command Output port not connected!\n");
+    }
+
+  }
+
+  // ----------------------------------------------------------------------
+  // Command: PiCam_StopSending
+  // ----------------------------------------------------------------------
+
+  void PiCameraTesterBase ::
+    sendCmd_PiCam_StopSending(
+        const NATIVE_INT_TYPE instance,
+        const U32 cmdSeq
+    )
+  {
+
+    // Serialize arguments
+
+    Fw::CmdArgBuffer buff;
+
+    // Call output command port
+
+    FwOpcodeType _opcode;
+    const U32 idBase = this->getIdBase();
+    _opcode = PiCameraComponentBase::OPCODE_PICAM_STOPSENDING + idBase;
+
+    if (this->m_to_CmdDisp[0].isConnected()) {
+      this->m_to_CmdDisp[0].invoke(
+          _opcode,
+          cmdSeq,
+          buff
+      );
+    }
+    else {
+      printf("Test Command Output port not connected!\n");
+    }
+
+  }
+
+  // ----------------------------------------------------------------------
+  // Command: PiCam_StartSending
+  // ----------------------------------------------------------------------
+
+  void PiCameraTesterBase ::
+    sendCmd_PiCam_StartSending(
+        const NATIVE_INT_TYPE instance,
+        const U32 cmdSeq,
+        I16 startFrame
+    )
+  {
+
+    // Serialize arguments
+
+    Fw::CmdArgBuffer buff;
+    Fw::SerializeStatus _status;
+    _status = buff.serialize(startFrame);
+    FW_ASSERT(_status == Fw::FW_SERIALIZE_OK,static_cast<AssertArg>(_status));
+
+    // Call output command port
+
+    FwOpcodeType _opcode;
+    const U32 idBase = this->getIdBase();
+    _opcode = PiCameraComponentBase::OPCODE_PICAM_STARTSENDING + idBase;
+
+    if (this->m_to_CmdDisp[0].isConnected()) {
+      this->m_to_CmdDisp[0].invoke(
+          _opcode,
+          cmdSeq,
+          buff
+      );
+    }
+    else {
+      printf("Test Command Output port not connected!\n");
+    }
+
+  }
+
 
   void PiCameraTesterBase ::
     sendRawCmd(FwOpcodeType opcode, U32 cmdSeq, Fw::CmdArgBuffer& args) {
@@ -1268,7 +1496,7 @@ namespace App {
 
       case PiCameraComponentBase::CHANNELID_PICAM_PICTURECNT:
       {
-        U32 arg;
+        U8 arg;
         const Fw::SerializeStatus _status = val.deserialize(arg);
         if (_status != Fw::FW_SERIALIZE_OK) {
           printf("Error deserializing PiCam_PictureCnt: %d\n", _status);
@@ -1327,7 +1555,7 @@ namespace App {
   void PiCameraTesterBase ::
     tlmInput_PiCam_PictureCnt(
         const Fw::Time& timeTag,
-        const U32& val
+        const U8& val
     )
   {
     TlmEntry_PiCam_PictureCnt e = { timeTag, val };
