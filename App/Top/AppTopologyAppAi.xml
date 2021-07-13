@@ -820,14 +820,6 @@
         <source component="piCamera" port="PingOut" type="Ping" num="0"/>
         <target component="health" port="PingReturn" type="Ping" num="9"/>
     </connection>
-    <connection name="rockBlockPingSend">
-        <source component="health" port="PingSend" type="Ping" num="10"/>
-        <target component="rockBlock" port="PingIn" type="Ping" num="0"/>
-    </connection>
-    <connection name="rockBlockingRecv">
-        <source component="rockBlock" port="PingOut" type="Ping" num="0"/>
-        <target component="health" port="PingReturn" type="Ping" num="10"/>
-    </connection>
     <connection name = "SenseHatPingSend">
         <source component = "health" port = "PingSend" type = "Ping" num = "11"/>
         <target component = "senseHat" port = "PingIn" type = "Ping" num = "0"/>

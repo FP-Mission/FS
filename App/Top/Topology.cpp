@@ -297,7 +297,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
         {3, 5, getHealthName(blockDrv)},        // 7
         {3, 5, getHealthName(flexTrak)},        // 8
         {3, 5, getHealthName(piCamera)},        // 9
-        {6, 10, getHealthName(rockBlock)},      // 10
+        //{6, 10, getHealthName(rockBlock)},      // 10
         {3, 5, getHealthName(senseHat)},        // 11
         {3, 5, getHealthName(thermometer)},     // 12
 		{3, 5, getHealthName(motionTracking)},  // 13
