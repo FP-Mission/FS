@@ -239,7 +239,7 @@ void RockBlockComponentImpl ::PingIn_handler(const NATIVE_INT_TYPE portNum,
                                              U32 key) {
     // Save ping key to allow response in serialRecv_handler
     PingOut_out(0, key);
-    pingMutex.lock();
+    /*pingMutex.lock();
     // Try to directly send an AT command
     // If RockBlock is busy, next OK received will respond to the ping request
     this->csqIntervalMutex.lock();
@@ -251,7 +251,7 @@ void RockBlockComponentImpl ::PingIn_handler(const NATIVE_INT_TYPE portNum,
     this->pingCtn = (this->pingCtn + 1) % this->csqInterval ;
     this->csqIntervalMutex.unLock();
     this->pingKey = key;
-    pingMutex.unLock();
+    pingMutex.unLock();*/
 }
 
 void RockBlockComponentImpl ::RckBlck_SendCommand_cmdHandler(
