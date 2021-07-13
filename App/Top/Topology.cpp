@@ -297,12 +297,12 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
         {3, 5, getHealthName(blockDrv)},        // 7
         {3, 5, getHealthName(flexTrak)},        // 8
         {3, 5, getHealthName(piCamera)},        // 9
-        //{6, 10, getHealthName(rockBlock)},      // 10
-        {3, 5, getHealthName(senseHat)},        // 11
-        {3, 5, getHealthName(thermometer)},     // 12
-		{3, 5, getHealthName(motionTracking)},  // 13
-        {3, 5, getHealthName(barometer)},       // 14
-        {3, 5, getHealthName(rateGroup4)},      // 15
+        {3, 5, getHealthName(senseHat)},        // 10
+        {3, 5, getHealthName(thermometer)},     // 11
+		{3, 5, getHealthName(motionTracking)},  // 12
+        {3, 5, getHealthName(barometer)},       // 13
+        {3, 5, getHealthName(rateGroup4)},      // 14
+        //{6, 10, getHealthName(rockBlock)},    // 15
     };
 
 #ifndef ROCKBLOCK_SIMULATOR

@@ -821,45 +821,55 @@
         <target component="health" port="PingReturn" type="Ping" num="9"/>
     </connection>
     <connection name = "SenseHatPingSend">
-        <source component = "health" port = "PingSend" type = "Ping" num = "11"/>
+        <source component = "health" port = "PingSend" type = "Ping" num = "10"/>
         <target component = "senseHat" port = "PingIn" type = "Ping" num = "0"/>
     </connection>
     <connection name = "SenseHatPingRecv">
         <source component = "senseHat" port = "PingOut" type = "Ping" num = "0"/>
-        <target component = "health" port = "PingReturn" type = "Ping" num = "11"/>
+        <target component = "health" port = "PingReturn" type = "Ping" num = "10"/>
     </connection>
     <connection name = "ThermometerPingSend">
-        <source component = "health" port = "PingSend" type = "Ping" num = "12"/>
+        <source component = "health" port = "PingSend" type = "Ping" num = "11"/>
         <target component = "thermometer" port = "PingIn" type = "Ping" num = "0"/>
     </connection>
     <connection name = "ThermometerPingRecv">
         <source component = "thermometer" port = "PingOut" type = "Ping" num = "0"/>
-        <target component = "health" port = "PingReturn" type = "Ping" num = "12"/>
+        <target component = "health" port = "PingReturn" type = "Ping" num = "11"/>
     </connection>
     <connection name = "MotionTrackingPingSend">
-        <source component = "health" port = "PingSend" type = "Ping" num = "13"/>
+        <source component = "health" port = "PingSend" type = "Ping" num = "12"/>
         <target component = "motionTracking" port = "PingIn" type = "Ping" num = "0"/>
     </connection>
     <connection name = "MotionTrackingPingRecv">
         <source component = "motionTracking" port = "PingOut" type = "Ping" num = "0"/>
-        <target component = "health" port = "PingReturn" type = "Ping" num = "13"/>
+        <target component = "health" port = "PingReturn" type = "Ping" num = "12"/>
     </connection>
     <connection name = "BarometerPingSend">
-        <source component = "health" port = "PingSend" type = "Ping" num = "14"/>
+        <source component = "health" port = "PingSend" type = "Ping" num = "13"/>
         <target component = "barometer" port = "PingIn" type = "Ping" num = "0"/>
     </connection>
     <connection name = "BarometerPingRecv">
         <source component = "barometer" port = "PingOut" type = "Ping" num = "0"/>
-        <target component = "health" port = "PingReturn" type = "Ping" num = "14"/>
+        <target component = "health" port = "PingReturn" type = "Ping" num = "13"/>
     </connection>
     <connection name="Rg4PingSend">
-        <source component="health" port="PingSend" type="Ping" num="15"/>
+        <source component="health" port="PingSend" type="Ping" num="14"/>
         <target component="rateGroup4" port="PingIn" type="Ping" num="0"/>
     </connection>
     <connection name="Rg4PingRecv">
         <source component="rateGroup4" port="PingOut" type="Ping" num="0"/>
+        <target component="health" port="PingReturn" type="Ping" num="14"/>
+    </connection>
+    <!-- ROCKBLOCK ping
+    <connection name="rockBlockPingSend">
+        <source component="health" port="PingSend" type="Ping" num="15"/>
+        <target component="rockBlock" port="PingIn" type="Ping" num="0"/>
+    </connection>
+    <connection name="rockBlockingRecv">
+        <source component="rockBlock" port="PingOut" type="Ping" num="0"/>
         <target component="health" port="PingReturn" type="Ping" num="15"/>
     </connection>
+    -->
     <!-- App Connections -->
         <!-- Serial Driver 1 - FlexTrak -->
      <connection name = "serialDriver1Buff">
