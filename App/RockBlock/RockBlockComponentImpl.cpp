@@ -238,6 +238,7 @@ bool RockBlockComponentImpl ::detectCommand(const char* command, const char* lin
 void RockBlockComponentImpl ::PingIn_handler(const NATIVE_INT_TYPE portNum,
                                              U32 key) {
     // Save ping key to allow response in serialRecv_handler
+    PingOut_out(0, key);
     pingMutex.lock();
     // Try to directly send an AT command
     // If RockBlock is busy, next OK received will respond to the ping request
