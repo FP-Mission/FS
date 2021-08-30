@@ -4,6 +4,7 @@
     <comment>Component handling the FlexTrak temperature probes</comment>
        
     <import_port_type>App/FlexTrak/TemperaturePort/TemperaturePortAi.xml</import_port_type>
+    <import_port_type>Svc/Sched/SchedPortAi.xml</import_port_type>
 
     <ports>
         <port name="internalIn" data_type="App::Temperature" kind="async_input" max_number="1">
@@ -29,7 +30,7 @@
     </ports>
 
     <commands>
-        <command kind="async" opcode="0" mnemonic="TempProb_SetInternalLevel">
+        <command kind="async" opcode="0" mnemonic="TempProb_SetExternalHighLevel">
             <comment>
                 Set internal temperature warning level
             </comment>
@@ -39,7 +40,7 @@
                 </arg>          
             </args>
         </command>
-        <command kind="async" opcode="1" mnemonic="TempProb_SetExternalLevel">
+        <command kind="async" opcode="1" mnemonic="TempProb_SetExternalLowLevel">
             <comment>
                 Set external temperature warning level
             </comment>
@@ -52,22 +53,27 @@
     </commands>
 
     <telemetry>
-        <channel id="0" name="TempProb_InternalTemperature" data_type="I16">
+        <channel id="0" name="TempProb_ExternalHighTemperature" data_type="I16">
             <comment>
-                Internal temperature in °C
+                External high temperature in °C
             </comment>
         </channel>
-        <channel id="1" name="TempProb_ExternalTemperature" data_type="I16">
+        <channel id="1" name="TempProb_ExternalLowTemperature" data_type="I16">
             <comment>
-                External temperature in °C
+                External low temperature in °C
+            </comment>
+        </channel>
+        <channel id="2" name="TempProb_Temperature" data_type="I16">
+            <comment>
+                temperature in °C
             </comment>
         </channel>
     </telemetry>
 
     <events>
-        <event id="0" name="TempPro_LowInternalWarning" severity="WARNING_HI" format_string="Low internal temperature: %d" >
+        <event id="0" name="TempPro_TempSet" severity="ACTIVITY_LO" format_string="Limit temperature set to : %d" >
             <comment>
-                Sent when internal temperature reachs low level
+                Sent when low/high temps is set
             </comment>
             <args>
                 <arg name="temperature" type="I16">
@@ -76,6 +82,16 @@
             </args>
         </event>
         <event id="1" name="TempPro_LowExternalWarning" severity="WARNING_HI" format_string="Low external temperature: %d" >
+            <comment>
+                Sent when external temperature reachs low level
+            </comment>
+            <args>
+                <arg name="temperature" type="I16">
+                    <comment>Temperature in °C</comment>
+                </arg>          
+            </args>
+        </event>
+        <event id="2" name="TempPro_HighExternalWarning" severity="WARNING_HI" format_string="High external temperature: %d" >
             <comment>
                 Sent when external temperature reachs low level
             </comment>

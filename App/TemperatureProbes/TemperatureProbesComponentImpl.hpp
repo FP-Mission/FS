@@ -67,7 +67,7 @@ class TemperatureProbesComponentImpl : public TemperatureProbesComponentBase {
         //! Implementation for TempProb_SetInternalLevel command handler
         //! Set internal temperature warning level
         void
-        TempProb_SetInternalLevel_cmdHandler(
+        TempProb_SetExternalHighLevel_cmdHandler(
             const FwOpcodeType opCode, /*!< The opcode*/
             const U32 cmdSeq,          /*!< The command sequence number*/
             I16 temperature            /*!< Temperature in °C*/
@@ -75,11 +75,13 @@ class TemperatureProbesComponentImpl : public TemperatureProbesComponentBase {
 
     //! Implementation for TempProb_SetExternalLevel command handler
     //! Set external temperature warning level
-    void TempProb_SetExternalLevel_cmdHandler(
+    void TempProb_SetExternalLowLevel_cmdHandler(
         const FwOpcodeType opCode, /*!< The opcode*/
         const U32 cmdSeq,          /*!< The command sequence number*/
         I16 temperature            /*!< Temperature in °C*/
     );
+    I16 highExternalTemp = 40;
+    I16 lowExternalTemp = -10;
 };
 
 }  // end namespace App

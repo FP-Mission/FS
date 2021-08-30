@@ -174,19 +174,19 @@ void FlexTrakComponentImpl ::serialRecv_handler(const NATIVE_INT_TYPE portNum,
                 //DEBUG_PRINT("%u:%u:%u le %d.%d.%d à (%f, %f, %u) : %u\n", GPS.hours, GPS.minutes, GPS.seconds, GPS.day, GPS.month, GPS.year, GPS.latitude, GPS.longitude, GPS.altitude, GPS.satellites);
                 // @todo Set FS time with received data
                 Fw::Time time = getTime();
-                this->gps_out(0, time, GPS.latitude, GPS.longitude, GPS.altitude, GPS.satellites);
+                //this->gps_out(0, time, GPS.latitude, GPS.longitude, GPS.altitude, GPS.satellites);
             } else {
                 Fw::Logger::logMsg("[ERROR] Unable to parse GPS FlexTrak response, res=%u\n", res);
             }
         } else if(detectCommand("Batt=", pointer)) {
             I16 batteryVoltage = atoi(pointer + 5);
-            batteryVoltage_out(0, (U16)batteryVoltage);
+            //batteryVoltage_out(0, (U16)batteryVoltage);
         }  else if(detectCommand("Temp0=", pointer)) {
             I16 temp0 = atoi(pointer + 6);
-            internalTemp_out(0, temp0);
+            externalTemp_out(0, temp0);
         }  else if(detectCommand("Temp1=", pointer)) {
             I16 temp1 = atoi(pointer + 6);
-            externalTemp_out(0, temp1);
+            //internalTemp_out(0, temp1);
         } else if(detectCommand("LoRaIsFree=", pointer)) {
             loRaIsFreeMutex.lock();
             this->loRaIsFree = atoi(pointer + 11) == 1 ? true : false;
@@ -381,7 +381,7 @@ void FlexTrakComponentImpl::downlinkDataScheduler() {
         if(downlinkData(this->lastPicturePacket, this->lastPictureSize)) {
             this->newPicturePacket = false;
             // Ask next PicturePacket
-            this->AskPictureFrame_out(0, 0);
+            //this->AskPictureFrame_out(0, 0);
         }
         ret = true;
     }

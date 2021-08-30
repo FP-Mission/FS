@@ -52,17 +52,17 @@ extern Ref::PingReceiverComponentImpl pingRcvr;
 extern Drv::SocketIpDriverComponentImpl socketIpDriver;
 extern Drv::LinuxSerialDriverComponentImpl serialDriver1, serialDriver2;
 
-extern App::EpsComponentImpl eps;
+//extern App::EpsComponentImpl eps;
 extern App::FlexTrakComponentImpl flexTrak;
-extern App::RockBlockComponentImpl rockBlock;
-extern App::GpsComponentImpl gps;
-extern App::PiCameraComponentImpl piCamera;
-extern App::PredictorComponentImpl predictor;
+//extern App::RockBlockComponentImpl rockBlock;
+//extern App::GpsComponentImpl gps;
+//extern App::PiCameraComponentImpl piCamera;
+//extern App::PredictorComponentImpl predictor;
 extern App::TemperatureProbesComponentImpl temperatureProbes;
 
 extern App::SenseHatComponentImpl senseHat;
-extern App::ThermometerComponentImpl thermometer;
-extern App::MotionTrackingComponentImpl motionTracking;
+//extern App::ThermometerComponentImpl thermometer;
+//extern App::MotionTrackingComponentImpl motionTracking;
 extern App::BarometerComponentImpl barometer;
 
 #endif

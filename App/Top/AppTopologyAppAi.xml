@@ -25,15 +25,15 @@
     <import_component_type>Drv/SocketIpDriver/SocketIpDriverComponentAi.xml</import_component_type>
     <import_component_type>Drv/LinuxSerialDriver/LinuxSerialDriverComponentAi.xml</import_component_type>
     <import_component_type>App/SenseHat/SenseHatComponentAi.xml</import_component_type>
-    <import_component_type>App/Thermometer/ThermometerComponentAi.xml</import_component_type>
-    <import_component_type>App/MotionTracking/MotionTrackingComponentAi.xml</import_component_type>
+    <!--<import_component_type>App/Thermometer/ThermometerComponentAi.xml</import_component_type> -->
+    <!--<import_component_type>App/MotionTracking/MotionTrackingComponentAi.xml</import_component_type>-->
     <import_component_type>App/Barometer/BarometerComponentAi.xml</import_component_type>
-    <import_component_type>App/Eps/EpsComponentAi.xml</import_component_type>
+    <!--<import_component_type>App/Eps/EpsComponentAi.xml</import_component_type>-->
     <import_component_type>App/FlexTrak/FlexTrakComponentAi.xml</import_component_type>
-    <import_component_type>App/Gps/GpsComponentAi.xml</import_component_type>
-    <import_component_type>App/PiCamera/PiCameraComponentAi.xml</import_component_type>
-    <import_component_type>App/Predictor/PredictorComponentAi.xml</import_component_type>
-    <import_component_type>App/RockBlock/RockBlockComponentAi.xml</import_component_type>
+    <!--<import_component_type>App/Gps/GpsComponentAi.xml</import_component_type>-->
+    <!--<import_component_type>App/PiCamera/PiCameraComponentAi.xml</import_component_type>-->
+    <!--<import_component_type>App/Predictor/PredictorComponentAi.xml</import_component_type>-->
+    <!--<import_component_type>App/RockBlock/RockBlockComponentAi.xml</import_component_type>-->
     <import_component_type>App/TemperatureProbes/TemperatureProbesComponentAi.xml</import_component_type>
 
     <!-- ################################################################ -->
@@ -64,16 +64,16 @@
     <instance namespace="Drv" name="serialDriver1"  type="LinuxSerialDriver"    base_id="79"   base_id_window="7" />
     <instance namespace="Drv" name="serialDriver2"  type="LinuxSerialDriver"    base_id="89"   base_id_window="7" />
 
-    <instance namespace="App" name="eps"                type="Eps"                  base_id="100"   base_id_window="10" />
+    <!--<instance namespace="App" name="eps"                type="Eps"                  base_id="100"   base_id_window="10" />-->
     <instance namespace="App" name="flexTrak"           type="FlexTrak"             base_id="110"   base_id_window="10" />
-    <instance namespace="App" name="gps"                type="Gps"                  base_id="120"   base_id_window="10" />
-    <instance namespace="App" name="piCamera"           type="PiCamera"             base_id="130"   base_id_window="10" />
-    <instance namespace="App" name="predictor"          type="Predictor"            base_id="140"   base_id_window="10" />
-    <instance namespace="App" name="rockBlock"          type="RockBlock"            base_id="150"   base_id_window="10" />
+    <!--<instance namespace="App" name="gps"                type="Gps"                  base_id="120"   base_id_window="10" />-->
+    <!--<instance namespace="App" name="piCamera"           type="PiCamera"             base_id="130"   base_id_window="10" />-->
+    <!--<instance namespace="App" name="predictor"          type="Predictor"            base_id="140"   base_id_window="10" />-->
+    <!--<instance namespace="App" name="rockBlock"          type="RockBlock"            base_id="150"   base_id_window="10" />-->
     <instance namespace="App" name="temperatureProbes"  type="TemperatureProbes"    base_id="160"   base_id_window="10" />
     <instance namespace="App" name="senseHat"           type ="SenseHat"            base_id="170"   base_id_window="10" />
-    <instance namespace="App" name="thermometer"        type ="Thermometer"         base_id="180"   base_id_window="10" />
-    <instance namespace="App" name="motionTracking"     type ="MotionTracking"      base_id="190"   base_id_window="10" />
+    <!--<instance namespace="App" name="thermometer"        type ="Thermometer"         base_id="180"   base_id_window="10" />-->
+    <!--<instance namespace="App" name="motionTracking"     type ="MotionTracking"      base_id="190"   base_id_window="10" />-->
     <instance namespace="App" name="barometer"          type ="Barometer"           base_id="200"   base_id_window="10" />
 
     <!-- ########### -->
@@ -95,18 +95,17 @@
     -->
 
     <!-- GROUND INTERFACE DOWNLINK - CHOSE BETWEEN IP OR FLEXTRAK -->
-    <!-- Send data to Ip  -->
+    <!-- Send data to Ip 
     <connection name="CommunicationSend">
         <source component="groundIf" port="write" type="Fw::BufferSend" num="0"/>
         <target component="socketIpDriver" port="send" type="Fw::BufferSend" num="0"/>
-    </connection>
+    </connection> -->
     
-    <!-- Send data to FlexTrak
+    <!-- Send data to FlexTrak -->
     <connection name="CommunicationSend">
         <source component="groundIf" port="write" type="Fw::BufferSend" num="0"/>
         <target component="flexTrak" port="sendData" type="Fw::BufferSend" num="0"/>
     </connection>
-    -->
 
         <!-- Command uplink -->
     <connection name="cmdDispPkts">
@@ -154,26 +153,34 @@
          <source component="tlmChan" port="CmdReg" type="CmdReg" num="0"/>
          <target component="cmdDisp" port="compCmdReg" type="CmdReg" num="4"/>
     </connection>
+    <!--
     <connection name="EpsReg">
         <source component="eps" port="CmdReg" type="CmdReg" num="0"/>
         <target component="cmdDisp" port="compCmdReg" type="CmdReg" num="10"/>
     </connection>
+    -->
     <connection name="FlexTrakReg">
         <source component="flexTrak" port="CmdReg" type="CmdReg" num="0"/>
         <target component="cmdDisp" port="compCmdReg" type="CmdReg" num="11"/>
     </connection>
+    <!--
     <connection name="GpsReg">
         <source component="gps" port="CmdReg" type="CmdReg" num="0"/>
         <target component="cmdDisp" port="compCmdReg" type="CmdReg" num="12"/>
     </connection>
+    -->
+    <!--
     <connection name="PiCameraReg">
         <source component="piCamera" port="CmdReg" type="CmdReg" num="0"/>
         <target component="cmdDisp" port="compCmdReg" type="CmdReg" num="13"/>
     </connection>
+    -->
+    <!--
     <connection name="PredictorReg">
         <source component="predictor" port="CmdReg" type="CmdReg" num="0"/>
         <target component="cmdDisp" port="compCmdReg" type="CmdReg" num="14"/>
     </connection>
+    -->
     <connection name="TemperatureProbesReg">
         <source component="temperatureProbes" port="CmdReg" type="CmdReg" num="0"/>
         <target component="cmdDisp" port="compCmdReg" type="CmdReg" num="15"/>
@@ -182,10 +189,12 @@
         <source component = "senseHat" port = "CmdReg" type = "CmdReg" num = "0"/>
         <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "16"/>
     </connection>
+    <!--
     <connection name="RockBlockReg">
          <source component="rockBlock" port="CmdReg" type="CmdReg" num="0"/>
          <target component="cmdDisp" port="compCmdReg" type="CmdReg" num="17"/>
     </connection>
+    -->
 
         <!-- Command Dispatch Ports - Dispatch port number must match registration port for each component -->
     <connection name="EventLoggerDisp">
@@ -207,27 +216,35 @@
     <connection name="TlmChanDisp">
          <source component="cmdDisp" port="compCmdSend" type="Cmd" num="4"/>
          <target component="tlmChan" port="CmdDisp" type="Cmd" num="0"/>
-    </connection>  
+    </connection>
+    <!--  
     <connection name="EpsDisp">
         <source component="cmdDisp" port="compCmdSend" type="Cmd" num="10"/>
         <target component="eps" port="CmdDisp" type="Cmd" num="0"/>
     </connection>
+    -->
     <connection name="FlexTrakDisp">
         <source component="cmdDisp" port="compCmdSend" type="Cmd" num="11"/>
         <target component="flexTrak" port="CmdDisp" type="Cmd" num="0"/>
     </connection>
+    <!--
     <connection name="GpsDisp">
         <source component="cmdDisp" port="compCmdSend" type="Cmd" num="12"/>
         <target component="gps" port="CmdDisp" type="Cmd" num="0"/>
     </connection>
+    -->
+    <!--
     <connection name="PiCameraDisp">
         <source component="cmdDisp" port="compCmdSend" type="Cmd" num="13"/>
         <target component="piCamera" port="CmdDisp" type="Cmd" num="0"/>
     </connection>
+    -->
+    <!--
     <connection name="PredictorDisp">
         <source component="cmdDisp" port="compCmdSend" type="Cmd" num="14"/>
         <target component="predictor" port="CmdDisp" type="Cmd" num="0"/>
     </connection>
+    -->
     <connection name="TemperatureProbesDisp">
         <source component="cmdDisp" port="compCmdSend" type="Cmd" num="15"/>
         <target component="temperatureProbes" port="CmdDisp" type="Cmd" num="0"/>
@@ -236,11 +253,12 @@
         <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "16"/>
         <target component = "senseHat" port = "CmdDisp" type = "Cmd" num = "0"/>
     </connection>
+    <!--
     <connection name="RockBlockDisp">
          <source component="cmdDisp" port="compCmdSend" type="Cmd" num="17"/>
          <target component="rockBlock" port="CmdDisp" type="Cmd" num="0"/>
     </connection>
-   
+   -->
         <!-- Command Reply Ports - Go to the same response port on the dispatcher -->
     <connection name="EventLoggerReply">
         <source component="eventLogger" port="CmdStatus" type="CmdResponse" num="0"/>
@@ -262,26 +280,34 @@
         <source component="pingRcvr" port="CmdStatus" type="CmdResponse" num="0"/>
         <target component="cmdDisp" port="compCmdStat" type="CmdResponse" num="0"/>
     </connection>
+    <!--
     <connection name="EpsStat">
         <source component="eps" port="CmdStatus" type="CmdResponse" num="0"/>
         <target component="cmdDisp" port="compCmdStat" type="CmdResponse" num="0"/>
     </connection>
+    -->
     <connection name="FlexTrakStat">
         <source component="flexTrak" port="CmdStatus" type="CmdResponse" num="0"/>
         <target component="cmdDisp" port="compCmdStat" type="CmdResponse" num="0"/>
     </connection>
+    <!--
     <connection name="GpsStat">
         <source component="gps" port="CmdStatus" type="CmdResponse" num="0"/>
         <target component="cmdDisp" port="compCmdStat" type="CmdResponse" num="0"/>
     </connection>
+    -->
+    <!--
     <connection name="PiCameraStat">
         <source component="piCamera" port="CmdStatus" type="CmdResponse" num="0"/>
         <target component="cmdDisp" port="compCmdStat" type="CmdResponse" num="0"/>
     </connection>
+    -->
+    <!--
     <connection name="PredictorStat">
         <source component="predictor" port="CmdStatus" type="CmdResponse" num="0"/>
         <target component="cmdDisp" port="compCmdStat" type="CmdResponse" num="0"/>
     </connection>
+    -->
     <connection name="TemperatureProbesStat">
         <source component="temperatureProbes" port="CmdStatus" type="CmdResponse" num="0"/>
         <target component="cmdDisp" port="compCmdStat" type="CmdResponse" num="0"/>
@@ -290,11 +316,12 @@
         <source component = "senseHat" port = "CmdStatus" type = "CmdResponse" num = "0"/>
         <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
     </connection>
+    <!--
     <connection name="RockBlockStat">
          <source component="rockBlock" port="CmdStatus" type="CmdResponse" num="0"/>
          <target component="cmdDisp" port="compCmdStat" type="CmdResponse" num="0"/>
     </connection>
-
+    -->
     <!-- Event Logger Binary Connections -->
     <connection name="groundIfLog">
         <source component="groundIf" port="Log" type="Log" num="0"/>
@@ -348,42 +375,56 @@
          <source component="serialDriver2" port="Log" type="Log" num="0"/>
          <target component="eventLogger" port="LogRecv" type="Log" num="0"/>
     </connection>
+    <!--
     <connection name="epsEvt">
         <source component="eps" port="Log" type="Log" num="0"/>
         <target component="eventLogger" port="LogRecv" type="Log" num="0"/>
     </connection>
+    -->
     <connection name="flexTrakEvt">
         <source component="flexTrak" port="Log" type="Log" num="0"/>
         <target component="eventLogger" port="LogRecv" type="Log" num="0"/>
     </connection>
+    <!--
     <connection name="gpsEvt">
         <source component="gps" port="Log" type="Log" num="0"/>
         <target component="eventLogger" port="LogRecv" type="Log" num="0"/>
     </connection>
+    -->
+    <!--
     <connection name="piCameraEvt">
         <source component="piCamera" port="Log" type="Log" num="0"/>
         <target component="eventLogger" port="LogRecv" type="Log" num="0"/>
     </connection>
+    -->
+    <!--
     <connection name="predictorEvt">
         <source component="predictor" port="Log" type="Log" num="0"/>
         <target component="eventLogger" port="LogRecv" type="Log" num="0"/>
     </connection>
+    -->
+    <!--
     <connection name = "ThermometerLog">
         <source component = "thermometer" port = "Log" type = "Log" num = "0"/>
         <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
     </connection>
+    -->
+    <!--
     <connection name = "MotionTrackingLog">
         <source component = "motionTracking" port = "Log" type = "Log" num = "0"/>
         <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
     </connection>
+    -->
     <connection name = "BarometerLog">
         <source component = "barometer" port = "Log" type = "Log" num = "0"/>
         <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
     </connection>
+    <!--
     <connection name="rockBlockEvt">
         <source component="rockBlock" port="Log" type="Log" num="0"/>
         <target component="eventLogger" port="LogRecv" type="Log" num="0"/>
     </connection>
+    -->
     <connection name="temperatureProbesEvt">
         <source component="temperatureProbes" port="Log" type="Log" num="0"/>
         <target component="eventLogger" port="LogRecv" type="Log" num="0"/>
@@ -446,30 +487,40 @@
          <source component="serialDriver2" port="LogText" type="LogText" num="0"/>
          <target component="textLogger" port="TextLogger" type="LogText" num="0"/>
     </connection>
+    <!--
     <connection name="epsText">
         <source component="eps" port="LogText" type="LogText" num="0"/>
         <target component="textLogger" port="TextLogger" type="LogText" num="0"/>
     </connection>
+    -->
     <connection name="flexTrakText">
         <source component="flexTrak" port="LogText" type="LogText" num="0"/>
         <target component="textLogger" port="TextLogger" type="LogText" num="0"/>
     </connection>
+    <!--
     <connection name="gpsText">
         <source component="gps" port="LogText" type="LogText" num="0"/>
         <target component="textLogger" port="TextLogger" type="LogText" num="0"/>
     </connection>
+    -->
+    <!--
     <connection name="piCameraText">
         <source component="piCamera" port="LogText" type="LogText" num="0"/>
         <target component="textLogger" port="TextLogger" type="LogText" num="0"/>
     </connection>
+    -->
+    <!--
     <connection name="predictorText">
         <source component="predictor" port="LogText" type="LogText" num="0"/>
         <target component="textLogger" port="TextLogger" type="LogText" num="0"/>
     </connection>
+    -->
+    <!--
     <connection name="rockBlockText">
         <source component="rockBlock" port="LogText" type="LogText" num="0"/>
         <target component="textLogger" port="TextLogger" type="LogText" num="0"/>
     </connection>
+    -->
     <connection name="temperatureProbesText">
         <source component="temperatureProbes" port="LogText" type="LogText" num="0"/>
         <target component="textLogger" port="TextLogger" type="LogText" num="0"/>
@@ -478,14 +529,18 @@
         <source component = "senseHat" port = "LogText" type = "LogText" num = "0"/>
         <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
     </connection>
+    <!--
     <connection name = "thermometerText">
         <source component = "thermometer" port = "LogText" type = "LogText" num = "0"/>
         <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
     </connection>
+    -->
+    <!--
     <connection name = "motionTrackingText">
         <source component = "motionTracking" port = "LogText" type = "LogText" num = "0"/>
         <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
     </connection>
+    -->
     <connection name = "barometerText">
         <source component = "barometer" port = "LogText" type = "LogText" num = "0"/>
         <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
@@ -532,47 +587,60 @@
          <source component="serialDriver2" port="Tlm" type="Tlm" num="0"/>
          <target component="tlmChan" port="TlmRecv" type="Tlm" num="0"/>
     </connection>
+    <!--
     <connection name="epsTlm">
          <source component="eps" port="Tlm" type="Tlm" num="0"/>
          <target component="tlmChan" port="TlmRecv" type="Tlm" num="0"/>
     </connection>
+    -->
     <connection name="flexTrakTlm">
          <source component="flexTrak" port="Tlm" type="Tlm" num="0"/>
          <target component="tlmChan" port="TlmRecv" type="Tlm" num="0"/>
     </connection>
+    <!--
     <connection name="gpsTlm">
          <source component="gps" port="Tlm" type="Tlm" num="0"/>
          <target component="tlmChan" port="TlmRecv" type="Tlm" num="0"/>
     </connection>
+    -->
+    <!--
     <connection name="piCameraTlm">
          <source component="piCamera" port="Tlm" type="Tlm" num="0"/>
          <target component="tlmChan" port="TlmRecv" type="Tlm" num="0"/>
     </connection>
+    -->
+    <!--
     <connection name="predictorTlm">
          <source component="predictor" port="Tlm" type="Tlm" num="0"/>
          <target component="tlmChan" port="TlmRecv" type="Tlm" num="0"/>
     </connection>
+    -->
+    <!--
     <connection name="rockBlockTlm">
          <source component="rockBlock" port="Tlm" type="Tlm" num="0"/>
          <target component="tlmChan" port="TlmRecv" type="Tlm" num="0"/>
     </connection>
+    -->
     <connection name="temperatureProbesTlm">
          <source component="temperatureProbes" port="Tlm" type="Tlm" num="0"/>
          <target component="tlmChan" port="TlmRecv" type="Tlm" num="0"/>
     </connection>
+    <!--
     <connection name = "thermometerTlm">
         <source component = "thermometer" port = "Tlm" type = "Tlm" num = "0"/>
         <target component = "tlmChan" port = "TlmRecv" type = "Tlm" num = "0"/>
     </connection>
+    -->
     <connection name = "barometerTlm">
         <source component = "barometer" port = "Tlm" type = "Tlm" num = "0"/>
         <target component = "tlmChan" port = "TlmRecv" type = "Tlm" num = "0"/>
     </connection>
+    <!--
     <connection name = "motionTrackingTlm">
         <source component = "motionTracking" port = "Tlm" type = "Tlm" num = "0"/>
         <target component = "tlmChan" port = "TlmRecv" type = "Tlm" num = "0"/>
     </connection>
-    
+    -->
     <!-- Time Connections -->
     <connection name="tlmChanTime">
         <source component="tlmChan" port="Time" type="Time" num="0"/>
@@ -630,30 +698,40 @@
          <source component="serialDriver2" port="Time" type="Time" num="0"/>
          <target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
     </connection>
+    <!--
     <connection name="epsTime">
         <source component="eps" port="Time" type="Time" num="0"/>
         <target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
     </connection>
+    -->
     <connection name="flexTrakTime">
         <source component="flexTrak" port="Time" type="Time" num="0"/>
         <target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
     </connection>
+    <!--
     <connection name="gpsTime">
         <source component="gps" port="Time" type="Time" num="0"/>
         <target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
     </connection>
+    -->
+    <!--
     <connection name="piCameraTime">
         <source component="piCamera" port="Time" type="Time" num="0"/>
         <target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
     </connection>
+    -->
+    <!--
     <connection name="predictorTime">
         <source component="predictor" port="Time" type="Time" num="0"/>
         <target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
     </connection>
+    -->
+    <!--
     <connection name="rockBlockTime">
         <source component="rockBlock" port="Time" type="Time" num="0"/>
         <target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
     </connection>
+    -->
     <connection name="temperatureProbesTime">
         <source component="temperatureProbes" port="Time" type="Time" num="0"/>
         <target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
@@ -662,19 +740,22 @@
         <source component = "senseHat" port = "Time" type = "Time" num = "0"/>
         <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
     </connection>
+    <!--
     <connection name = "ThermometerTime">
         <source component = "thermometer" port = "Time" type = "Time" num = "0"/>
         <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
     </connection>
+    -->
     <connection name = "BarometerTime">
         <source component = "barometer" port = "Time" type = "Time" num = "0"/>
         <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
     </connection>
+    <!--
     <connection name = "MotionTrackingTime">
         <source component = "motionTracking" port = "Time" type = "Time" num = "0"/>
         <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
     </connection>
-    
+    -->
 
     <!-- Rate Group Connections -->
         <!-- Linux Timer Connection -->
@@ -713,23 +794,29 @@
         <source component = "rateGroup3" port = "RateGroupMemberOut" type = "Sched" num = "2"/>
         <target component = "senseHat" port = "Schedin" type = "Sched" num = "0"/>
     </connection>
+    <!--
     <connection name = "RgSenseHat">
         <source component = "rateGroup3" port = "RateGroupMemberOut" type = "Sched" num = "3"/>
         <target component = "gps" port = "Run" type = "Sched" num = "0"/>
     </connection>
+    -->
             <!-- Rate Group 4 - 10 seconds -->
     <connection name="rateGroup4DriverComp">
         <source component="rateGroupDrv" port="CycleOut" type="Cycle" num="3"/>
         <target component="rateGroup4" port="CycleIn" type="Cycle" num="0"/>
     </connection>
+    <!--
     <connection name="RgPiCamera">
         <source component="rateGroup4" port="RateGroupMemberOut" type="Sched" num="0"/>
         <target component="piCamera" port="Schedin" type="Sched" num="0"/>
     </connection>
+    -->
+    <!--
     <connection name="RgRockBlock">
          <source component="rateGroup4" port="RateGroupMemberOut" type="Sched" num="1"/>
          <target component="rockBlock" port="Run" type="Sched" num="0"/>
     </connection>
+    -->
     <connection name="RgChTlm">
          <source component="rateGroup4" port="RateGroupMemberOut" type="Sched" num="2"/>
          <target component="tlmChan" port="Run" type="Sched" num="0"/>
@@ -812,6 +899,7 @@
         <source component="flexTrak" port="PingOut" type="Ping" num="0"/>
         <target component="health" port="PingReturn" type="Ping" num="8"/>
     </connection>
+    <!--
     <connection name="piCameraPingSend">
         <source component="health" port="PingSend" type="Ping" num="9"/>
         <target component="piCamera" port="PingIn" type="Ping" num="0"/>
@@ -820,14 +908,16 @@
         <source component="piCamera" port="PingOut" type="Ping" num="0"/>
         <target component="health" port="PingReturn" type="Ping" num="9"/>
     </connection>
+    -->
     <connection name = "SenseHatPingSend">
-        <source component = "health" port = "PingSend" type = "Ping" num = "10"/>
+        <source component = "health" port = "PingSend" type = "Ping" num = "9"/>
         <target component = "senseHat" port = "PingIn" type = "Ping" num = "0"/>
     </connection>
     <connection name = "SenseHatPingRecv">
         <source component = "senseHat" port = "PingOut" type = "Ping" num = "0"/>
-        <target component = "health" port = "PingReturn" type = "Ping" num = "10"/>
+        <target component = "health" port = "PingReturn" type = "Ping" num = "9"/>
     </connection>
+    <!--
     <connection name = "ThermometerPingSend">
         <source component = "health" port = "PingSend" type = "Ping" num = "11"/>
         <target component = "thermometer" port = "PingIn" type = "Ping" num = "0"/>
@@ -836,6 +926,8 @@
         <source component = "thermometer" port = "PingOut" type = "Ping" num = "0"/>
         <target component = "health" port = "PingReturn" type = "Ping" num = "11"/>
     </connection>
+    -->
+    <!--
     <connection name = "MotionTrackingPingSend">
         <source component = "health" port = "PingSend" type = "Ping" num = "12"/>
         <target component = "motionTracking" port = "PingIn" type = "Ping" num = "0"/>
@@ -844,21 +936,22 @@
         <source component = "motionTracking" port = "PingOut" type = "Ping" num = "0"/>
         <target component = "health" port = "PingReturn" type = "Ping" num = "12"/>
     </connection>
+    -->
     <connection name = "BarometerPingSend">
-        <source component = "health" port = "PingSend" type = "Ping" num = "13"/>
+        <source component = "health" port = "PingSend" type = "Ping" num = "10"/>
         <target component = "barometer" port = "PingIn" type = "Ping" num = "0"/>
     </connection>
     <connection name = "BarometerPingRecv">
         <source component = "barometer" port = "PingOut" type = "Ping" num = "0"/>
-        <target component = "health" port = "PingReturn" type = "Ping" num = "13"/>
+        <target component = "health" port = "PingReturn" type = "Ping" num = "10"/>
     </connection>
     <connection name="Rg4PingSend">
-        <source component="health" port="PingSend" type="Ping" num="14"/>
+        <source component="health" port="PingSend" type="Ping" num="11"/>
         <target component="rateGroup4" port="PingIn" type="Ping" num="0"/>
     </connection>
     <connection name="Rg4PingRecv">
         <source component="rateGroup4" port="PingOut" type="Ping" num="0"/>
-        <target component="health" port="PingReturn" type="Ping" num="14"/>
+        <target component="health" port="PingReturn" type="Ping" num="11"/>
     </connection>
     <!-- ROCKBLOCK ping
     <connection name="rockBlockPingSend">
@@ -893,15 +986,19 @@
         <source component="flexTrak" port="externalTemp" type="Temperature" num="0"/>
         <target component="temperatureProbes" port="externalIn" type="Temperature" num="0"/>
      </connection>
+     <!--
      <connection name="flexTrakBattery">
         <source component="flexTrak" port="batteryVoltage" type="BatteryLevel" num="0"/>
         <target component="eps" port="batteryVoltage" type="BatteryLevel" num="0"/>
      </connection>
+     -->
+     <!--
      <connection name="flexTrakGps">
         <source component="flexTrak" port="gps" type="Position" num="0"/>
         <target component="gps" port="positionIn" type="Position" num="0"/>
      </connection>
-        <!-- Serial Driver 2 - rockBlock -->
+     -->
+        <!-- Serial Driver 2 - rockBlock 
      <connection name = "serialDriver2Buff">
         <source component = "rockBlock" port = "serialBufferOut" type = "BufferSend" num = "0"/>
         <target component = "serialDriver2" port = "readBufferSend" type = "BufferSend" num = "0"/>
@@ -918,35 +1015,40 @@
         <source component="rockBlock" port="binaryMode" type="Drv::BinaryMode" num="0"/>
         <target component="serialDriver2" port="binaryMode" type="Drv::BinaryMode" num="0"/>
      </connection>
+     -->
         <!-- GPS -->
+        <!--
      <connection name="gpsPiCamera">
         <source component="gps" port="positionOut" type="Position" num="0"/>
         <target component="piCamera" port="position" type="Position" num="0"/>
     </connection> 
+    -->
     <!--
     <connection name="gpsPredictor">
         <source component="gps" port="positionOut" type="Position" num="0"/>
         <target component="predictor" port="position" type="Position" num="0"/>
     </connection>
     -->
-        <!-- Thermometer --> 
+        <!-- Thermometer 
     <connection name = "SenseHatThermometer">
         <source component = "senseHat" port = "SHT" type = "App::SHTPort" num = "0"/>
         <target component = "thermometer" port = "DataIn" type = "App::SHTPort" num = "0"/>
     </connection>
+    -->
 
-        <!-- MotionTracking --> 
+        <!-- MotionTracking 
     <connection name = "SenseHatMotionTracking">
         <source component = "senseHat" port = "ICM" type = "App::ICMPort" num = "0"/>
         <target component = "motionTracking" port = "DataIn" type = "App::ICMPort" num = "0"/>
     </connection>
-
+    -->
         <!-- Barometer -->
     <connection name = "SenseHatBarometer">
         <source component = "senseHat" port = "LPS" type = "App::LPSPort" num = "0"/>
         <target component = "barometer" port = "DataIn" type = "App::LPSPort" num = "0"/>
     </connection>
         <!-- PiCamera -->
+    <!--
     <connection name = "BarometerPiCamera">
         <source component = "barometer" port = "DataOut" type = "App::PiCameraBarometerPort" num = "0"/>
         <target component = "piCamera" port = "barometerDataIn" type = "App::PiCameraBarometerPort" num = "0"/>
@@ -967,4 +1069,5 @@
         <source component="temperatureProbes" port="externalOut" type="Temperature" num="0"/>
         <target component="piCamera" port="tempProbeExternal" type="Temperature" num="0"/>
     </connection>
+    -->
 </assembly>

@@ -95,25 +95,25 @@ namespace App {
     }
     pingMutex.unLock();
     
-    shtc3.cycle();
+    //shtc3.cycle();
     lps22.cycle();
-    icm.cycle();
+    //icm.cycle();
 
-    IMU_ST_ANGLES_DATA anglesData = icm.getAngles();
-    IMU_ST_SENSOR_DATA gyroData = icm.getGyro();
-    IMU_ST_SENSOR_DATA accelData = icm.getAccel();
-    IMU_ST_SENSOR_DATA magnData = icm.getMagn();
+    //IMU_ST_ANGLES_DATA anglesData = icm.getAngles();
+    //IMU_ST_SENSOR_DATA gyroData = icm.getGyro();
+    //IMU_ST_SENSOR_DATA accelData = icm.getAccel();
+    //IMU_ST_SENSOR_DATA magnData = icm.getMagn();
 
 
-    this->angles.setRollPitchYaw(anglesData.fRoll, anglesData.fPitch, anglesData.fYaw);
-    this->gyro.setXyz(gyroData.s16X, gyroData.s16Y, gyroData.s16Z);
-    this->accel.setXyz(accelData.s16X ,accelData.s16Y ,accelData.s16Z);
-    this->magn.setXyz(magnData.s16X, magnData.s16Y, magnData.s16Z);
+    //this->angles.setRollPitchYaw(anglesData.fRoll, anglesData.fPitch, anglesData.fYaw);
+    //this->gyro.setXyz(gyroData.s16X, gyroData.s16Y, gyroData.s16Z);
+    //this->accel.setXyz(accelData.s16X ,accelData.s16Y ,accelData.s16Z);
+    //this->magn.setXyz(magnData.s16X, magnData.s16Y, magnData.s16Z);
 
     //log_ACTIVITY_LO_MS_DATA();
 
-    ICM_out(0,angles, gyro, accel, magn);
-    SHT_out(0,shtc3.getTemperatureValue(),shtc3.getHumidityValue());
+    //ICM_out(0,angles, gyro, accel, magn);
+    //SHT_out(0,shtc3.getTemperatureValue(),shtc3.getHumidityValue());
     LPS_out(0,lps22.getTemperatureValue(),lps22.getPressureValue());
   }
 

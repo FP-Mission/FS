@@ -82,20 +82,20 @@ Drv::LinuxSerialDriverComponentImpl serialDriver1(
 Drv::LinuxSerialDriverComponentImpl serialDriver2(
     FW_OPTIONAL_NAME("serialDriver2"));
 
-App::EpsComponentImpl eps(FW_OPTIONAL_NAME("Eps"));
+//App::EpsComponentImpl eps(FW_OPTIONAL_NAME("Eps"));
 App::FlexTrakComponentImpl flexTrak(FW_OPTIONAL_NAME("FlexTrak"));
-App::GpsComponentImpl gps(FW_OPTIONAL_NAME("Gps"));
-App::PiCameraComponentImpl piCamera(FW_OPTIONAL_NAME("PiCamera"));
-App::PredictorComponentImpl predictor(FW_OPTIONAL_NAME("Predictor"));
-App::RockBlockComponentImpl rockBlock(FW_OPTIONAL_NAME("RockBlock"));
+//App::GpsComponentImpl gps(FW_OPTIONAL_NAME("Gps"));
+//App::PiCameraComponentImpl piCamera(FW_OPTIONAL_NAME("PiCamera"));
+//App::PredictorComponentImpl predictor(FW_OPTIONAL_NAME("Predictor"));
+//App::RockBlockComponentImpl rockBlock(FW_OPTIONAL_NAME("RockBlock"));
 App::TemperatureProbesComponentImpl temperatureProbes(
     FW_OPTIONAL_NAME("TemperatureProbes"));
 
 App::SenseHatComponentImpl senseHat(FW_OPTIONAL_NAME("senseHat"));
 
-App::ThermometerComponentImpl thermometer(FW_OPTIONAL_NAME("thermometer"));
+//App::ThermometerComponentImpl thermometer(FW_OPTIONAL_NAME("thermometer"));
 
-App::MotionTrackingComponentImpl motionTracking(FW_OPTIONAL_NAME("motionTracking"));
+//App::MotionTrackingComponentImpl motionTracking(FW_OPTIONAL_NAME("motionTracking"));
 
 App::BarometerComponentImpl barometer(FW_OPTIONAL_NAME("barometer"));
 
@@ -155,16 +155,16 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     health.init(25, 0);
     pingRcvr.init(10);
 
-    eps.init(10, 0);
+    //eps.init(10, 0);
     flexTrak.init(10, 0);
-    gps.init(0);
-    piCamera.init(10, 0);
-    predictor.init(10, 0);
-    rockBlock.init(10, 0);
+    //gps.init(0);
+    //piCamera.init(10, 0);
+    //predictor.init(10, 0);
+    //rockBlock.init(10, 0);
     temperatureProbes.init(10, 0);
     senseHat.init(30, 0);
-    thermometer.init(30, 0);
-    motionTracking.init(30, 0);
+    //thermometer.init(30, 0);
+    //motionTracking.init(30, 0);
     barometer.init(30, 0);
 
     // Connect rate groups to rate group driver
@@ -186,12 +186,12 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     pingRcvr.regCommands();
     senseHat.regCommands();
 
-    eps.regCommands();
+    //eps.regCommands();
     flexTrak.regCommands();
-    gps.regCommands();
-    piCamera.regCommands();
-    predictor.regCommands();
-    rockBlock.regCommands();
+    //gps.regCommands();
+    //piCamera.regCommands();
+    //predictor.regCommands();
+    //rockBlock.regCommands();
     temperatureProbes.regCommands();
 
 #ifdef ROCKBLOCK_SIMULATOR
@@ -259,23 +259,23 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
         flexTrak.configureHardware();
     }
 
-    if (rockblock_connected) {
+    /*if (rockblock_connected) {
         rockBlock.start(0, 100, 10 * 1024);
         serialDriver2.startReadThread(90, 20 * 1024);
         sleep(1);
         rockBlock.configureHardware();
-    }
+    }*/
 
-    eps.start(0, 95, 10 * 1024);
-    piCamera.start(0, 95, 10 * 1024);
-    predictor.start(0, 90, 10 * 1024);
+    //eps.start(0, 95, 10 * 1024);
+    //piCamera.start(0, 95, 10 * 1024);
+    //predictor.start(0, 90, 10 * 1024);
     temperatureProbes.start(0, 100, 10 * 1024);
 
     senseHat.start(0, 97, 10*1024);
 
-    thermometer.start(0, 96, 10*1024);
+    //thermometer.start(0, 96, 10*1024);
 
-    motionTracking.start(0, 96, 10*1024);
+    //motionTracking.start(0, 96, 10*1024);
 
     barometer.start(0, 96, 10*1024);
 
@@ -296,10 +296,10 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
         {3, 5, getHealthName(pingRcvr)},        // 6
         {3, 5, getHealthName(blockDrv)},        // 7
         {3, 5, getHealthName(flexTrak)},        // 8
-        {3, 5, getHealthName(piCamera)},        // 9
+        //{3, 5, getHealthName(piCamera)},        // 9
         {3, 5, getHealthName(senseHat)},        // 10
-        {3, 5, getHealthName(thermometer)},     // 11
-		{3, 5, getHealthName(motionTracking)},  // 12
+        //{3, 5, getHealthName(thermometer)},     // 11
+		//{3, 5, getHealthName(motionTracking)},  // 12
         {3, 5, getHealthName(barometer)},       // 13
         {3, 5, getHealthName(rateGroup4)},      // 14
         //{6, 10, getHealthName(rockBlock)},    // 15
@@ -326,15 +326,15 @@ void exitTasks(void) {
     tlmChan.exit();
     pingRcvr.exit();
     // App
-    eps.exit();
+    //eps.exit();
     flexTrak.exit();
-    piCamera.exit();
-    predictor.exit();
-    rockBlock.exit();
+    //piCamera.exit();
+    //predictor.exit();
+    //rockBlock.exit();
     temperatureProbes.exit();
     senseHat.exit();
-    thermometer.exit();
-    motionTracking.exit();
+    //thermometer.exit();
+    //motionTracking.exit();
     barometer.exit();
 
     // Join the component threads with NULL pointers to free them
@@ -348,15 +348,15 @@ void exitTasks(void) {
     (void)tlmChan.ActiveComponentBase::join(NULL);
     (void)pingRcvr.ActiveComponentBase::join(NULL);
     // App
-    (void)eps.ActiveComponentBase::join(NULL);
+    //(void)eps.ActiveComponentBase::join(NULL);
     (void)flexTrak.ActiveComponentBase::join(NULL);
-    (void)piCamera.ActiveComponentBase::join(NULL);
-    (void)predictor.ActiveComponentBase::join(NULL);
-    (void)rockBlock.ActiveComponentBase::join(NULL);
-    (void)temperatureProbes.ActiveComponentBase::join(NULL);
+    //(void)piCamera.ActiveComponentBase::join(NULL);
+    //(void)predictor.ActiveComponentBase::join(NULL);
+    //(void)rockBlock.ActiveComponentBase::join(NULL);
+    //(void)temperatureProbes.ActiveComponentBase::join(NULL);
     (void)senseHat.ActiveComponentBase::join(NULL);
-    (void)thermometer.ActiveComponentBase::join(NULL);
-    (void)motionTracking.ActiveComponentBase::join(NULL);
+    //(void)thermometer.ActiveComponentBase::join(NULL);
+    //(void)motionTracking.ActiveComponentBase::join(NULL);
     (void)barometer.ActiveComponentBase::join(NULL);
     socketIpDriver.exitSocketTask();
     (void)socketIpDriver.joinSocketTask(NULL);

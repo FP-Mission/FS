@@ -38,32 +38,42 @@ TemperatureProbesComponentImpl ::~TemperatureProbesComponentImpl(void) {}
 void TemperatureProbesComponentImpl ::internalIn_handler(
     const NATIVE_INT_TYPE portNum, I16 degree) {
     //printf("[TemperatureProbes] Internal temperature: %d\n", degree);
-    internalOut_out(0, degree);
-    tlmWrite_TempProb_InternalTemperature(degree);
+    //internalOut_out(0, degree);
+    //tlmWrite_TempProb_InternalTemperature(degree);
 }
 
 void TemperatureProbesComponentImpl ::externalIn_handler(
     const NATIVE_INT_TYPE portNum, I16 degree) {
     //printf("[TemperatureProbes] External temperature: %d\n", degree);
-    externalOut_out(0, degree);
-    tlmWrite_TempProb_ExternalTemperature(degree);
+    //externalOut_out(0, degree);
+    if(degree >= highExternalTemp){
+        log_WARNING_HI_TempPro_HighExternalWarning(degree);
+    }
+    else if(degree <= lowExternalTemp){
+        log_WARNING_HI_TempPro_LowExternalWarning(degree);
+    }
+    tlmWrite_TempProb_Temperature(degree);
 }
 
 // ----------------------------------------------------------------------
 // Command handler implementations
 // ----------------------------------------------------------------------
 
-void TemperatureProbesComponentImpl ::TempProb_SetInternalLevel_cmdHandler(
+void TemperatureProbesComponentImpl ::TempProb_SetExternalHighLevel_cmdHandler(
     const FwOpcodeType opCode, const U32 cmdSeq, I16 temperature) {
     // @todo
-    this->log_WARNING_HI_TempPro_LowInternalWarning(2);
+    this->log_ACTIVITY_LO_TempPro_TempSet(temperature);
+    this->tlmWrite_TempProb_ExternalHighTemperature(temperature);
+    this->highExternalTemp = temperature;
     this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
 }
 
-void TemperatureProbesComponentImpl ::TempProb_SetExternalLevel_cmdHandler(
+void TemperatureProbesComponentImpl ::TempProb_SetExternalLowLevel_cmdHandler(
     const FwOpcodeType opCode, const U32 cmdSeq, I16 temperature) {
     // @todo
-    this->log_WARNING_HI_TempPro_LowExternalWarning(-15);
+    this->log_ACTIVITY_LO_TempPro_TempSet(temperature);
+    this->tlmWrite_TempProb_ExternalLowTemperature(temperature);
+    this->lowExternalTemp = temperature;
     this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
 }
 
