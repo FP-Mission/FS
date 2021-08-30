@@ -52,7 +52,7 @@ void TemperatureProbesComponentImpl ::externalIn_handler(
     else if(degree <= lowExternalTemp){
         log_WARNING_HI_TempPro_LowExternalWarning(degree);
     }
-    tlmWrite_TempProb_Temperature(degree);
+    tlmWrite_TempProb_ExternalTemperature(degree);
 }
 
 // ----------------------------------------------------------------------

@@ -537,7 +537,7 @@
     <channel component="flexTrak" name="FT_SSDVBufferLength" id="0x6e" description="Used length of SSDV buffer" type="U16"/>
     <channel component="temperatureProbes" name="TempProb_ExternalHighTemperature" id="0xa0" description="External high temperature in &#176;C" type="I16"/>
     <channel component="temperatureProbes" name="TempProb_ExternalLowTemperature" id="0xa1" description="External low temperature in &#176;C" type="I16"/>
-    <channel component="temperatureProbes" name="TempProb_Temperature" id="0xa2" description="temperature in &#176;C" type="I16"/>
+    <channel component="temperatureProbes" name="TempProb_ExternalTemperature" id="0xa2" description="temperature in &#176;C" type="I16"/>
     <channel component="barometer" name="BAROMETER_TEMP" id="0xc8" description="Temperature value" type="F32"/>
     <channel component="barometer" name="BAROMETER_PRESS" id="0xc9" description="Pressure value" type="F32"/>
     <channel component="barometer" name="BAROMETER_ALT" id="0xca" description="Altitude value" type="U16"/>

@@ -110,8 +110,9 @@
 #define DICT_TLM_PiCam_Timeinterval 0x84
 #define DICT_TLM_Predi_LandingPosition 0x8c
 #define DICT_TLM_RckBlck_RSSI 0x96
-#define DICT_TLM_TempProb_InternalTemperature 0xa0
-#define DICT_TLM_TempProb_ExternalTemperature 0xa1
+#define DICT_TLM_TempProb_ExternalHighTemperature 0xa0
+#define DICT_TLM_TempProb_ExternalLowTemperature 0xa1
+#define DICT_TLM_TempProb_ExternalTemperature 0xa2
 #define DICT_TLM_THERMOMETER_TEMP 0xb4
 #define DICT_TLM_THERMOMETER_HUMI 0xb5
 #define DICT_TLM_MOTIONTRACKING_ANGLES 0xbe

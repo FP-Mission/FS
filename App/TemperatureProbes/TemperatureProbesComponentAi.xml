@@ -63,7 +63,7 @@
                 External low temperature in °C
             </comment>
         </channel>
-        <channel id="2" name="TempProb_Temperature" data_type="I16">
+        <channel id="2" name="TempProb_ExternalTemperature" data_type="I16">
             <comment>
                 temperature in °C
             </comment>
