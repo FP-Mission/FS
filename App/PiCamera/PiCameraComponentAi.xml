@@ -93,7 +93,7 @@
             Set time interval
             </comment>
             <args>
-                <arg name="timeInterval" type="U8">
+                <arg name="timeInterval" type="U32">
                     <comment>Time interval</comment>
                 </arg>
             </args>
@@ -139,7 +139,7 @@
     </commands>
 
     <telemetry>
-        <channel id="0" name="PiCam_PictureCnt" data_type="U8">
+        <channel id="0" name="PiCam_PictureCnt" data_type="U32">
             <comment>
                 Number of pictures taken
             </comment>
@@ -149,7 +149,7 @@
                 Picture size
             </comment>
         </channel>
-         <channel id="2" name="PiCam_Timeinterval" data_type="U8">
+         <channel id="2" name="PiCam_Timeinterval" data_type="U32">
             <comment>
                 Time interval of 10 seconds
             </comment>
@@ -198,7 +198,7 @@
                 Time interval update
             </comment>
             <args>
-                <arg name="timeInterval" type="U8">
+                <arg name="timeInterval" type="U32">
                     <comment>time interval</comment>
                 </arg>
             </args> 

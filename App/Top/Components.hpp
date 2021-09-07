@@ -56,7 +56,7 @@ extern Drv::LinuxSerialDriverComponentImpl serialDriver1, serialDriver2;
 extern App::FlexTrakComponentImpl flexTrak;
 //extern App::RockBlockComponentImpl rockBlock;
 //extern App::GpsComponentImpl gps;
-//extern App::PiCameraComponentImpl piCamera;
+extern App::PiCameraComponentImpl piCamera;
 //extern App::PredictorComponentImpl predictor;
 extern App::TemperatureProbesComponentImpl temperatureProbes;
 

@@ -85,7 +85,7 @@ Drv::LinuxSerialDriverComponentImpl serialDriver2(
 //App::EpsComponentImpl eps(FW_OPTIONAL_NAME("Eps"));
 App::FlexTrakComponentImpl flexTrak(FW_OPTIONAL_NAME("FlexTrak"));
 //App::GpsComponentImpl gps(FW_OPTIONAL_NAME("Gps"));
-//App::PiCameraComponentImpl piCamera(FW_OPTIONAL_NAME("PiCamera"));
+App::PiCameraComponentImpl piCamera(FW_OPTIONAL_NAME("PiCamera"));
 //App::PredictorComponentImpl predictor(FW_OPTIONAL_NAME("Predictor"));
 //App::RockBlockComponentImpl rockBlock(FW_OPTIONAL_NAME("RockBlock"));
 App::TemperatureProbesComponentImpl temperatureProbes(
@@ -158,7 +158,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     //eps.init(10, 0);
     flexTrak.init(10, 0);
     //gps.init(0);
-    //piCamera.init(10, 0);
+    piCamera.init(10, 0);
     //predictor.init(10, 0);
     //rockBlock.init(10, 0);
     temperatureProbes.init(10, 0);
@@ -189,7 +189,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     //eps.regCommands();
     flexTrak.regCommands();
     //gps.regCommands();
-    //piCamera.regCommands();
+    piCamera.regCommands();
     //predictor.regCommands();
     //rockBlock.regCommands();
     temperatureProbes.regCommands();
@@ -267,7 +267,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     }*/
 
     //eps.start(0, 95, 10 * 1024);
-    //piCamera.start(0, 95, 10 * 1024);
+    piCamera.start(0, 95, 10 * 1024);
     //predictor.start(0, 90, 10 * 1024);
     temperatureProbes.start(0, 100, 10 * 1024);
 
@@ -296,7 +296,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
         {3, 5, getHealthName(pingRcvr)},        // 6
         {3, 5, getHealthName(blockDrv)},        // 7
         {3, 5, getHealthName(flexTrak)},        // 8
-        //{3, 5, getHealthName(piCamera)},        // 9
+        {3, 5, getHealthName(piCamera)},        // 9
         {3, 5, getHealthName(senseHat)},        // 10
         //{3, 5, getHealthName(thermometer)},     // 11
 		//{3, 5, getHealthName(motionTracking)},  // 12
@@ -328,7 +328,7 @@ void exitTasks(void) {
     // App
     //eps.exit();
     flexTrak.exit();
-    //piCamera.exit();
+    piCamera.exit();
     //predictor.exit();
     //rockBlock.exit();
     temperatureProbes.exit();
@@ -350,7 +350,7 @@ void exitTasks(void) {
     // App
     //(void)eps.ActiveComponentBase::join(NULL);
     (void)flexTrak.ActiveComponentBase::join(NULL);
-    //(void)piCamera.ActiveComponentBase::join(NULL);
+    (void)piCamera.ActiveComponentBase::join(NULL);
     //(void)predictor.ActiveComponentBase::join(NULL);
     //(void)rockBlock.ActiveComponentBase::join(NULL);
     //(void)temperatureProbes.ActiveComponentBase::join(NULL);

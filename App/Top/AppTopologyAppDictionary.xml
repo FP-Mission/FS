@@ -56,7 +56,14 @@
       <item name="FILT_DIAGNOSTIC" value="5"/>
     </enum>
   </enums>
-  <serializables/>
+  <serializables>
+    <serializable type="App::PictureSize">
+      <members>
+        <member name="width" format_specifier="%u" type="U32"/>
+        <member name="height" format_specifier="%u" type="U32"/>
+      </members>
+    </serializable>
+  </serializables>
   <arrays/>
   <commands>
     <command component="tlmChan" mnemonic="DUMP_CHANNEL" opcode="0x2">
@@ -129,6 +136,36 @@
     <command component="flexTrak" mnemonic="FT_CHANGE_FREQ" opcode="0x6f">
       <args>
         <arg name="frequency" type="F32"/>
+      </args>
+    </command>
+    <command component="piCamera" mnemonic="PiCam_TakePicture" opcode="0x82">
+      <args/>
+    </command>
+    <command component="piCamera" mnemonic="PiCam_LoadLast" opcode="0x83">
+      <args/>
+    </command>
+    <command component="piCamera" mnemonic="PiCam_SetTimeInterval" opcode="0x84">
+      <args>
+        <arg name="timeInterval" type="U32"/>
+      </args>
+    </command>
+    <command component="piCamera" mnemonic="PiCam_SetSize" opcode="0x85">
+      <args>
+        <arg name="width" type="U32"/>
+        <arg name="height" type="U32"/>
+      </args>
+    </command>
+    <command component="piCamera" mnemonic="PiCam_SendFrame" opcode="0x86">
+      <args>
+        <arg name="frameId" type="I16"/>
+      </args>
+    </command>
+    <command component="piCamera" mnemonic="PiCam_StopSending" opcode="0x87">
+      <args/>
+    </command>
+    <command component="piCamera" mnemonic="PiCam_StartSending" opcode="0x88">
+      <args>
+        <arg name="startFrame" type="I16"/>
       </args>
     </command>
     <command component="temperatureProbes" mnemonic="TempProb_SetExternalHighLevel" opcode="0xa0">
@@ -484,6 +521,35 @@
         <arg name="frequency" type="F32"/>
       </args>
     </event>
+    <event component="piCamera" name="PiCam_PictureTaken" id="0x82" severity="ACTIVITY_LO" format_string="Picture was taken">
+      <args/>
+    </event>
+    <event component="piCamera" name="PiCam_PositionUpdate" id="0x83" severity="ACTIVITY_LO" format_string="Position update">
+      <args/>
+    </event>
+    <event component="piCamera" name="PiCam_BarometerDataUpdate" id="0x84" severity="ACTIVITY_LO" format_string="Data Update : temperature: %.2f C&#176;, pressure:  %.2f hPa, Altitude: %d m">
+      <args>
+        <arg name="temp" type="F32"/>
+        <arg name="pressure" type="F32"/>
+        <arg name="altitude" type="U16"/>
+      </args>
+    </event>
+    <event component="piCamera" name="PiCam_PictureError" id="0x85" severity="WARNING_LO" format_string="Unable to take picture, error code %u">
+      <args>
+        <arg name="code" type="U32"/>
+      </args>
+    </event>
+    <event component="piCamera" name="PiCam_SetTimeInterval" id="0x86" severity="ACTIVITY_LO" format_string="Time interval of 10sec set to : %hu">
+      <args>
+        <arg name="timeInterval" type="U32"/>
+      </args>
+    </event>
+    <event component="piCamera" name="PiCam_SetPictureSize" id="0x87" severity="ACTIVITY_LO" format_string="Picture size set to : width : %u, height : %u">
+      <args>
+        <arg name="width" type="U32"/>
+        <arg name="height" type="U32"/>
+      </args>
+    </event>
     <event component="temperatureProbes" name="TempPro_TempSet" id="0xa0" severity="ACTIVITY_LO" format_string="Limit temperature set to : %d">
       <args>
         <arg name="temperature" type="I16"/>
@@ -535,6 +601,9 @@
     <channel component="serialDriver2" name="DR_BytesSent" id="0x59" description="Bytes Sent" type="U32"/>
     <channel component="serialDriver2" name="DR_BytesRecv" id="0x5a" description="Bytes Received" type="U32"/>
     <channel component="flexTrak" name="FT_SSDVBufferLength" id="0x6e" description="Used length of SSDV buffer" type="U16"/>
+    <channel component="piCamera" name="PiCam_PictureCnt" id="0x82" description="Number of pictures taken" type="U32"/>
+    <channel component="piCamera" name="PiCam_PictureSize" id="0x83" description="Picture size" type="App::PictureSize"/>
+    <channel component="piCamera" name="PiCam_Timeinterval" id="0x84" description="Time interval of 10 seconds" type="U32"/>
     <channel component="temperatureProbes" name="TempProb_ExternalHighTemperature" id="0xa0" description="External high temperature in &#176;C" type="I16"/>
     <channel component="temperatureProbes" name="TempProb_ExternalLowTemperature" id="0xa1" description="External low temperature in &#176;C" type="I16"/>
     <channel component="temperatureProbes" name="TempProb_ExternalTemperature" id="0xa2" description="temperature in &#176;C" type="I16"/>

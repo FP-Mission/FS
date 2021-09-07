@@ -31,7 +31,7 @@
     <!--<import_component_type>App/Eps/EpsComponentAi.xml</import_component_type>-->
     <import_component_type>App/FlexTrak/FlexTrakComponentAi.xml</import_component_type>
     <!--<import_component_type>App/Gps/GpsComponentAi.xml</import_component_type>-->
-    <!--<import_component_type>App/PiCamera/PiCameraComponentAi.xml</import_component_type>-->
+    <import_component_type>App/PiCamera/PiCameraComponentAi.xml</import_component_type>
     <!--<import_component_type>App/Predictor/PredictorComponentAi.xml</import_component_type>-->
     <!--<import_component_type>App/RockBlock/RockBlockComponentAi.xml</import_component_type>-->
     <import_component_type>App/TemperatureProbes/TemperatureProbesComponentAi.xml</import_component_type>
@@ -67,7 +67,7 @@
     <!--<instance namespace="App" name="eps"                type="Eps"                  base_id="100"   base_id_window="10" />-->
     <instance namespace="App" name="flexTrak"           type="FlexTrak"             base_id="110"   base_id_window="10" />
     <!--<instance namespace="App" name="gps"                type="Gps"                  base_id="120"   base_id_window="10" />-->
-    <!--<instance namespace="App" name="piCamera"           type="PiCamera"             base_id="130"   base_id_window="10" />-->
+    <instance namespace="App" name="piCamera"           type="PiCamera"             base_id="130"   base_id_window="10" />
     <!--<instance namespace="App" name="predictor"          type="Predictor"            base_id="140"   base_id_window="10" />-->
     <!--<instance namespace="App" name="rockBlock"          type="RockBlock"            base_id="150"   base_id_window="10" />-->
     <instance namespace="App" name="temperatureProbes"  type="TemperatureProbes"    base_id="160"   base_id_window="10" />
@@ -169,12 +169,12 @@
         <target component="cmdDisp" port="compCmdReg" type="CmdReg" num="12"/>
     </connection>
     -->
-    <!--
+
     <connection name="PiCameraReg">
         <source component="piCamera" port="CmdReg" type="CmdReg" num="0"/>
         <target component="cmdDisp" port="compCmdReg" type="CmdReg" num="13"/>
     </connection>
-    -->
+
     <!--
     <connection name="PredictorReg">
         <source component="predictor" port="CmdReg" type="CmdReg" num="0"/>
@@ -233,12 +233,12 @@
         <target component="gps" port="CmdDisp" type="Cmd" num="0"/>
     </connection>
     -->
-    <!--
+
     <connection name="PiCameraDisp">
         <source component="cmdDisp" port="compCmdSend" type="Cmd" num="13"/>
         <target component="piCamera" port="CmdDisp" type="Cmd" num="0"/>
     </connection>
-    -->
+
     <!--
     <connection name="PredictorDisp">
         <source component="cmdDisp" port="compCmdSend" type="Cmd" num="14"/>
@@ -296,12 +296,12 @@
         <target component="cmdDisp" port="compCmdStat" type="CmdResponse" num="0"/>
     </connection>
     -->
-    <!--
+
     <connection name="PiCameraStat">
         <source component="piCamera" port="CmdStatus" type="CmdResponse" num="0"/>
         <target component="cmdDisp" port="compCmdStat" type="CmdResponse" num="0"/>
     </connection>
-    -->
+
     <!--
     <connection name="PredictorStat">
         <source component="predictor" port="CmdStatus" type="CmdResponse" num="0"/>
@@ -391,12 +391,12 @@
         <target component="eventLogger" port="LogRecv" type="Log" num="0"/>
     </connection>
     -->
-    <!--
+
     <connection name="piCameraEvt">
         <source component="piCamera" port="Log" type="Log" num="0"/>
         <target component="eventLogger" port="LogRecv" type="Log" num="0"/>
     </connection>
-    -->
+
     <!--
     <connection name="predictorEvt">
         <source component="predictor" port="Log" type="Log" num="0"/>
@@ -503,12 +503,12 @@
         <target component="textLogger" port="TextLogger" type="LogText" num="0"/>
     </connection>
     -->
-    <!--
+
     <connection name="piCameraText">
         <source component="piCamera" port="LogText" type="LogText" num="0"/>
         <target component="textLogger" port="TextLogger" type="LogText" num="0"/>
     </connection>
-    -->
+
     <!--
     <connection name="predictorText">
         <source component="predictor" port="LogText" type="LogText" num="0"/>
@@ -603,12 +603,12 @@
          <target component="tlmChan" port="TlmRecv" type="Tlm" num="0"/>
     </connection>
     -->
-    <!--
+
     <connection name="piCameraTlm">
          <source component="piCamera" port="Tlm" type="Tlm" num="0"/>
          <target component="tlmChan" port="TlmRecv" type="Tlm" num="0"/>
     </connection>
-    -->
+
     <!--
     <connection name="predictorTlm">
          <source component="predictor" port="Tlm" type="Tlm" num="0"/>
@@ -714,12 +714,12 @@
         <target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
     </connection>
     -->
-    <!--
+
     <connection name="piCameraTime">
         <source component="piCamera" port="Time" type="Time" num="0"/>
         <target component="linuxTime" port="timeGetPort" type="Time" num="0"/>
     </connection>
-    -->
+
     <!--
     <connection name="predictorTime">
         <source component="predictor" port="Time" type="Time" num="0"/>
@@ -805,12 +805,12 @@
         <source component="rateGroupDrv" port="CycleOut" type="Cycle" num="3"/>
         <target component="rateGroup4" port="CycleIn" type="Cycle" num="0"/>
     </connection>
-    <!--
+
     <connection name="RgPiCamera">
         <source component="rateGroup4" port="RateGroupMemberOut" type="Sched" num="0"/>
         <target component="piCamera" port="Schedin" type="Sched" num="0"/>
     </connection>
-    -->
+
     <!--
     <connection name="RgRockBlock">
          <source component="rateGroup4" port="RateGroupMemberOut" type="Sched" num="1"/>
@@ -899,7 +899,7 @@
         <source component="flexTrak" port="PingOut" type="Ping" num="0"/>
         <target component="health" port="PingReturn" type="Ping" num="8"/>
     </connection>
-    <!--
+
     <connection name="piCameraPingSend">
         <source component="health" port="PingSend" type="Ping" num="9"/>
         <target component="piCamera" port="PingIn" type="Ping" num="0"/>
@@ -908,14 +908,14 @@
         <source component="piCamera" port="PingOut" type="Ping" num="0"/>
         <target component="health" port="PingReturn" type="Ping" num="9"/>
     </connection>
-    -->
+ 
     <connection name = "SenseHatPingSend">
-        <source component = "health" port = "PingSend" type = "Ping" num = "9"/>
+        <source component = "health" port = "PingSend" type = "Ping" num = "10"/>
         <target component = "senseHat" port = "PingIn" type = "Ping" num = "0"/>
     </connection>
     <connection name = "SenseHatPingRecv">
         <source component = "senseHat" port = "PingOut" type = "Ping" num = "0"/>
-        <target component = "health" port = "PingReturn" type = "Ping" num = "9"/>
+        <target component = "health" port = "PingReturn" type = "Ping" num = "10"/>
     </connection>
     <!--
     <connection name = "ThermometerPingSend">
@@ -938,20 +938,20 @@
     </connection>
     -->
     <connection name = "BarometerPingSend">
-        <source component = "health" port = "PingSend" type = "Ping" num = "10"/>
+        <source component = "health" port = "PingSend" type = "Ping" num = "11"/>
         <target component = "barometer" port = "PingIn" type = "Ping" num = "0"/>
     </connection>
     <connection name = "BarometerPingRecv">
         <source component = "barometer" port = "PingOut" type = "Ping" num = "0"/>
-        <target component = "health" port = "PingReturn" type = "Ping" num = "10"/>
+        <target component = "health" port = "PingReturn" type = "Ping" num = "11"/>
     </connection>
     <connection name="Rg4PingSend">
-        <source component="health" port="PingSend" type="Ping" num="11"/>
+        <source component="health" port="PingSend" type="Ping" num="12"/>
         <target component="rateGroup4" port="PingIn" type="Ping" num="0"/>
     </connection>
     <connection name="Rg4PingRecv">
         <source component="rateGroup4" port="PingOut" type="Ping" num="0"/>
-        <target component="health" port="PingReturn" type="Ping" num="11"/>
+        <target component="health" port="PingReturn" type="Ping" num="12"/>
     </connection>
     <!-- ROCKBLOCK ping
     <connection name="rockBlockPingSend">
@@ -1048,7 +1048,7 @@
         <target component = "barometer" port = "DataIn" type = "App::LPSPort" num = "0"/>
     </connection>
         <!-- PiCamera -->
-    <!--
+
     <connection name = "BarometerPiCamera">
         <source component = "barometer" port = "DataOut" type = "App::PiCameraBarometerPort" num = "0"/>
         <target component = "piCamera" port = "barometerDataIn" type = "App::PiCameraBarometerPort" num = "0"/>
@@ -1069,5 +1069,5 @@
         <source component="temperatureProbes" port="externalOut" type="Temperature" num="0"/>
         <target component="piCamera" port="tempProbeExternal" type="Temperature" num="0"/>
     </connection>
-    -->
+
 </assembly>

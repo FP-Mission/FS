@@ -238,7 +238,7 @@ namespace App {
   void PiCameraComponentImpl::PiCam_SetTimeInterval_cmdHandler(
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq, /*!< The command sequence number*/
-          const U8 timeInterval /*!< The command sequence number*/
+          const U32 timeInterval /*!< The command sequence number*/
       ){
         this->timeInterval = timeInterval;
         tlmWrite_PiCam_Timeinterval(timeInterval);
@@ -341,8 +341,8 @@ namespace App {
     }
     else{
     managePpm(Camera,data);
-    managePng(data, width, height);
-    manageTelemetry();
+    //managePng(data, width, height);
+    //manageTelemetry();
     }
     delete data;
     return true;

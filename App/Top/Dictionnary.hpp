@@ -80,8 +80,9 @@
 #define DICT_LOG_RckBlck_RingAlert 0x9b
 #define DICT_LOG_RckBlck_CommandSent 0x9c
 #define DICT_LOG_RckBlck_Response 0x9d
-#define DICT_LOG_TempPro_LowInternalWarning 0xa0
-#define DICT_LOG_TempPro_LowExternalWarning 0xa1
+#define DICT_LOG_TempPro_LowExternalWarning 0xa0
+#define DICT_LOG_TempPro_HighExternalWarning 0xa1
+#define DICT_LOG_TempPro_TempsSet 0xa2
 
 // Telemetry channels
 #define DICT_TLM_CommandsDispatched 0x3
