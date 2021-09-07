@@ -183,10 +183,10 @@ void FlexTrakComponentImpl ::serialRecv_handler(const NATIVE_INT_TYPE portNum,
             //batteryVoltage_out(0, (U16)batteryVoltage);
         }  else if(detectCommand("Temp0=", pointer)) {
             I16 temp0 = atoi(pointer + 6);
-            //internalTemp_out(0, temp1);
+            externalTemp_out(0, temp0);
         }  else if(detectCommand("Temp1=", pointer)) {
             I16 temp1 = atoi(pointer + 6);
-            externalTemp_out(0, temp1);
+            //internalTemp_out(0, temp1);
         } else if(detectCommand("LoRaIsFree=", pointer)) {
             loRaIsFreeMutex.lock();
             this->loRaIsFree = atoi(pointer + 11) == 1 ? true : false;
