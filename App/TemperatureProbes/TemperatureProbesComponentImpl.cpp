@@ -46,11 +46,17 @@ void TemperatureProbesComponentImpl ::externalIn_handler(
     const NATIVE_INT_TYPE portNum, I16 degree) {
     //printf("[TemperatureProbes] External temperature: %d\n", degree);
     //externalOut_out(0, degree);
-    if(degree >= highExternalTemp){
+    if(degree >= highExternalTemp && limitTemp){
         log_WARNING_HI_TempPro_HighExternalWarning(degree);
+        limitTemp = false;
     }
-    else if(degree <= lowExternalTemp){
+    else if(degree <= lowExternalTemp && limitTemp){
         log_WARNING_HI_TempPro_LowExternalWarning(degree);
+        limitTemp = false;
+    }
+
+    if(degree < highExternalTemp && degree > lowExternalTemp){
+        limitTemp = true;
     }
     this->tlmWrite_TempProb_ExternalHighTemperature(highExternalTemp);
     this->tlmWrite_TempProb_ExternalLowTemperature(lowExternalTemp);

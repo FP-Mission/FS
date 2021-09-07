@@ -82,6 +82,7 @@ class TemperatureProbesComponentImpl : public TemperatureProbesComponentBase {
     );
     I16 highExternalTemp = 40;
     I16 lowExternalTemp = -10;
+    bool limitTemp = true;
 };
 
 }  // end namespace App
